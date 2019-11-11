@@ -11,7 +11,7 @@ It is particularly suitable for accelerating an electron beam in direct channels
 
 ## Theory
 
-Watch in theory_ru.md
+Watch in theory_ru
 
 ## Algorithm
 
@@ -29,4 +29,4 @@ pip install kenv
 
 ## Instruction
 
-...
+Watch notebooks: theory and example ...

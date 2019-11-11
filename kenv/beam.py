@@ -34,11 +34,11 @@ class Beam:
         
         self.current = current
         self.energy = energy
-	self.radius_x = radius
+        self.radius_x = radius
         self.radius_y = radius
         self.angular_x = angular
         self.angular_y = angular
-	self.normalized_emittans_x = normalized_emittans
+        self.normalized_emittans_x = normalized_emittans
         self.normalized_emittans_y = normalized_emittans
         if (radius_x or radius_y):
             self.radius_x = radius_x
