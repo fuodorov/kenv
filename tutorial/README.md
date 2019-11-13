@@ -1,6 +1,6 @@
 # Tutorial KENV
 
-[V. Fedorov](fuodorov1998@gmail.com),
+[V. Fedorov]<fuodorov1998@gmail.com>,
 [D. Nikiforov](nikdanila@bk.ru),
 [A. Petrenko](http://www.inp.nsk.su/~petrenko/),
 2019,
