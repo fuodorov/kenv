@@ -8,7 +8,7 @@ Let's consider the main examples of using the solver kenv. Examples are presente
 
 ### Notebooks
 
-####  01. [Theory](01_theory.ipynb)
+####  01. [Theory](https://nbviewer.jupyter.org/github/fuodorov/kenv/blob/notebooks/tutorial/01_theory.ipynb)
 The theory of the Kapchinsky-Vladimir envelope equation is considered.
 ####  02. [Manual](02_manual.ipynb)
 The basic applications of the kenv are considered.
