@@ -43,13 +43,13 @@ class Beam:
         self.normalized_emittans = normalized_emittans
         self.normalized_emittans_x = normalized_emittans_x
         self.normalized_emittans_y = normalized_emittans_y
-        if not radius:
+        if radius != .0e0:
             self.radius_x = radius
             self.radius_y = radius   
-        if not angular:
+        if angular !=.0e0:
             self.angular_x = angular
             self.angular_y = angular
-        if not normalized_emittans:
+        if normalized_emittans !=.0e0:
             self.normalized_emittans_x = normalized_emittans
             self.normalized_emittans_y = normalized_emittans
             
