@@ -8,7 +8,8 @@ Let's consider the main examples of using the solver kenv. Examples are presente
 
 ### Notebooks
 
-####  01. [Theory](01a_theory.ipynb)
+#### 00. [Itroduction](00__introduction.ipynb)
+####  01. [Theory](01_theory.ipynb)
 The theory of the Kapchinsky-Vladimir envelope equation is considered.
 ####  02. [Manual](02_manual.ipynb)
 The basic applications of the kenv are considered.
@@ -18,3 +19,5 @@ The basic interactive plotting on matplotlib.
 The application of the genetic algorithm (deap library) for constructing the envelope is considered.
 ####  05. [GUI](05_GUI.ipynb)
 Considered a graphical interface.
+#### 0A. [Test](0A_test.ipynb)
+KENV vs Astra vs WARP vs SAM.

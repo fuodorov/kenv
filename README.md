@@ -30,4 +30,4 @@ pip install kenv
 
 ## Instruction
 
-Watch notebooks: theory and example ...
+Watch notebooks
