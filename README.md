@@ -10,10 +10,6 @@ KENV is a solver code for the equation of the envelope of an electron beam with 
 
 It is particularly suitable for accelerating an electron beam in direct channels with solenoidal and quadrupole focusing.
 
-## Theory
-
-Watch in theory_ru
-
 ## Algorithm
 
 The algorithm reduces to lowering the order of the Kapchinsky-Vladimirsky differential equations to the first and subsequent integration.
