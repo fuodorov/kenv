@@ -34,21 +34,24 @@ class Beam:
         
         self.current = current
         self.energy = energy
-        self.radius_x = radius
-        self.radius_y = radius
-        self.angular_x = angular
-        self.angular_y = angular
-        self.normalized_emittans_x = normalized_emittans
-        self.normalized_emittans_y = normalized_emittans
-        if (radius_x or radius_y):
-            self.radius_x = radius_x
-            self.radius_y = radius_y   
-        if (angular_x or angular_y):
-            self.angular_x = angular_x
-            self.angular_y = angular_y
-        if (normalized_emittans_x or normalized_emittans_y):
-            self.normalized_emittans_x = normalized_emittans_x
-            self.normalized_emittans_y = normalized_emittans_y
+        self.radius = radius
+        self.radius_x = radius_x
+        self.radius_y = radius_y
+        self.angular = angular
+        self.angular_x = angular_x
+        self.angular_y = angular_y
+        self.normalized_emittans = normalized_emittans
+        self.normalized_emittans_x = normalized_emittans_x
+        self.normalized_emittans_y = normalized_emittans_y
+        if radius != .0e0:
+            self.radius_x = radius
+            self.radius_y = radius   
+        if angular !=.0e0:
+            self.angular_x = angular
+            self.angular_y = angular
+        if normalized_emittans !=.0e0:
+            self.normalized_emittans_x = normalized_emittans
+            self.normalized_emittans_y = normalized_emittans
             
     
     def __str__(self):
