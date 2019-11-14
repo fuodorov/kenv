@@ -97,7 +97,7 @@ class Simulation:
 
             return [dxdz, dsigma_xdz, dydz, dsigma_ydz]
 
-        X0 = [self.radius_x, self.angular_x, self.radius_y, self.angular_y]
+        X0 = [self.angular_x, self.radius_x, self.angular_y, self.radius_y]
         self.envelope_x = odeint(dXdz, X0, self.parameter, rtol=self.rtol)[0:,1]
         self.envelope_y = odeint(dXdz, X0, self.parameter, rtol=self.rtol)[0:,3]
         
