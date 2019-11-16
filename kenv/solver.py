@@ -109,7 +109,6 @@ class Simulation:
                 dydz = 2 * P/(sigma_x + sigma_y) + emitt_y * emitt_y / (sigma_y * sigma_y * sigma_y) - K_y * sigma_y - \
                        dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
 
-
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz]
 
             def dXdz_particle(X:list, z:np.arange,
