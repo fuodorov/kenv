@@ -5,6 +5,7 @@
 
 import numpy as np
 from scipy import interpolate
+from scipy.misc import derivative
 
 __all__ = ['Element',
            'Accelerator',
@@ -58,15 +59,12 @@ def read_elements(z:np.arange,
             M = field_files[element.file_name]
             z_data = M[:,0]
             F_data = M[:,1]
-            z_int = np.linspace(z_data[0], z_data[-1], 1e5*len(z_data))
-            tck = interpolate.splrep(z_data, F_data, k = 1, s = 1e3)
-            F_int = interpolate.splev(z_int, tck, der = 0)
             f = interpolate.interp1d(
-                element.z0+z_int, element.max_field*F_int, kind='quadratic',
+                element.z0+z_data, element.max_field*F_data, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
             F = F + f(z)
-    F = interpolate.interp1d(z, F,fill_value=(0, 0), bounds_error=False)
+    F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
     return F
 
 
@@ -94,6 +92,9 @@ class Accelerator:
         self.Bz = interpolate.interp1d
         self.Ez = interpolate.interp1d
         self.Gz = interpolate.interp1d
+        self.dBzdz = interpolate.interp1d
+        self.dEzdz = interpolate.interp1d
+        self.dGzdz = interpolate.interp1d
 
     def add_solenoid(self,
                      name: str,
@@ -195,6 +196,23 @@ class Accelerator:
         self.Bz = read_elements(self.parameter, self.Bz_beamline)
         self.Ez = read_elements(self.parameter, self.Ez_beamline)
         self.Gz = read_elements(self.parameter, self.Gz_beamline)
+        
+        self.dEzdz = derivative(self.Ez, self.parameter, self.step*10)
+        self.dBzdz = derivative(self.Bz, self.parameter, self.step*10)
+        self.dGzdz = derivative(self.Gz, self.parameter, self.step*10)
+        self.dEzdz = interpolate.interp1d(
+                self.parameter, self.dEzdz, kind='linear',
+                fill_value=(0, 0), bounds_error=False
+            )
+        self.dBzdz = interpolate.interp1d(
+                    self.parameter, self.dBzdz, kind='linear',
+                    fill_value=(0, 0), bounds_error=False
+                )
+        self.dGzdz = interpolate.interp1d(
+                self.parameter, self.dGzdz, kind='linear',
+                fill_value=(0, 0), bounds_error=False
+            )
+
 
     def __str__(self):
         string = 'Accelerator structure.\n'
