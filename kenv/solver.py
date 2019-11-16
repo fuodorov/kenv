@@ -31,7 +31,7 @@ class Simulation:
         self.normalized_emittans_x = beam.normalized_emittans_x
         self.normalized_emittans_y = beam.normalized_emittans_y
 
-        self.particles = beam.Particles
+        self.particles = beam.particles
 
         self.start = accelerator.start
         self.stop = accelerator.stop
@@ -47,15 +47,19 @@ class Simulation:
 
         self.particle_x = {}
         self.particle_y = {}
+        self.particle_phase = {}
 
         self.envelope_x = []
         self.envelope_y = []
 
-    def track(self, solver = 'odeint', rtol:float = 1e-5):
+    def track(self, solver = 'odeint', rtol:float = 1e-8):
         '''Tracking!
         '''
 
+        X0 = [self.radius_x, self.angular_x, self.radius_y, self.angular_y]
+
         if solver == 'odeint':
+
             def dXdz(X:list, z:np.arange,
                      dz:float=self.step,
                      gamma:interpolate.interp1d=self.gamma,
@@ -67,7 +71,7 @@ class Simulation:
                      emitt_n_y:float=self.normalized_emittans_y,
                      c:float=self.clight,
                      mc:float=self.mass_rest_electron,
-                     alfven_current:float=self.alfven_current) ->list:
+                     alfven_current:float=self.alfven_current) -> list:
                 '''Located derivative for further integration.
                 '''
                 sigma_x = X[0]
@@ -77,6 +81,7 @@ class Simulation:
 
                 g = gamma(z)
                 dgdz = Ez(z) / mc
+
                 d2gdz2 = (Ez(z+dz) - Ez(z) / dz / mc)
 
                 beta = np.sqrt(1 - 1 / (g * g))
@@ -91,21 +96,74 @@ class Simulation:
 
                 P = 2 * beam_current / (alfven_current * beta * beta * beta * g * g * g)
 
+                dsigma_xdz = x
                 dxdz = 2 * P / (sigma_x + sigma_y) + emitt_x * emitt_x / (sigma_x * sigma_x * sigma_x) - K_x * sigma_x - \
                        dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
-                dsigma_xdz = x
-
+                dsigma_ydz = y
                 dydz = 2 * P/(sigma_x + sigma_y) + emitt_y * emitt_y / (sigma_y * sigma_y * sigma_y) - K_y * sigma_y - \
                        dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
-                dsigma_ydz = y
+
 
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz]
 
-            X0 = [self.radius_x, self.angular_x, self.radius_y, self.angular_y]
-            self.envelope_x = odeint(dXdz, X0, self.parameter, rtol=rtol)[0:,0]
-            self.envelope_y = odeint(dXdz, X0, self.parameter, rtol=rtol)[0:,2]
+            def dXdz_particle(X:list, z:np.arange,
+                     dz:float=self.step,
+                     gamma:interpolate.interp1d=self.gamma,
+                     Bz:interpolate.interp1d=self.Bz,
+                     Ez:interpolate.interp1d=self.Ez,
+                     Gz:interpolate.interp1d=self.Gz,
+                     beam_current:float=.0e0,
+                     emitt_n_x:float=.0e0,
+                     emitt_n_y:float=.0e0,
+                     c:float=self.clight,
+                     mc:float=self.mass_rest_electron,
+                     alfven_current:float=self.alfven_current,
+                     rtol:float=rtol) -> list:
+                '''Located derivative for further integration.
+                '''
+                sigma_x = X[0]
+                x = X[1]
+                sigma_y = X[2]
+                y = X[3]
+                phi = X[4]
+
+                g = gamma(z)
+                dgdz = Ez(z) / mc
+                d2gdz2 = (Ez(z+dz) - Ez(z) / dz / mc)
+
+                beta = np.sqrt(1 - 1 / (g * g))
+
+                K_s = ( c * Bz(z) / (2*mc*1e6) / (g * beta))**2
+                K_q = ( c * Gz(z) / (mc*1e6)) / (g * beta)
+                K_x = K_s + K_q
+                K_y = K_s - K_q
+
+                sigma_x = sigma_x*np.cos(phi) + sigma_y*np.sin(phi)
+                sigma_y = -sigma_x*np.sin(phi) + sigma_y*np.cos(phi)
+                x = x*np.cos(phi) + y*np.sin(phi)
+                y = -x*np.sin(phi) + y*np.cos(phi)
+
+                dsigma_xdz = x
+                dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
+                dsigma_ydz = y
+                dydz = - K_y * sigma_y - dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
+                dphidz = K_s**0.5
+
+                return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
+
+            sol = odeint(dXdz, X0, self.parameter, rtol=rtol)
+            self.envelope_x = sol[0:,0]
+            self.envelope_y = sol[0:,2]
+
+            for particle in self.particles.values():
+                X0_particle = [particle.x_position, particle.angular_x, particle.y_position, particle.angular_y, particle.phase]
+                sol = odeint(dXdz_particle, X0_particle, self.parameter, rtol=rtol)
+                self.particle_x[particle.name] =  sol[0:,0]
+                self.particle_y[particle.name] =  sol[0:,2]
+                self.particle_phase[particle.name] =  sol[0:,4]
 
         elif solver == 'solve_ivp':
+
             def dXdz(z:np.arange, X:list,
                      dz:float=self.step,
                      gamma:interpolate.interp1d=self.gamma,
@@ -151,7 +209,7 @@ class Simulation:
 
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz]
 
-            X0 = np.array([self.radius_x, self.angular_x, self.radius_y, self.angular_y])
+            X0 = np.array(X0)
             self.envelope_x = solve_ivp(dXdz, t_span=[self.parameter[0],self.parameter[-1]], y0=X0, t_eval=self.parameter, rtol=rtol).y[0,:]
             self.envelope_y = solve_ivp(dXdz, t_span=[self.parameter[0],self.parameter[-1]], y0=X0, t_eval=self.parameter, rtol=rtol).y[2,:]
 

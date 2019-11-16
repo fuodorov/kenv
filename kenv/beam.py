@@ -120,9 +120,9 @@ class Beam:
             string=''
             string += '\tParticles:\n'
             for particle in self.particles.values():
-                string +="\t[ %.1f mm, %.1f mm, %.1f mrad, %.1f mrad, '%s'],\n" % \
+                string +="\t[ %.1f mm, %.1f mm, %.1f mrad, %.1f mrad, %.1f rad, '%s'],\n" % \
                 (particle.x_position*1e3, particle.y_position*1e3,\
-                 particle.angular_x*1e3, particle.angular_y*1e3,\
+                 particle.angular_x*1e3, particle.angular_y*1e3, particle.phase,\
                   particle.name)
             return 'Beam parameters:' + '\n' \
                     +'\tCurrent\t%0.1f A'%(self.current) + '\n' \

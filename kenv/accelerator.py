@@ -58,12 +58,15 @@ def read_elements(z:np.arange,
             M = field_files[element.file_name]
             z_data = M[:,0]
             F_data = M[:,1]
+            z_int = np.linspace(z_data[0], z_data[-1], 1e5*len(z_data))
+            tck = interpolate.splrep(z_data, F_data, k = 1, s = 1e3)
+            F_int = interpolate.splev(z_int, tck, der = 0)
             f = interpolate.interp1d(
-                element.z0+z_data, element.max_field*F_data,
+                element.z0+z_int, element.max_field*F_int, kind='quadratic',
                 fill_value=(0, 0), bounds_error=False
             )
             F = F + f(z)
-    F = interpolate.interp1d(z, F, fill_value=(0, 0), bounds_error=False)
+    F = interpolate.interp1d(z, F,fill_value=(0, 0), bounds_error=False)
     return F
 
 
