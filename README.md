@@ -1,5 +1,5 @@
 # Kapchinsky ENVelope (KENV)
-
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fuodorov/kenv/dev?filepath=notebooks%2F00_introduction.ipynb)
 ## Solver of the Kapchinsky-Vladimirsky envelope equation
 
 <a href=mailto:fuodorov1998@gmail.com>V. Fedorov</a>, <a href=mailto:nikdanila@bk.ru>D. Nikiforov</a>, <a href=http://www.inp.nsk.su/~petrenko/>A. Petrenko</a>, (Novosibirsk, 2019)
