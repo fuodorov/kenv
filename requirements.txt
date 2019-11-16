@@ -1,0 +1,6 @@
+kenv
+holoviews
+bokeh
+scipy
+numpy
+matplotlib
