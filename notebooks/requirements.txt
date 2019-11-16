@@ -1,0 +1,4 @@
+kenv
+bokeh
+scipy
+numpy
