@@ -158,7 +158,7 @@ class Simulation:
                 dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
                 dsigma_ydz = y
                 dydz = - K_y * sigma_y - dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
-                dphidz = -K_s**0.5
+                dphidz = K_s**0.5
 
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
@@ -283,9 +283,12 @@ class Simulation:
             for particle in self.particles.values():
                 X0_particle = np.array([particle.x_position, particle.angular_x, particle.y_position, particle.angular_y, particle.phase])
                 sol = solve_ivp(dXdz_particle, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_particle, t_eval=self.parameter, rtol=rtol).y
-                self.particle_x[particle.name] =  sol[0,:]
-                self.particle_y[particle.name] =  sol[2,:]
-                self.particle_phase[particle.name] =  sol[4,:]
+                self.particle_larmor_x[particle.name] =  sol[0,:]
+                self.particle_larmor_y[particle.name] =  sol[2,:]
+                self.particle_larmor_phase[particle.name] =  sol[4,:]
+                self.particle_x[particle.name] = sol[0,:]*np.cos(sol[4,:]) - sol[2,:]*np.sin(sol[4,:])
+                self.particle_y[particle.name] = sol[0,:]*np.sin(sol[4,:]) + sol[2,:]*np.cos(sol[4,:])
+                self.particle_radius[particle.name] = (sol[0,:]**2 + sol[2,:]**2)**0.5
 
 
 Sim = Simulation
