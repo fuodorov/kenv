@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name='kenv',
-    version='0.0.4',
+    version='0.0.6',
     author='Vyacheslav Fedorov',
     author_email='fuodorov1998@gmail.com',
-    description='Solver of the Kapchinsky-Vladimir envelope equation',
+    description='Solver of the Kapchinsky-Vladimirsky envelope equation',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/fuodorov/kenv',
