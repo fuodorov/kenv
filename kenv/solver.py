@@ -156,11 +156,6 @@ class Simulation:
                 K_x = K_s + K_q
                 K_y = K_s - K_q
 
-                sigma_x = sigma_x*np.cos(phi) + sigma_y*np.sin(phi)
-                sigma_y = -sigma_x*np.sin(phi) + sigma_y*np.cos(phi)
-                x = x*np.cos(phi) + y*np.sin(phi)
-                y = -x*np.sin(phi) + y*np.cos(phi)
-
                 dsigma_xdz = x
                 dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
                 dsigma_ydz = y
@@ -277,11 +272,6 @@ class Simulation:
                 K_q = ( c * Gz(z) / (mc*1e6)) / (g * beta)
                 K_x = K_s + K_q
                 K_y = K_s - K_q
-
-                sigma_x = sigma_x*np.cos(phi) + sigma_y*np.sin(phi)
-                sigma_y = -sigma_x*np.sin(phi) + sigma_y*np.cos(phi)
-                x = x*np.cos(phi) + y*np.sin(phi)
-                y = -x*np.sin(phi) + y*np.cos(phi)
 
                 dsigma_xdz = x
                 dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
