@@ -167,6 +167,7 @@ class Simulation:
                 dydz = - K_y * sigma_y - dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
                 dphidz = -K_s**0.5
 
+
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
             sol = odeint(dXdz, X0, self.parameter, rtol=rtol)

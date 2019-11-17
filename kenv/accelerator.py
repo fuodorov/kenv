@@ -196,20 +196,20 @@ class Accelerator:
         self.Bz = read_elements(self.parameter, self.Bz_beamline)
         self.Ez = read_elements(self.parameter, self.Ez_beamline)
         self.Gz = read_elements(self.parameter, self.Gz_beamline)
-        
+
         self.dEzdz = derivative(self.Ez, self.parameter, self.step*10)
         self.dBzdz = derivative(self.Bz, self.parameter, self.step*10)
         self.dGzdz = derivative(self.Gz, self.parameter, self.step*10)
         self.dEzdz = interpolate.interp1d(
-                self.parameter, self.dEzdz, kind='linear',
+                self.parameter, self.dEzdz, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
         self.dBzdz = interpolate.interp1d(
-                    self.parameter, self.dBzdz, kind='linear',
+                    self.parameter, self.dBzdz, kind='cubic',
                     fill_value=(0, 0), bounds_error=False
                 )
         self.dGzdz = interpolate.interp1d(
-                self.parameter, self.dGzdz, kind='linear',
+                self.parameter, self.dGzdz, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
 
