@@ -50,7 +50,10 @@ class Simulation:
 
         self.particle_x = {}
         self.particle_y = {}
-        self.particle_phase = {}
+        self.particle_radius = {}
+        self.particle_larmor_phase = {}
+        self.particle_larmor_x = {}
+        self.particle_larmor_y = {}
 
         self.envelope_x = []
         self.envelope_y = []
@@ -155,20 +158,23 @@ class Simulation:
                 dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
                 dsigma_ydz = y
                 dydz = - K_y * sigma_y - dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
-                dphidz = K_s**0.5
+                dphidz = -K_s**0.5
 
                 return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
             sol = odeint(dXdz, X0, self.parameter, rtol=rtol)
             self.envelope_x = sol[0:,0]
-            self.envelope_y = sol[0:,2]
+            self.envelope_y= sol[0:,2]
 
             for particle in self.particles.values():
                 X0_particle = [particle.x_position, particle.angular_x, particle.y_position, particle.angular_y, particle.phase]
                 sol = odeint(dXdz_particle, X0_particle, self.parameter, rtol=rtol)
-                self.particle_x[particle.name] =  sol[0:,0]
-                self.particle_y[particle.name] =  sol[0:,2]
-                self.particle_phase[particle.name] =  sol[0:,4]
+                self.particle_larmor_x[particle.name] =  sol[0:,0]
+                self.particle_larmor_y[particle.name] =  sol[0:,2]
+                self.particle_larmor_phase[particle.name] =  sol[0:,4]
+                self.particle_x[particle.name] = sol[0:,0]*np.cos(sol[0:,4]) - sol[0:,2]*np.sin(sol[0:,4])
+                self.particle_y[particle.name] = sol[0:,0]*np.sin(sol[0:,4]) + sol[0:,2]*np.cos(sol[0:,4])
+                self.particle_radius[particle.name] = (sol[0:,0]**2 + sol[0:,2]**2)**0.5
 
         elif solver == 'solve_ivp':
 
