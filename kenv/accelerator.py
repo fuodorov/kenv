@@ -77,6 +77,15 @@ class Accelerator:
     step [m] --- step method along the accelerator.
 
     Can add a solenoids, quadrupoles and accelerating modules.
+
+    Accelerator's parameters after compile:
+    beamline:
+    Bz_beamline, Ez_beamline, Gz_beamline
+    function :
+    Ez, Bz, Gz
+    and
+    dEzdz, dBzdz, dGzdz
+
     '''
     def __init__(self,
                  start: float,
@@ -201,7 +210,7 @@ class Accelerator:
         self.dBzdz = derivative(self.Bz, self.parameter, self.step*10)
         self.dGzdz = derivative(self.Gz, self.parameter, self.step*10)
         self.dEzdz = interpolate.interp1d(
-                self.parameter, self.dEzdz, kind='cubic',
+                self.parameter, -self.dEzdz, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
         self.dBzdz = interpolate.interp1d(
