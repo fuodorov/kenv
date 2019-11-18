@@ -19,7 +19,7 @@ The basic applications of the kenv are considered.
 The basic interactive plotting on matplotlib.
 ####  04. [Genetic algorithm for envelope](04_genetic_envelope.ipynb)
 The application of the genetic algorithm (deap library) for constructing the envelope is considered.
-####  05. [GUI](05_GUI.ipynb)
+####  05. [GUI](05_GUI_bokeh.ipynb)
 Considered a graphical interface.
 #### 06. [Shifted centroid](06_shifted_centroid)
 Simulation of a central particle with Astra.
