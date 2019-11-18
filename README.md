@@ -26,5 +26,5 @@ pip install kenv
 
 ## Test
 
-Comparison of PIC-codes Astra (blue), WARP (red) and SAM (black) with KENV 
+Comparison of PIC-codes Astra (blue) and WARP (red), SAM (black) with KENV 
 ![VS](notebooks/output/demo/vs_kenv.gif)
