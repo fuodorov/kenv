@@ -1,4 +1,4 @@
-# Tutorial KENV
+# Tutorial and Test KENV
 
 <a href=mailto:fuodorov1998@gmail.com>V. Fedorov</a>, <a href=mailto:nikdanila@bk.ru>D. Nikiforov</a>, <a href=http://www.inp.nsk.su/~petrenko/>A. Petrenko</a>, (Novosibirsk, 2019)
 
@@ -6,7 +6,9 @@
 
 Let's consider the main examples of using the solver kenv. Examples are presented in notebooks.
 
-### Notebooks
+## Notebooks
+
+### Tutorial
 
 #### 00. [Itroduction](00_introduction.ipynb)
 ####  01. [Theory](01_theory.ipynb)
@@ -19,5 +21,9 @@ The basic interactive plotting on matplotlib.
 The application of the genetic algorithm (deap library) for constructing the envelope is considered.
 ####  05. [GUI](05_GUI.ipynb)
 Considered a graphical interface.
-#### 0A. [Test](0A_test.ipynb)
+
+### Test
+#### 0A. [Beam test](0A_beam.ipynb)
 KENV vs Astra vs WARP vs SAM.
+#### 0B. [Particle test](0A_paricle.ipynb)
+KENV vs Astra.
