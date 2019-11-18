@@ -157,17 +157,17 @@ LBField=T,
  
 File_Bfield(1)='B_z(z).dat', S_pos(1)=0.45
  
-MaxB(1)=-0.00,  S_smooth(1)=4
+MaxB(1)=-0.00,  S_smooth(1)=10
 
  
 File_Bfield(2)='B_z(z).dat', S_pos(2)=0.95
  
-MaxB(2)=0.001,  S_smooth(2)=4
+MaxB(2)=0.001,  S_smooth(2)=10
 
 
 File_Bfield(3)='B_z(z).dat', S_pos(3)=2.10
  
-MaxB(3)=0.0300,  S_smooth(3)=4
+MaxB(3)=0.0300,  S_smooth(3)=10
 
 
 File_Bfield(4)='B_z(z).dat', S_pos(4)=2.9077
