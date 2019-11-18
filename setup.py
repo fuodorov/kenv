@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='kenv',
-    version='0.0.6',
+    version='0.0.7',
     author='Vyacheslav Fedorov',
     author_email='fuodorov1998@gmail.com',
     description='Solver of the Kapchinsky-Vladimirsky envelope equation',
