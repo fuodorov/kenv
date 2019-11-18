@@ -15,15 +15,15 @@ Let's consider the main examples of using the solver kenv. Examples are presente
 The theory of the Kapchinsky-Vladimir envelope equation is considered.
 ####  02. [Manual](02_manual.ipynb)
 The basic applications of the kenv are considered.
-####  03. [Interactiv plotting](03_interactiv.ipynb)
+####  03. [Interactiv basic plotting](03_interactiv_basic.ipynb)
 The basic interactive plotting on matplotlib.
-####  04. [Genetic algorithm](04_genetic.ipynb)
+####  04. [Genetic algorithm for envelope](04_genetic_envelope.ipynb)
 The application of the genetic algorithm (deap library) for constructing the envelope is considered.
 ####  05. [GUI](05_GUI.ipynb)
 Considered a graphical interface.
+#### 06. [Shifted centroid](06_shifted_centroid)
+Simulation of a central particle with Astra.
 
 ### Test
-#### 0A. [Beam test](0A_beam.ipynb)
+#### 0A. [Tracking beam test](0A_track_beam.ipynb)
 KENV vs Astra vs WARP vs SAM.
-#### 0B. [Particle test](0A_paricle.ipynb)
-KENV vs Astra.
