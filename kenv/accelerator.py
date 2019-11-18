@@ -214,11 +214,11 @@ class Accelerator:
                 fill_value=(0, 0), bounds_error=False
             )
         self.dBzdz = interpolate.interp1d(
-                    self.parameter, self.dBzdz, kind='cubic',
+                    self.parameter, -self.dBzdz, kind='cubic',
                     fill_value=(0, 0), bounds_error=False
                 )
         self.dGzdz = interpolate.interp1d(
-                self.parameter, self.dGzdz, kind='cubic',
+                self.parameter, -self.dGzdz, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
 
