@@ -121,7 +121,7 @@ LSPCH=t
 
  File_Efield(2)='E_z(z).dat',  C_pos(2)=7.456, C_higher_order(2) = t
  
- Nue(2)=0,	MaxE(2)=-0.9
+ Nue(2)=0,	MaxE(2)=-0.9, C_smooth(2)= 10 
 
 
  File_Efield(3)='E_z(z).dat',  C_pos(3)=8.838, C_higher_order(3) = t

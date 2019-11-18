@@ -34,8 +34,8 @@
  CHECK_REF_PART  = F,
  L_RM_BACK       = F,
  LMONITOR        = F,
- H_MAX   =  0.100000000000000     ,
- H_MIN   =  1.000000000000000E-002,
+ H_MAX   =  1.000000000000000E-002,
+ H_MIN   =  1.000000000000000E-003,
  DEBUNCH =  0.000000000000000E+000,
  MAX_STEP        =      100000,
  Z_MIN   =  1.000000000000000E+015,
@@ -3505,7 +3505,7 @@
                                                                                                                                      
                                                              ,
  C_NOSCALE       = 500*F,
- C_SMOOTH        = 500*0,
+ C_SMOOTH        =           0,          10, 498*0,
  C_HIGHER_ORDER  = F, 6*T, 493*F,
  COM_GRID        =                                                                                                                   
                                                                                                                                      
@@ -4940,6 +4940,6 @@
 Example.ini                     0.0000D+00  0.7727D-06  F
 track_centroid.0000.001         0.0000D+00  7.7266D-07  F
 
-     execution started:   18.11.2019     23:25
-     execution finished:  18.11.2019     23:25
-     execution time:  0.58 sek                         
+     execution started:   18.11.2019     23:57
+     execution finished:  18.11.2019     23:57
+     execution time:  7.09 sek                         
