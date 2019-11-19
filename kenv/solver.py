@@ -167,8 +167,8 @@ class Simulation:
         self.envelope_x = beam[0,:]
         self.envelope_y = beam[2,:]
 
-        self.centroid_x = centroid[0,:]*np.cos(centroid[4,:]) - centroid[2,:]*np.sin(centroid[4,:])
-        self.centroid_y = centroid[0,:]*np.sin(centroid[4,:]) + centroid[2,:]*np.cos(centroid[4,:])
+        self.centroid_x = centroid[0,:]*np.cos(centroid[4,:]) + centroid[2,:]*np.sin(centroid[4,:])
+        self.centroid_y = -centroid[0,:]*np.sin(centroid[4,:]) + centroid[2,:]*np.cos(centroid[4,:])
         self.larmor_phase = centroid[4,:]
 
 Sim = Simulation
