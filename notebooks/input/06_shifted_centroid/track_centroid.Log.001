@@ -2934,14 +2934,14 @@
  &CAVITY
  LOOP    = F,
  LEFIELD = T,
- FILE_EFIELD     = E_z(z).dat                                                                                                        
-                                     E_z(z).dat                                                                                      
-                                                       E_z(z).dat                                                                    
-                                                                         E_z(z).dat                                                  
-                                                                                           E_z(z).dat                                
-                                                                                                             E_z(z).dat              
-                                                                                                                               E_z(z)
- .dat                                                                                                                                
+ FILE_EFIELD     = DC-3D_liu4                                                                                                        
+                                     DC-3D_liu4                                                                                      
+                                                       DC-3D_liu4                                                                    
+                                                                         DC-3D_liu4                                                  
+                                                                                           DC-3D_liu4                                
+                                                                                                             DC-3D_liu4              
+                                                                                                                               DC-3D_
+ liu4                                                                                                                                
                                                                                                                                      
                                                                                                                                      
                                                                                                                                      
@@ -3505,7 +3505,7 @@
                                                                                                                                      
                                                              ,
  C_NOSCALE       = 500*F,
- C_SMOOTH        =           0,          10, 498*0,
+ C_SMOOTH        = 500*0,
  C_HIGHER_ORDER  = F, 6*T, 493*F,
  COM_GRID        =                                                                                                                   
                                                                                                                                      
@@ -3549,8 +3549,8 @@
  MAXE    =  0.000000000000000E+000, 6*-0.900000000000000      , 493*0.000000000000000E+000  ,
  FLATNESS        = 500*0.000000000000000E+000  ,
  PHI     = 501*0.000000000000000E+000  ,
- C_POS   =  0.000000000000000E+000,   7.45600000000000     ,   8.83800000000000     ,   10.2200000000000     ,
-    11.6020000000000     ,   12.9840000000000     ,   14.3660000000000     , 493*0.000000000000000E+000  ,
+ C_POS   =  0.000000000000000E+000,   7.09000000000000     ,   8.47200000000000     ,   9.85400000000000     ,
+    11.2360000000000     ,   12.6180000000000     ,   14.0000000000000     , 493*0.000000000000000E+000  ,
  C_NUMB  = 500*1,
  T_DEPENDENCE    = constantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantco
  nstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconstantconsta
@@ -4940,6 +4940,6 @@
 Example.ini                     0.0000D+00  0.7727D-06  F
 track_centroid.0000.001         0.0000D+00  7.7266D-07  F
 
-     execution started:   18.11.2019     23:57
-     execution finished:  18.11.2019     23:57
-     execution time:  7.09 sek                         
+     execution started:   20.11.2019     13:30
+     execution finished:  20.11.2019     13:30
+     execution time:  9.58 sek                         

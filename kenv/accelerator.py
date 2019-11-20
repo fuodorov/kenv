@@ -34,7 +34,7 @@ class Element:
 field_files = {} # buffer for field files
 
 def read_elements(beamline: dict,
-                  z:np.arange, dz: float,
+                  z:np.arange,
                   ) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
@@ -61,15 +61,18 @@ def read_elements(beamline: dict,
             M = field_files[element.file_name]
             z_data = M[:,0]
             F_data = M[:,1]
+            dz = 2*(z_data[-1] - z_data[0])/len(z_data)
+
             f = interpolate.interp1d(
                 element.z0+z_data, element.max_field*F_data, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
             F = F + f(z)
 
+            z_data_dev = z_data
             F_data_dev = np.gradient(F_data, dz)
             f_dev = interpolate.interp1d(
-                element.z0+z_data, -element.max_field*F_data_dev, kind='cubic',
+                element.z0+z_data_dev, -element.max_field*F_data_dev, kind='cubic',
                 fill_value=(0, 0), bounds_error=False
             )
             F_dev = F_dev + f_dev(z)
@@ -212,9 +215,9 @@ class Accelerator:
     def compile(self) -> None:
         '''Compilation of the accelerator.
         '''
-        self.Bz, self.dBzdz = read_elements(self.Bz_beamline, self.parameter, self.step*2)
-        self.Ez, self.dEzdz = read_elements(self.Ez_beamline, self.parameter, self.step*2)
-        self.Gz, self.dGzdz = read_elements(self.Gz_beamline, self.parameter, self.step*2)
+        self.Bz, self.dBzdz = read_elements(self.Bz_beamline, self.parameter)
+        self.Ez, self.dEzdz = read_elements(self.Ez_beamline, self.parameter)
+        self.Gz, self.dGzdz = read_elements(self.Gz_beamline, self.parameter)
 
 
 

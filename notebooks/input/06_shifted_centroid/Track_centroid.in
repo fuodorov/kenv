@@ -11,7 +11,7 @@
  
  Phase_Scan=F
  
- H_max=1.0000E-01,     H_min=1.0000E-02
+ H_max=1.0000E-02,     H_min=1.0000E-03
 
  EmitS=.T.
  
@@ -114,36 +114,36 @@ LSPCH=t
  LEField=t,
  
  
- File_Efield(1)='E_z(z).dat',  C_pos(1)=0.0000, C_higher_order(1) = f
+ File_Efield(1)='DC-3D_liu4',  C_pos(1)=0.0000, C_higher_order(1) = f
  
  Nue(1)=0,	MaxE(1)=-0.0
 
 
- File_Efield(2)='E_z(z).dat',  C_pos(2)=7.456, C_higher_order(2) = t
+ File_Efield(2)='DC-3D_liu4',  C_pos(2)=7.090, C_higher_order(2) = t
  
- Nue(2)=0,	MaxE(2)=-0.9, C_smooth(2)= 10 
+ Nue(2)=0,	MaxE(2)=-0.9
 
 
- File_Efield(3)='E_z(z).dat',  C_pos(3)=8.838, C_higher_order(3) = t
+ File_Efield(3)='DC-3D_liu4',  C_pos(3)=8.472, C_higher_order(3) = t
  
  Nue(3)=0,	MaxE(3)=-0.9
 
- File_Efield(4)='E_z(z).dat',  C_pos(4)=10.220, C_higher_order(4) = t
+ File_Efield(4)='DC-3D_liu4',  C_pos(4)=9.854, C_higher_order(4) = t
  
  Nue(4)=0,	MaxE(4)=-0.9
 
 
- File_Efield(5)='E_z(z).dat',  C_pos(5)=11.602, C_higher_order(5) = t
+ File_Efield(5)='DC-3D_liu4',  C_pos(5)=11.236, C_higher_order(5) = t
  
  Nue(5)=0,	MaxE(5)=-0.9
 
 
- File_Efield(6)='E_z(z).dat',  C_pos(6)=12.984, C_higher_order(6) = t
+ File_Efield(6)='DC-3D_liu4',  C_pos(6)=12.618, C_higher_order(6) = t
  
  Nue(6)=0,	MaxE(6)=-0.9
 
 
- File_Efield(7)='E_z(z).dat',  C_pos(7)=14.366, C_higher_order(7) = t
+ File_Efield(7)='DC-3D_liu4',  C_pos(7)=14.0, C_higher_order(7) = t
  
  Nue(7)=0,	MaxE(7)=-0.9
 
@@ -182,7 +182,7 @@ MaxB(5)=0.0300,  S_smooth(5)=4
 
 File_Bfield(6)='B_z(z).dat', S_pos(6)=5.642
 
-MaxB(6)=0.030,  S_smooth(6)=4
+MaxB(6)=0.0300,  S_smooth(6)=4
 
 
 File_Bfield(7)='B_z(z).dat', S_pos(7)=6.760
