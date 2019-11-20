@@ -1,4 +1,5 @@
 # Kapchinsky ENVelope (KENV)
+[![PyPI version](https://badge.fury.io/py/kenv.svg)](https://badge.fury.io/py/kenv)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fuodorov/kenv/dev?filepath=notebooks%2F00_introduction.ipynb)
 ## Solver of the Kapchinsky-Vladimirsky envelope equation
 
