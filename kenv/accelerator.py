@@ -5,7 +5,6 @@
 
 import numpy as np
 from scipy import interpolate
-from scipy.misc import derivative
 
 __all__ = ['Element',
            'Accelerator',
@@ -34,8 +33,9 @@ class Element:
 
 field_files = {} # buffer for field files
 
-def read_elements(z:np.arange,
-                  beamline: dict) -> interpolate.interp1d:
+def read_elements(beamline: dict,
+                  z:np.arange, dz: float,
+                  ) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
@@ -44,6 +44,7 @@ def read_elements(z:np.arange,
     '''
     global field_files
     F = 0
+    F_dev = 0
     if not beamline:
         z_data = [i/1000 for i in range(1000)]
         F_data = [0 for i in range(1000)]
@@ -52,6 +53,7 @@ def read_elements(z:np.arange,
             fill_value=(0, 0), bounds_error=False
         )
         F = F + f(z)
+        F_dev = F
     else:
         for element in beamline.values():
             if not (element.file_name in field_files):
@@ -64,8 +66,16 @@ def read_elements(z:np.arange,
                 fill_value=(0, 0), bounds_error=False
             )
             F = F + f(z)
+
+            F_data_dev = np.gradient(F_data, dz)
+            f_dev = interpolate.interp1d(
+                element.z0+z_data, -element.max_field*F_data_dev, kind='cubic',
+                fill_value=(0, 0), bounds_error=False
+            )
+            F_dev = F_dev + f_dev(z)
     F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
-    return F
+    F_dev = interpolate.interp1d(z, F_dev, kind='cubic', fill_value=(0, 0), bounds_error=False)
+    return F, F_dev
 
 
 class Accelerator:
@@ -202,25 +212,10 @@ class Accelerator:
     def compile(self) -> None:
         '''Compilation of the accelerator.
         '''
-        self.Bz = read_elements(self.parameter, self.Bz_beamline)
-        self.Ez = read_elements(self.parameter, self.Ez_beamline)
-        self.Gz = read_elements(self.parameter, self.Gz_beamline)
+        self.Bz, self.dBzdz = read_elements(self.Bz_beamline, self.parameter, self.step*2)
+        self.Ez, self.dEzdz = read_elements(self.Ez_beamline, self.parameter, self.step*2)
+        self.Gz, self.dGzdz = read_elements(self.Gz_beamline, self.parameter, self.step*2)
 
-        self.dEzdz = derivative(self.Ez, self.parameter, self.step*10)
-        self.dBzdz = derivative(self.Bz, self.parameter, self.step*10)
-        self.dGzdz = derivative(self.Gz, self.parameter, self.step*10)
-        self.dEzdz = interpolate.interp1d(
-                self.parameter, -self.dEzdz, kind='cubic',
-                fill_value=(0, 0), bounds_error=False
-            )
-        self.dBzdz = interpolate.interp1d(
-                    self.parameter, -self.dBzdz, kind='cubic',
-                    fill_value=(0, 0), bounds_error=False
-                )
-        self.dGzdz = interpolate.interp1d(
-                self.parameter, -self.dGzdz, kind='cubic',
-                fill_value=(0, 0), bounds_error=False
-            )
 
 
     def __str__(self):
