@@ -34,8 +34,7 @@ class Element:
 field_files = {} # buffer for field files
 
 def read_elements(beamline: dict,
-                  z:np.arange,
-                  ) -> interpolate.interp1d:
+                  z:np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
