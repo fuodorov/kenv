@@ -11,7 +11,7 @@ Let's consider the main examples of using the solver kenv. Examples are presente
 
 ### Tutorial
 
-#### 00. [Itroduction](00_introduction.ipynb)
+#### 00. [Algorithm features](00_algorithm_features.ipynb)
 ####  01. [Theory](01_theory.ipynb)
 The theory of the Kapchinsky-Vladimir envelope equation is considered.
 ####  02. [Manual](02_manual.ipynb)
