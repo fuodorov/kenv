@@ -989,7 +989,7 @@
  MIN_GRID_TRANS  =  0.000000000000000E+000,
  NRAD    =           9,
  CELL_VAR        =   3.00000000000000     ,
- NLONG_IN        =          15,
+ NLONG_IN        =          19,
  NX0     =           2,
  NY0     =           2,
  NZ0     =           2,
@@ -997,8 +997,8 @@
  NYF     =           8,
  NZF     =           8,
  N_MIN   =   30.0000000000000     ,
- MIN_GRID        =  1.000000000000000E-002,
- MAX_SCALE       =  1.000000000000000E-002,
+ MIN_GRID        =  1.000000000000000E-003,
+ MAX_SCALE       =  1.000000000000000E-003,
  MAX_COUNT       =          40,
  EXP_CONTROL     =  0.100000000000000     ,
  L_QSCALE        = T,
@@ -4263,7 +4263,7 @@
                                                                                                                                      
                                                                                                              ,
  S_NOSCALE       = 70*F,
- S_SMOOTH        = 3*10, 4*4, 63*0,
+ S_SMOOTH        = 7*4, 63*0,
  S_HIGHER_ORDER  = 70*T,
  MAXB    =  0.000000000000000E+000,  1.000000000000000E-003,  3.000000000000000E-002,  1.000000000000000E-003,
   2*3.000000000000000E-002  ,  1.000000000000000E-003, 63*0.000000000000000E+000  ,
@@ -4937,9 +4937,9 @@
  STAT    = 188*F, T, F, T, F, T, F, T, F, T, F, T, F, T, F, T, F, 198*T
  /
  End of Input deck
-Example.ini                     0.0000D+00  0.7727D-06  F
-track_centroid.0000.001         0.0000D+00  7.7266D-07  F
+Example.ini                     0.0000D+00  0.7663D-06  F
+track_centroid.0000.001         0.0000D+00  7.6628D-07  F
 
-     execution started:   20.11.2019     13:30
-     execution finished:  20.11.2019     13:30
-     execution time:  9.58 sek                         
+     execution started:   20.11.2019     18:49
+     execution finished:  20.11.2019     18:49
+     execution time: 10.58 sek                         
