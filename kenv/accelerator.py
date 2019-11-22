@@ -93,7 +93,7 @@ class Accelerator:
     Accelerator's parameters after compile:
     beamline:
     Bz_beamline, Ez_beamline, Gz_beamline
-    function :
+    function:
     Ez, Bz, Gz
     and
     dEzdz, dBzdz, dGzdz
@@ -106,7 +106,7 @@ class Accelerator:
         self.start = start
         self.stop = stop
         self.step = step
-        self.parameter = np.arange(start, stop, step)
+        self.z = self.parameter = np.arange(start, stop, step)
         self.Bz_beamline = {}
         self.Ez_beamline = {}
         self.Gz_beamline = {}

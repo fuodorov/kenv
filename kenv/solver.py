@@ -6,7 +6,7 @@ import numpy as np
 from .beam import *
 from .accelerator import *
 from scipy import interpolate, integrate
-from scipy.integrate import odeint, solve_ivp
+from scipy.integrate import solve_ivp
 
 __all__ = ['Sim',
            'Simulation']
@@ -15,9 +15,9 @@ class Simulation:
     '''Simulation of the envelope beam in the accelerator.
 
     basic parameters after track:
-    envelope_x and anvelope_y,
+    envelope_x and envelope_y,
     centroid_x and centroid_y,
-    larmor_phase
+    larmor_angle
     '''
     mass_rest_electron = 0.511
     clight = 299792458
@@ -33,17 +33,17 @@ class Simulation:
         self.y = beam.y
         self.radius_x = beam.radius_x
         self.radius_y = beam.radius_y
-        self.angular_x = beam.angular_x
-        self.angular_y = beam.angular_y
-        self.normalized_emittans_x = beam.normalized_emittans_x
-        self.normalized_emittans_y = beam.normalized_emittans_y
-        self.phase = beam.phase
+        self.xp = beam.xp
+        self.yp = beam.yp
+        self.normalized_emittance_x = beam.normalized_emittance_x
+        self.normalized_emittance_y = beam.normalized_emittance_y
+        self.phase = beam.larmor_angle
 
         self.start = accelerator.start
         self.stop = accelerator.stop
         self.step = accelerator.step
 
-        self.parameter = accelerator.parameter
+        self.z = self.parameter = accelerator.parameter
         self.Bz = accelerator.Bz
         self.Ez = accelerator.Ez
         self.Gz = accelerator.Gz
@@ -59,7 +59,7 @@ class Simulation:
 
         self.centroid_x = []
         self.centroid_y = []
-        self.larmor_phase = []
+        self.larmor_angle = []
 
     def track(self, rtol:float = 1e-6):
         '''Tracking!
@@ -75,8 +75,8 @@ class Simulation:
                  dEzdz:interpolate.interp1d=self.dEzdz,
                  dGzdz:interpolate.interp1d=self.dGzdz,
                  beam_current:float=self.current,
-                 emitt_n_x:float=self.normalized_emittans_x,
-                 emitt_n_y:float=self.normalized_emittans_y,
+                 emitt_n_x:float=self.normalized_emittance_x,
+                 emitt_n_y:float=self.normalized_emittance_y,
                  c:float=self.clight,
                  mc:float=self.mass_rest_electron,
                  alfven_current:float=self.alfven_current) -> list:
@@ -158,7 +158,7 @@ class Simulation:
             return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
 
-        X0_beam = np.array([self.radius_x, self.angular_x, self.radius_y, self.angular_y])
+        X0_beam = np.array([self.radius_x, self.xp, self.radius_y, self.yp])
         X0_centroid = np.array([self.x, 0, self.y, 0, self.phase])
 
         beam = solve_ivp(dXdz_beam, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_beam, t_eval=self.parameter, rtol=rtol).y
@@ -169,6 +169,6 @@ class Simulation:
 
         self.centroid_x = centroid[0,:]*np.cos(centroid[4,:]) + centroid[2,:]*np.sin(centroid[4,:])
         self.centroid_y = -centroid[0,:]*np.sin(centroid[4,:]) + centroid[2,:]*np.cos(centroid[4,:])
-        self.larmor_phase = centroid[4,:]
+        self.larmor_angle = centroid[4,:]
 
 Sim = Simulation
