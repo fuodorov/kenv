@@ -1,11 +1,13 @@
 from setuptools import setup, find_packages
+import kenv
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
 setup(
     name='kenv',
-    version='0.0.11',
+    version=kenv.__version__,
     author='Vyacheslav Fedorov',
     author_email='fuodorov1998@gmail.com',
     description='Solver of the Kapchinsky-Vladimirsky envelope equation',
