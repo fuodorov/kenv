@@ -84,9 +84,9 @@ class Accelerator:
     '''Create an accelerator.
 
     Create an accelerator with parameters:
-    start [m] --- the beginning of the accelerator,
-    stop [m] --- end of the accelerator,
-    step [m] --- step method along the accelerator.
+    z_start [m] --- the beginning of the accelerator,
+    z_stop [m] --- end of the accelerator,
+    dz [m] --- step method along the accelerator.
 
     Can add a solenoids, quadrupoles and accelerating modules.
 
@@ -100,13 +100,13 @@ class Accelerator:
 
     '''
     def __init__(self,
-                 start: float,
-                 stop: float,
-                 step: float):
-        self.start = start
-        self.stop = stop
-        self.step = step
-        self.z = self.parameter = np.arange(start, stop, step)
+                 z_start: float,
+                 z_stop: float,
+                 dz: float):
+        self.z_start = self.start = z_start
+        self.z_stop = self.stop = z_stop
+        self.dz = self.step = dz
+        self.z = self.parameter = np.arange(z_start, z_stop, dz)
         self.Bz_beamline = {}
         self.Ez_beamline = {}
         self.Gz_beamline = {}
