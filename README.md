@@ -11,7 +11,7 @@ KENV is a solver code for the equation of the envelope of an electron beam with 
 
 It is particularly suitable for accelerating an electron beam in direct channels with solenoidal and quadrupole focusing.
 
-In order to use the KENV code correctly, it is important to read the [wiki](https://github.com/fuodorov/kenv/wiki).
+In order to use the KENV code correctly, it is important to **read** the [wiki](https://github.com/fuodorov/kenv/wiki).
 
 ## Algorithm
 
