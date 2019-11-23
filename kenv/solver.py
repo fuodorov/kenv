@@ -19,7 +19,7 @@ class Simulation:
     centroid_x and centroid_y,
     larmor_angle
     '''
-    
+
     mass_rest_electron = 0.511
     clight = 299792458
     alfven_current = 17000
@@ -31,7 +31,7 @@ class Simulation:
         self.beam = beam
         self.accelerator = accelerator
 
-        self.gamma = self.beam.energy/self.mass_rest_electron + 1 + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
+        self.gamma = (self.beam.energy/self.mass_rest_electron + 1) + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
         self.gamma = interpolate.interp1d(self.accelerator.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
 
         self.envelope_x = []
