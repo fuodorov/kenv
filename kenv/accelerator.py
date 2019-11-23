@@ -30,9 +30,6 @@ class Element:
         self.file_name = file_name
         self.name = name
 
-
-field_files = {} # buffer for field files
-
 def read_elements(beamline: dict,
                   z:np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
@@ -41,7 +38,7 @@ def read_elements(beamline: dict,
     beamline --- set of accelerator elements,
     z [m] --- coordinate.
     '''
-    global field_files
+    field_files = {}
     F = 0
     F_dev = 0
     if not beamline:
@@ -99,6 +96,16 @@ class Accelerator:
     dEzdz, dBzdz, dGzdz
 
     '''
+    Bz_beamline = {}
+    Ez_beamline = {}
+    Gz_beamline = {}
+    Bz = interpolate.interp1d
+    Ez = interpolate.interp1d
+    Gz = interpolate.interp1d
+    dBzdz = interpolate.interp1d
+    dEzdz = interpolate.interp1d
+    dGzdz = interpolate.interp1d
+
     def __init__(self,
                  z_start: float,
                  z_stop: float,
@@ -106,16 +113,8 @@ class Accelerator:
         self.z_start = self.start = z_start
         self.z_stop = self.stop = z_stop
         self.dz = self.step = dz
+
         self.z = self.parameter = np.arange(z_start, z_stop, dz)
-        self.Bz_beamline = {}
-        self.Ez_beamline = {}
-        self.Gz_beamline = {}
-        self.Bz = interpolate.interp1d
-        self.Ez = interpolate.interp1d
-        self.Gz = interpolate.interp1d
-        self.dBzdz = interpolate.interp1d
-        self.dEzdz = interpolate.interp1d
-        self.dGzdz = interpolate.interp1d
 
     def add_solenoid(self,
                      name: str,

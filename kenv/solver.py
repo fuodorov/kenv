@@ -2,11 +2,11 @@
 '''Simulation of the envelope beam in the accelerator.
 '''
 import numpy as np
+from scipy import interpolate, integrate
+from scipy.integrate import solve_ivp
 
 from .beam import *
 from .accelerator import *
-from scipy import interpolate, integrate
-from scipy.integrate import solve_ivp
 
 __all__ = ['Sim',
            'Simulation']
@@ -15,6 +15,7 @@ class Simulation:
     '''Simulation of the envelope beam in the accelerator.
 
     basic parameters after track:
+    gamma,
     envelope_x and envelope_y,
     centroid_x and centroid_y,
     larmor_angle
@@ -24,6 +25,15 @@ class Simulation:
     clight = 299792458
     alfven_current = 17000
 
+    gamma = 0
+
+    envelope_x = []
+    envelope_y = []
+
+    centroid_x = []
+    centroid_y = []
+    larmor_angle = []
+
     def __init__(self,
              beam,
              accelerator):
@@ -31,19 +41,12 @@ class Simulation:
         self.beam = beam
         self.accelerator = accelerator
 
-        self.gamma = (self.beam.energy/self.mass_rest_electron + 1) + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
-        self.gamma = interpolate.interp1d(self.accelerator.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
-
-        self.envelope_x = []
-        self.envelope_y = []
-
-        self.centroid_x = []
-        self.centroid_y = []
-        self.larmor_angle = []
-
     def track(self, rtol:float = 1e-6):
         '''Tracking!
         '''
+
+        self.gamma = (self.beam.energy/self.mass_rest_electron + 1) + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
+        self.gamma = interpolate.interp1d(self.accelerator.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
 
         def dXdz_beam(z:np.arange, X:list,
                  dz:float=self.accelerator.step,
@@ -132,7 +135,6 @@ class Simulation:
             dphidz = -K_s**0.5
 
             return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
-
 
         X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp, self.beam.radius_y, self.beam.radius_yp])
         X0_centroid = np.array([self.beam.x, self.beam.xp, self.beam.y, self.beam.yp, self.beam.larmor_angle])
