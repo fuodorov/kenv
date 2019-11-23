@@ -14,7 +14,7 @@ Let's consider the main examples of using the solver kenv. Examples are presente
 #### 00. [Algorithm features](00_algorithm_features.ipynb)
 ####  01. [Theory](01_theory.ipynb)
 The theory of the Kapchinsky-Vladimir envelope equation is considered.
-####  02. [Manual](02_manual.ipynb)
+####  02. [Tutorial](02_tutorial.ipynb)
 The basic applications of the kenv are considered.
 ####  03. [Interactiv basic plotting](03_interactiv_basic.ipynb)
 The basic interactive plotting on matplotlib.
