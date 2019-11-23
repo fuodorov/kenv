@@ -26,8 +26,3 @@ KENV completely written in Python.
 ```
 pip install kenv
 ```
-
-## Test
-
-Comparison of PIC-codes Astra (blue) and WARP (red), SAM (black) with KENV 
-![VS](https://github.com/fuodorov/kenv/blob/master/notebooks/output/demo/vs_kenv.gif)
