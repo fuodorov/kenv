@@ -19,7 +19,8 @@ class Simulation:
     centroid_x and centroid_y,
     larmor_angle
     '''
-    
+    #REFACTORME!
+
     mass_rest_electron = 0.511
     clight = 299792458
     alfven_current = 17000
@@ -28,11 +29,36 @@ class Simulation:
              beam,
              accelerator):
 
-        self.beam = beam
-        self.accelerator = accelerator
+        self.current = beam.current
+        self.energy = beam.energy
+        self.x = beam.x
+        self.y = beam.y
+        self.xp = beam.xp
+        self.yp = beam.yp
+        self.radius_x = beam.radius_x
+        self.radius_y = beam.radius_y
+        self.radius_xp = beam.radius_xp
+        self.radius_yp = beam.radius_yp
+        self.normalized_emittance_x = beam.normalized_emittance_x
+        self.normalized_emittance_y = beam.normalized_emittance_y
+        self.phase = beam.larmor_angle
 
-        self.gamma = self.beam.energy/self.mass_rest_electron + 1 + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
-        self.gamma = interpolate.interp1d(self.accelerator.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
+        self.start = accelerator.start
+        self.stop = accelerator.stop
+        self.step = accelerator.step
+
+        self.parameter = accelerator.parameter
+        self.Bz = accelerator.Bz
+        self.Ez = accelerator.Ez
+        self.Gz = accelerator.Gz
+        self.dBzdz = accelerator.dBzdz
+        self.dEzdz = accelerator.dEzdz
+        self.dGzdz = accelerator.dGzdz
+
+        self.gamma_0 = self.energy/self.mass_rest_electron + 1
+        self.gamma = self.gamma_0 + integrate.cumtrapz(-self.Ez(self.parameter)/self.mass_rest_electron, self.parameter)
+
+        self.gamma = interpolate.interp1d(self.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
 
         self.envelope_x = []
         self.envelope_y = []
@@ -46,17 +72,17 @@ class Simulation:
         '''
 
         def dXdz_beam(z:np.arange, X:list,
-                 dz:float=self.accelerator.step,
+                 dz:float=self.step,
                  gamma:interpolate.interp1d=self.gamma,
-                 Bz:interpolate.interp1d=self.accelerator.Bz,
-                 Ez:interpolate.interp1d=self.accelerator.Ez,
-                 Gz:interpolate.interp1d=self.accelerator.Gz,
-                 dBzdz:interpolate.interp1d=self.accelerator.dBzdz,
-                 dEzdz:interpolate.interp1d=self.accelerator.dEzdz,
-                 dGzdz:interpolate.interp1d=self.accelerator.dGzdz,
-                 beam_current:float=self.beam.current,
-                 emitt_n_x:float=self.beam.normalized_emittance_x,
-                 emitt_n_y:float=self.beam.normalized_emittance_y,
+                 Bz:interpolate.interp1d=self.Bz,
+                 Ez:interpolate.interp1d=self.Ez,
+                 Gz:interpolate.interp1d=self.Gz,
+                 dBzdz:interpolate.interp1d=self.dBzdz,
+                 dEzdz:interpolate.interp1d=self.dEzdz,
+                 dGzdz:interpolate.interp1d=self.dGzdz,
+                 beam_current:float=self.current,
+                 emitt_n_x:float=self.normalized_emittance_x,
+                 emitt_n_y:float=self.normalized_emittance_y,
                  c:float=self.clight,
                  mc:float=self.mass_rest_electron,
                  alfven_current:float=self.alfven_current) -> list:
@@ -91,17 +117,21 @@ class Simulation:
             dydz = 2 * P/(sigma_x + sigma_y) + emitt_y * emitt_y / (sigma_y * sigma_y * sigma_y) - K_y * sigma_y - \
                    dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
 
+
             return [dsigma_xdz, dxdz, dsigma_ydz, dydz]
 
         def dXdz_centroid(z:np.arange, X:list,
-                 dz:float=self.accelerator.step,
+                 dz:float=self.step,
                  gamma:interpolate.interp1d=self.gamma,
-                 Bz:interpolate.interp1d=self.accelerator.Bz,
-                 Ez:interpolate.interp1d=self.accelerator.Ez,
-                 Gz:interpolate.interp1d=self.accelerator.Gz,
-                 dBzdz:interpolate.interp1d=self.accelerator.dBzdz,
-                 dEzdz:interpolate.interp1d=self.accelerator.dEzdz,
-                 dGzdz:interpolate.interp1d=self.accelerator.dGzdz,
+                 Bz:interpolate.interp1d=self.Bz,
+                 Ez:interpolate.interp1d=self.Ez,
+                 Gz:interpolate.interp1d=self.Gz,
+                 dBzdz:interpolate.interp1d=self.dBzdz,
+                 dEzdz:interpolate.interp1d=self.dEzdz,
+                 dGzdz:interpolate.interp1d=self.dGzdz,
+                 beam_current:float=.0e0,
+                 emitt_n_x:float=.0e0,
+                 emitt_n_y:float=.0e0,
                  c:float=self.clight,
                  mc:float=self.mass_rest_electron,
                  alfven_current:float=self.alfven_current,
@@ -134,11 +164,11 @@ class Simulation:
             return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
 
-        X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp, self.beam.radius_y, self.beam.radius_yp])
-        X0_centroid = np.array([self.beam.x, self.beam.xp, self.beam.y, self.beam.yp, self.beam.larmor_angle])
+        X0_beam = np.array([self.radius_x, self.radius_xp, self.radius_y, self.radius_yp])
+        X0_centroid = np.array([self.x, self.xp, self.y, self.yp, self.phase])
 
-        beam = solve_ivp(dXdz_beam, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_beam, t_eval=self.accelerator.parameter, rtol=rtol).y
-        centroid = solve_ivp(dXdz_centroid, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
+        beam = solve_ivp(dXdz_beam, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_beam, t_eval=self.parameter, rtol=rtol).y
+        centroid = solve_ivp(dXdz_centroid, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_centroid, t_eval=self.parameter, rtol=rtol).y
 
         self.envelope_x = beam[0,:]
         self.envelope_y = beam[2,:]
