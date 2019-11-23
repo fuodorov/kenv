@@ -19,6 +19,8 @@ class Simulation:
     centroid_x and centroid_y,
     larmor_angle
     '''
+    #REFACTORME!
+
     mass_rest_electron = 0.511
     clight = 299792458
     alfven_current = 17000
@@ -31,10 +33,12 @@ class Simulation:
         self.energy = beam.energy
         self.x = beam.x
         self.y = beam.y
-        self.radius_x = beam.radius_x
-        self.radius_y = beam.radius_y
         self.xp = beam.xp
         self.yp = beam.yp
+        self.radius_x = beam.radius_x
+        self.radius_y = beam.radius_y
+        self.radius_xp = beam.radius_xp
+        self.radius_yp = beam.radius_yp
         self.normalized_emittance_x = beam.normalized_emittance_x
         self.normalized_emittance_y = beam.normalized_emittance_y
         self.phase = beam.larmor_angle
@@ -43,15 +47,17 @@ class Simulation:
         self.stop = accelerator.stop
         self.step = accelerator.step
 
-        self.z = self.parameter = accelerator.parameter
+        self.parameter = accelerator.parameter
         self.Bz = accelerator.Bz
         self.Ez = accelerator.Ez
         self.Gz = accelerator.Gz
         self.dBzdz = accelerator.dBzdz
         self.dEzdz = accelerator.dEzdz
         self.dGzdz = accelerator.dGzdz
+
         self.gamma_0 = self.energy/self.mass_rest_electron + 1
         self.gamma = self.gamma_0 + integrate.cumtrapz(-self.Ez(self.parameter)/self.mass_rest_electron, self.parameter)
+
         self.gamma = interpolate.interp1d(self.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
 
         self.envelope_x = []
@@ -158,8 +164,8 @@ class Simulation:
             return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
 
 
-        X0_beam = np.array([self.radius_x, self.xp, self.radius_y, self.yp])
-        X0_centroid = np.array([self.x, 0, self.y, 0, self.phase])
+        X0_beam = np.array([self.radius_x, self.radius_xp, self.radius_y, self.radius_yp])
+        X0_centroid = np.array([self.x, self.xp, self.y, self.yp, self.phase])
 
         beam = solve_ivp(dXdz_beam, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_beam, t_eval=self.parameter, rtol=rtol).y
         centroid = solve_ivp(dXdz_centroid, t_span=[self.parameter[0],self.parameter[-1]], y0=X0_centroid, t_eval=self.parameter, rtol=rtol).y
