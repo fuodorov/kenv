@@ -25,7 +25,7 @@ Considered a graphical interface.
 #### 06. [Shifted centroid](06_shifted_centroid.ipynb)
 Simulation of a central particle.
 
-### Test
+### Tests
 #### 0A. [Tracking beam test](0A_track_beam.ipynb)
 KENV vs Astra vs WARP vs SAM.
 #### 0B. [Tracking centroid test](0B_track_centroid.ipynb)
