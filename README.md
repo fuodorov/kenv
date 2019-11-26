@@ -1,6 +1,6 @@
 # Kapchinsky ENVelope (KENV)
 [![PyPI version](https://badge.fury.io/py/kenv.svg)](https://badge.fury.io/py/kenv)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fuodorov/kenv/dev?filepath=notebooks%2F00_introduction.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fuodorov/kenv/master?filepath=notebooks%2F00_introduction.ipynb)
 ## The solver of Kapchinsky-Vladimirsky envelope equation for electron beam with space charge.
 
 <a href=mailto:fuodorov1998@gmail.com>V. Fedorov</a>, <a href=mailto:nikdanila@bk.ru>D. Nikiforov</a>, <a href=http://www.inp.nsk.su/~petrenko/>A. Petrenko</a>, (Novosibirsk, 2019)
