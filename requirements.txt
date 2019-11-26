@@ -1,6 +1,6 @@
 kenv
-holoviews
-bokeh
-scipy
 numpy
+scipy
 matplotlib
+bokeh
+holoviews
