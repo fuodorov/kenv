@@ -1,6 +1,9 @@
 kenv
 numpy
 scipy
+random
+deap
 matplotlib
 bokeh
 holoviews
+
