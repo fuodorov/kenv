@@ -27,7 +27,7 @@ class Beam:
     x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]
     '''
 
-    def __init__(self,
+    def __init__(self,*,
                  current: float=.0e0,
                  energy: float=.0e0,
                  radius: float=.0e0,

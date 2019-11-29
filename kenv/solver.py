@@ -21,7 +21,7 @@ class Simulation:
     larmor_angle
     '''
 
-    mass_rest_electron = 0.511
+    mass_rest_electron = 0.5109989461
     clight = 299792458
     alfven_current = 17000
 
@@ -65,9 +65,9 @@ class Simulation:
                  alfven_current:float=self.alfven_current) -> list:
             '''Located derivative for further integration.
             '''
-            sigma_x = X[0]
+            radius_x = X[0]
             x = X[1]
-            sigma_y = X[2]
+            radius_y = X[2]
             y = X[3]
 
             g = gamma(z)
@@ -87,14 +87,14 @@ class Simulation:
 
             P = 2 * beam_current / (alfven_current * beta * beta * beta * g * g * g)
 
-            dsigma_xdz = x
-            dxdz = 2 * P / (sigma_x + sigma_y) + emitt_x * emitt_x / (sigma_x * sigma_x * sigma_x) - K_x * sigma_x - \
-                   dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
-            dsigma_ydz = y
-            dydz = 2 * P/(sigma_x + sigma_y) + emitt_y * emitt_y / (sigma_y * sigma_y * sigma_y) - K_y * sigma_y - \
-                   dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
+            dradius_xdz = x
+            dxdz = 2 * P / (radius_x + radius_y) + emitt_x * emitt_x / (radius_x * radius_x * radius_x) - K_x * radius_x - \
+                   dgdz * x / (beta * beta * g) - d2gdz2 * radius_x/(2 * beta * beta * g)
+            dradius_ydz = y
+            dydz = 2 * P/(radius_x + radius_y) + emitt_y * emitt_y / (radius_y * radius_y * radius_y) - K_y * radius_y - \
+                   dgdz * y/(beta * beta * g) - d2gdz2 * radius_y/(2 * beta * beta * g)
 
-            return [dsigma_xdz, dxdz, dsigma_ydz, dydz]
+            return [dradius_xdz, dxdz, dradius_ydz, dydz]
 
         def dXdz_centroid(z:np.arange, X:list,
                  dz:float=self.accelerator.step,
@@ -111,9 +111,9 @@ class Simulation:
                  rtol:float=rtol) -> list:
             '''Located derivative for further integration.
             '''
-            sigma_x = X[0]
+            radius_x = X[0]
             x = X[1]
-            sigma_y = X[2]
+            radius_y = X[2]
             y = X[3]
             phi = X[4]
 
@@ -128,13 +128,13 @@ class Simulation:
             K_x = K_s + K_q
             K_y = K_s - K_q
 
-            dsigma_xdz = x
-            dxdz =  - K_x * sigma_x - dgdz * x / (beta * beta * g) - d2gdz2 * sigma_x/(2 * beta * beta * g)
-            dsigma_ydz = y
-            dydz = - K_y * sigma_y - dgdz * y/(beta * beta * g) - d2gdz2 * sigma_y/(2 * beta * beta * g)
+            dradius_xdz = x
+            dxdz =  - K_x * radius_x - dgdz * x / (beta * beta * g) - d2gdz2 * radius_x/(2 * beta * beta * g)
+            dradius_ydz = y
+            dydz = - K_y * radius_y - dgdz * y/(beta * beta * g) - d2gdz2 * radius_y/(2 * beta * beta * g)
             dphidz = -K_s**0.5
 
-            return [dsigma_xdz, dxdz, dsigma_ydz, dydz, dphidz]
+            return [dradius_xdz, dxdz, dradius_ydz, dydz, dphidz]
 
         X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp, self.beam.radius_y, self.beam.radius_yp])
         X0_centroid = np.array([self.beam.x, self.beam.xp, self.beam.y, self.beam.yp, self.beam.larmor_angle])
@@ -148,5 +148,16 @@ class Simulation:
         self.centroid_x = centroid[0,:]*np.cos(centroid[4,:]) + centroid[2,:]*np.sin(centroid[4,:])
         self.centroid_y = -centroid[0,:]*np.sin(centroid[4,:]) + centroid[2,:]*np.cos(centroid[4,:])
         self.larmor_angle = centroid[4,:]
+
+        #TO function
+        self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
+        self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.centroid_y = interpolate.interp1d(self.accelerator.parameter, self.centroid_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
+
+
 
 Sim = Simulation
