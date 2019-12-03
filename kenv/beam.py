@@ -1,7 +1,8 @@
 # beam.py
+'''Creating an electron beam.'''
 
-'''Creating an electron beam.
-'''
+import numpy as np
+from .constants import *
 
 __all__ = ['Beam']
 
@@ -25,6 +26,7 @@ class Beam:
 
     and with shifted centroid:
     x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]
+
     '''
 
     def __init__(self,*,
@@ -43,7 +45,8 @@ class Beam:
                  y: float=.0e0,
                  xp: float=.0e0,
                  yp: float=.0e0,
-                 larmor_angle: float=.0e0):
+                 larmor_angle: float=.0e0,
+                 charge: int=-1):
 
         self.current = current
         self.energy = energy
@@ -72,10 +75,26 @@ class Beam:
         self.yp = yp
         self.larmor_angle = larmor_angle
 
+        self.charge = charge
+
+        self.gamma = gamma = self.energy / mass_rest_electron + 1
+        self.beta = beta = np.sqrt(1 - 1 / (gamma*gamma))
+
+        self.p = self.impuls = gamma*beta*mass_rest_electron
+        self.pz = self.impuls_z = (self.impuls /
+         np.sqrt(1 + self.radius_xp**2 + self.radius_yp**2))
+        self.px = self.impuls_x = self.radius_xp*self.impuls_z
+        self.py = self.impuls_y = self.radius_yp*self.impuls_z
+
     def __str__(self):
             return 'Beam parameters:' + '\n' \
-                    +'\tCurrent\t%0.1f A'%(self.current) + '\n' \
-                    +'\tEnergy\t%0.1f MeV'%(self.energy) + '\n' \
+                    +'\tCurrent\t%0.3f A'%(self.current) + '\n' \
+                    +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
+                    +'\tImpuls\t%0.3f MeV/c'%(self.impuls) + '\n' \
+                    +'\tImpils z\t%0.3f MeV/c'%(self.impuls_z) + '\n' \
+                    +'\tImpils x\t%0.3f MeV/c'%(self.impuls_x) + '\n' \
+                    +'\tImpils y\t%0.3f MeV/c'%(self.impuls_y) + '\n' \
+                    +'\tRel. factor g\t%0.3f'%(self.gamma) + '\n' \
                     +'\tRadius x\t%0.1f mm'%(self.radius_x*1e3) + '\n' \
                     +'\tRadius y\t%0.1f mm'%(self.radius_y*1e3) + '\n' \
                     +'\tRadius x prime\t%0.1f mrad'%(self.radius_xp*1e3) + '\n' \

@@ -1,163 +1,178 @@
 # solver.py
-'''Simulation of the envelope beam in the accelerator.
-'''
+'''Simulation of the envelope beam in the accelerator.'''
+
 import numpy as np
 from scipy import interpolate, integrate
 from scipy.integrate import solve_ivp
-
-from .beam import *
-from .accelerator import *
+from .constants import *
 
 __all__ = ['Sim',
-           'Simulation']
+           'Simulation',
+           'KapchinskyEquations']
+
+class KapchinskyEquations:
+    '''Located derivative for further integration.'''
+
+    def __init__(self, beam, accelerator):
+        self.beam = beam
+        self.accelerator = accelerator
+
+    def envelope_prime(self,
+                      z:np.arange,
+                      X:list) -> list:
+        '''Located derivative for further integration
+         Kapchinscky equation for envelope beam.
+
+         '''
+
+        x = X[0]
+        xp = X[1]
+        y = X[2]
+        yp = X[3]
+        phi = X[4]
+
+        g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
+        dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
+        d2gdz2 = self.beam.charge*self.accelerator.dEzdz(z)/mass_rest_electron
+        beta = np.sqrt(1 - 1 / (g*g))
+        p = g*beta*mass_rest_electron
+
+        K_s = (speed_light*self.accelerator.Bz(z) / (2*p*1e6))**2
+        K_q = (speed_light*self.accelerator.Gz(z) / (p*1e6))
+        K_x = K_s + K_q
+        K_y = K_s - K_q
+
+        emitt_x = self.beam.normalized_emittance_x / (p/mass_rest_electron)
+        emitt_y = self.beam.normalized_emittance_y / (p/mass_rest_electron)
+
+        P = 2*self.beam.current / (alfven_current*(p/mass_rest_electron)**3)
+
+        dxdz = xp
+        dxpdz = 2*P / (x + y) + emitt_x*emitt_x / x**3 - K_x*x - \
+                dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+        dydz = yp
+        dypdz = 2*P / (x + y) + emitt_y*emitt_y / y**3 - K_y*y - \
+                dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+        dphidz = -K_s**0.5
+
+        return [dxdz, dxpdz, dydz, dypdz, dphidz]
+
+
+    def centroid_prime(self,
+                       z:np.arange,
+                       X:list) -> list:
+        '''Located derivative for further integration
+         Kapchinscky equation for centroid trajectory.
+
+         '''
+
+        x = X[0]
+        xp = X[1]
+        y = X[2]
+        yp = X[3]
+        phi = X[4]
+
+        dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
+        d2gdz2 = self.beam.charge*self.accelerator.dEzdz(z)/mass_rest_electron
+
+        g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
+        beta = np.sqrt(1 - 1 / (g*g))
+        p = g*beta*mass_rest_electron
+
+        K_s = (speed_light*self.accelerator.Bz(z) / (2*p*1e6))**2
+        K_q = (speed_light*self.accelerator.Gz(z) / (p*1e6))
+        K_x = K_s + K_q
+        K_y = K_s - K_q
+
+        dxdz = xp
+        dxpdz = - K_x*x - dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+        dydz = yp
+        dypdz = - K_y*y - dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+        dphidz = -K_s**0.5
+
+        return [dxdz, dxpdz, dydz, dypdz, dphidz]
 
 class Simulation:
     '''Simulation of the envelope beam in the accelerator.
 
-    basic parameters after track:
+    Basic parameters after track:
     gamma,
     envelope_x and envelope_y,
     centroid_x and centroid_y,
     larmor_angle
-    '''
 
-    mass_rest_electron = 0.5109989461
-    clight = 299792458
-    alfven_current = 17000
+    '''
+    mass_rest_electron = mass_rest_electron
+    clight = speed_light
+    alfven_current = alfven_current
 
     gamma = 0
 
+    p = impuls = 0
+    pz = impuls_z = 0
+    px = impuls_x = 0
+    py = impuls_y = 0
+
     envelope_x = []
+    envelope_xp = []
     envelope_y = []
+    envelope_yp = []
 
     centroid_x = []
+    centroid_xp = []
     centroid_y = []
+    centroid_yp = []
+
     larmor_angle = []
 
     def __init__(self,
-             beam,
-             accelerator):
+                 beam,
+                 accelerator):
 
         self.beam = beam
         self.accelerator = accelerator
 
-    def track(self, rtol:float = 1e-6):
-        '''Tracking!
-        '''
+    def track(self,
+              rtol:float = 1e-6):
+        '''Tracking!'''
 
-        self.gamma = (self.beam.energy/self.mass_rest_electron + 1) + integrate.cumtrapz(-self.accelerator.Ez(self.accelerator.parameter)/self.mass_rest_electron, self.accelerator.parameter)
-        self.gamma = interpolate.interp1d(self.accelerator.parameter[1:], self.gamma, fill_value=(self.gamma[0], self.gamma[-1]), bounds_error=False)
+        Equations = KapchinskyEquations(self.beam, self.accelerator)
 
-        def dXdz_beam(z:np.arange, X:list,
-                 dz:float=self.accelerator.step,
-                 gamma:interpolate.interp1d=self.gamma,
-                 Bz:interpolate.interp1d=self.accelerator.Bz,
-                 Ez:interpolate.interp1d=self.accelerator.Ez,
-                 Gz:interpolate.interp1d=self.accelerator.Gz,
-                 dBzdz:interpolate.interp1d=self.accelerator.dBzdz,
-                 dEzdz:interpolate.interp1d=self.accelerator.dEzdz,
-                 dGzdz:interpolate.interp1d=self.accelerator.dGzdz,
-                 beam_current:float=self.beam.current,
-                 emitt_n_x:float=self.beam.normalized_emittance_x,
-                 emitt_n_y:float=self.beam.normalized_emittance_y,
-                 c:float=self.clight,
-                 mc:float=self.mass_rest_electron,
-                 alfven_current:float=self.alfven_current) -> list:
-            '''Located derivative for further integration.
-            '''
-            radius_x = X[0]
-            x = X[1]
-            radius_y = X[2]
-            y = X[3]
+        X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
+                            self.beam.radius_y, self.beam.radius_yp,
+                            self.beam.larmor_angle])
+        X0_centroid = np.array([self.beam.x, self.beam.xp,
+                                self.beam.y, self.beam.yp,
+                                self.beam.larmor_angle])
 
-            g = gamma(z)
-            dgdz = Ez(z) / mc
-
-            d2gdz2 = dEzdz(z) / mc
-
-            beta = np.sqrt(1 - 1 / (g * g))
-
-            K_s = ( c * Bz(z) / (2*mc*1e6) / (g * beta))**2
-            K_q = ( c * Gz(z) / (mc*1e6)) / (g * beta)
-            K_x = K_s + K_q
-            K_y = K_s - K_q
-
-            emitt_x = emitt_n_x / (g * beta)
-            emitt_y = emitt_n_y / (g * beta)
-
-            P = 2 * beam_current / (alfven_current * beta * beta * beta * g * g * g)
-
-            dradius_xdz = x
-            dxdz = 2 * P / (radius_x + radius_y) + emitt_x * emitt_x / (radius_x * radius_x * radius_x) - K_x * radius_x - \
-                   dgdz * x / (beta * beta * g) - d2gdz2 * radius_x/(2 * beta * beta * g)
-            dradius_ydz = y
-            dydz = 2 * P/(radius_x + radius_y) + emitt_y * emitt_y / (radius_y * radius_y * radius_y) - K_y * radius_y - \
-                   dgdz * y/(beta * beta * g) - d2gdz2 * radius_y/(2 * beta * beta * g)
-
-            return [dradius_xdz, dxdz, dradius_ydz, dydz]
-
-        def dXdz_centroid(z:np.arange, X:list,
-                 dz:float=self.accelerator.step,
-                 gamma:interpolate.interp1d=self.gamma,
-                 Bz:interpolate.interp1d=self.accelerator.Bz,
-                 Ez:interpolate.interp1d=self.accelerator.Ez,
-                 Gz:interpolate.interp1d=self.accelerator.Gz,
-                 dBzdz:interpolate.interp1d=self.accelerator.dBzdz,
-                 dEzdz:interpolate.interp1d=self.accelerator.dEzdz,
-                 dGzdz:interpolate.interp1d=self.accelerator.dGzdz,
-                 c:float=self.clight,
-                 mc:float=self.mass_rest_electron,
-                 alfven_current:float=self.alfven_current,
-                 rtol:float=rtol) -> list:
-            '''Located derivative for further integration.
-            '''
-            radius_x = X[0]
-            x = X[1]
-            radius_y = X[2]
-            y = X[3]
-            phi = X[4]
-
-            g = gamma(z)
-            dgdz = Ez(z) / mc
-            d2gdz2 = dEzdz(z) / mc
-
-            beta = np.sqrt(1 - 1 / (g * g))
-
-            K_s = ( c * Bz(z) / (2*mc*1e6) / (g * beta))**2
-            K_q = ( c * Gz(z) / (mc*1e6)) / (g * beta)
-            K_x = K_s + K_q
-            K_y = K_s - K_q
-
-            dradius_xdz = x
-            dxdz =  - K_x * radius_x - dgdz * x / (beta * beta * g) - d2gdz2 * radius_x/(2 * beta * beta * g)
-            dradius_ydz = y
-            dydz = - K_y * radius_y - dgdz * y/(beta * beta * g) - d2gdz2 * radius_y/(2 * beta * beta * g)
-            dphidz = -K_s**0.5
-
-            return [dradius_xdz, dxdz, dradius_ydz, dydz, dphidz]
-
-        X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp, self.beam.radius_y, self.beam.radius_yp])
-        X0_centroid = np.array([self.beam.x, self.beam.xp, self.beam.y, self.beam.yp, self.beam.larmor_angle])
-
-        beam = solve_ivp(dXdz_beam, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_beam, t_eval=self.accelerator.parameter, rtol=rtol).y
-        centroid = solve_ivp(dXdz_centroid, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
+        beam = solve_ivp(Equations.envelope_prime, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_beam, t_eval=self.accelerator.parameter, rtol=rtol).y
+        centroid = solve_ivp(Equations.centroid_prime, t_span=[self.accelerator.parameter[0],self.accelerator.parameter[-1]], y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
 
         self.envelope_x = beam[0,:]
+        self.envelope_xp = beam[1,:]
         self.envelope_y = beam[2,:]
+        self.envelope_yp = beam[3,:]
 
         self.centroid_x = centroid[0,:]*np.cos(centroid[4,:]) + centroid[2,:]*np.sin(centroid[4,:])
         self.centroid_y = -centroid[0,:]*np.sin(centroid[4,:]) + centroid[2,:]*np.cos(centroid[4,:])
+        self.centroid_xp = centroid[1,:]*np.cos(centroid[4,:]) + centroid[3,:]*np.sin(centroid[4,:])
+        self.centroid_yp = -centroid[1,:]*np.sin(centroid[4,:]) + centroid[3,:]*np.cos(centroid[4,:])
         self.larmor_angle = centroid[4,:]
+
+        self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
 
         #TO function
         self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
         self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.centroid_xp = interpolate.interp1d(self.accelerator.parameter, self.centroid_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.centroid_y = interpolate.interp1d(self.accelerator.parameter, self.centroid_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.centroid_yp = interpolate.interp1d(self.accelerator.parameter, self.centroid_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
-
-
+        self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
 Sim = Simulation
