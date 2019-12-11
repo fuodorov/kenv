@@ -84,7 +84,7 @@ class Beam:
 
     def __str__(self):
             return 'Beam parameters:' + '\n' \
-                    +'\tCurrent\t%0.3f A'%(self.current) + '\n' \
+                    +'\tCurrent\t%0.0f A'%(self.current) + '\n' \
                     +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
                     +'\tImpuls\t%0.3f MeV/c'%(self.impuls) + '\n' \
                     +'\tRel. factor g\t%0.3f'%(self.gamma) + '\n' \
