@@ -96,7 +96,7 @@ class Beam:
                     +'\tVertical centroid position\t%0.1f mm'%(self.y*1e3) + '\n' \
                     +'\tHorizontal centroid angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
                     +'\tVertical centroid angle\t%0.1f mrad'%(self.yp*1e3) + '\n' \
-                    +'\tLarmor angle\t%0.1f mrad'%(self.larmor_angle*1e3) + '\n' \
+                    +'\tLarmor angle\t%0.1f rad'%(self.larmor_angle) + '\n' \
                     +'\tNormalized emittance x\t%0.1f mm*mrad'%\
                     (self.normalized_emittance_x*1e6) + '\n' \
                     +'\tNormalized emittance y\t%0.1f mm*mrad'%\
