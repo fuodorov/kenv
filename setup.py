@@ -10,7 +10,7 @@ setup(
     version=kenv.__version__,
     author='Vyacheslav Fedorov',
     author_email='fuodorov1998@gmail.com',
-    description='Solver of the Kapchinsky-Vladimirsky envelope equation',
+    description=kenv.__doc__,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/fuodorov/kenv',

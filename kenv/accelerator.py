@@ -138,7 +138,7 @@ class Accelerator:
 
         Creates a solenoid in the accelerator with parameters:
         name --- solenoid's id,
-        centert [m] --- solenoid's center,
+        center [m] --- solenoid's center,
         max field [T] --- solenoid's maximum field,
         file name --- experimental profile of the Bz field
 
@@ -154,7 +154,7 @@ class Accelerator:
 
         Creates an accelerating module in the accelerator with parameters:
         name --- accelerating module's id,
-        centert [m] --- accelerating module's center,
+        center [m] --- accelerating module's center,
         max field [MV/m] --- accelerating module's maximum field,
         file name --- experimental profile of the Ez field
 
@@ -170,7 +170,7 @@ class Accelerator:
 
         Creates a quadrupole in the accelerator with parameters:
         name --- quadrupole's id,
-        centert [m] --- quadrupole's center,
+        center [m] --- quadrupole's center,
         max field [T/m] --- quadrupole's maximum field,
         file name --- experimental profile of the Gz field
 

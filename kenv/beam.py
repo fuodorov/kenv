@@ -17,12 +17,12 @@ class Beam:
     normalized emittance [m*rad],
 
     Creating an elliptical electron beam with parameters:
-    radius x [m],
-    radius y [m],
+    radius_x [m],
+    radius_y [m],
     radius_xp [rad],
     radius_yp [rad],
-    normalized emittance x [m*rad],
-    normalized emittance y [m*rad]
+    normalized_emittance_x [m*rad],
+    normalized_emittance_y [m*rad]
 
     and with shifted centroid:
     x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]
@@ -80,13 +80,13 @@ class Beam:
         self.gamma = gamma = self.energy / mass_rest_electron + 1
         self.beta = beta = np.sqrt(1 - 1 / (gamma*gamma))
 
-        self.p = self.impuls = gamma*beta*mass_rest_electron
+        self.p = self.momentum = gamma*beta*mass_rest_electron
 
     def __str__(self):
             return 'Beam parameters:' + '\n' \
                     +'\tCurrent\t%0.0f A'%(self.current) + '\n' \
                     +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
-                    +'\tImpuls\t%0.3f MeV/c'%(self.impuls) + '\n' \
+                    +'\tTotal momentum\t%0.3f MeV/c'%(self.momentum) + '\n' \
                     +'\tRel. factor g\t%0.3f'%(self.gamma) + '\n' \
                     +'\tRadius x\t%0.1f mm'%(self.radius_x*1e3) + '\n' \
                     +'\tRadius y\t%0.1f mm'%(self.radius_y*1e3) + '\n' \
