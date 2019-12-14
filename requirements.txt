@@ -5,4 +5,4 @@ deap
 matplotlib
 bokeh
 holoviews
-
+PyQt5

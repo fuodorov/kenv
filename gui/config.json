@@ -1,0 +1,72 @@
+{
+ "date": "Fri Dec  6 10:09:16 2019",
+ "KENV version": "0.0.19",
+ "Accelerator": {
+  "z_start": 0.7,
+  "z_stop": 6.7,
+  "dz": 0.001
+ },
+ "Beam": {
+  "current": 2000.0,
+  "energy": 2,
+  "radius": 0.055,
+  "rp": 0.0,
+  "normalized_emittance": 0.001,
+  "x": 0.0,
+  "y": 0,
+  "xp": 0.0,
+  "yp": 0.0
+ },
+  "Bz_beamline":[
+  {
+   "name": "Sol. 1",
+   "z0": 0.950,
+   "file_name": "Bz.dat",
+   "max_field": 0.035
+  },
+  {
+   "name": "S0l. 2",
+   "z0": 2.100,
+   "file_name": "Bz.dat",
+   "max_field": 0.032
+  },
+  {
+   "name": "Sol. 3",
+   "z0": 2.900,
+   "file_name": "Bz.dat",
+   "max_field": 0.043
+  },
+  {
+   "name": "Sol. 4",
+   "z0": 3.800,
+   "file_name": "Bz.dat",
+   "max_field": 0.038
+  },
+  {
+   "name": "Sol. 5",
+   "z0": 4.700,
+   "file_name": "Bz.dat",
+   "max_field": 0.047
+  },
+  {
+   "name": "Sol. 6",
+   "z0": 5.600,
+   "file_name": "Bz.dat",
+   "max_field": 0.052
+  }
+ ],
+ "Ez_beamline": [
+  {
+   "name": "Acc. 1",
+   "z0": 4.223,
+   "file_name": "Ez.dat",
+   "max_field": -1.2
+  },
+  {
+   "name": "Acc. 2",
+   "z0": 6.076,
+   "file_name": "Ez.dat",
+   "max_field": -1.2
+  }
+ ]
+}
