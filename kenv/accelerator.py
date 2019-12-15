@@ -25,7 +25,12 @@ class Element:
                  z0: float,
                  max_field: float,
                  file_name: str,
-                 name: str):
+                 name: str,
+                 *,
+                 x: float=0.0,
+                 xp: float=0.0,
+                 y: float=0.0,
+                 yp: float=0.0):
         self.z0 = z0
         self.max_field = max_field
         self.file_name = file_name
@@ -151,7 +156,7 @@ class Accelerator:
                      x: float=0.0,
                      xp: float=0.0,
                      y: float=0.0,
-                     yp: float=0.0 ) -> None:
+                     yp: float=0.0) -> None:
         '''Creates a solenoid in the accelerator.
 
         Creates a solenoid in the accelerator with parameters:
@@ -173,7 +178,7 @@ class Accelerator:
                   x: float=0.0,
                   xp: float=0.0,
                   y: float=0.0,
-                  yp: float=0.0 ) -> None:
+                  yp: float=0.0) -> None:
         '''Creates an accelerating module in the accelerator.
 
         Creates an accelerating module in the accelerator with parameters:
@@ -194,7 +199,7 @@ class Accelerator:
                        x: float=0.0,
                        xp: float=0.0,
                        y: float=0.0,
-                       yp: float=0.0 ) -> None:
+                       yp: float=0.0) -> None:
         '''Creates a quadrupole in the accelerator.
 
         Creates a quadrupole in the accelerator with parameters:
@@ -215,7 +220,7 @@ class Accelerator:
                         x: float=0.0,
                         xp: float=0.0,
                         y: float=0.0,
-                        yp: float=0.0 ) -> None:
+                        yp: float=0.0) -> None:
         '''Creates a corrector in the accelerator.
 
         Creates a corrector in the accelerator with parameters:
@@ -236,7 +241,7 @@ class Accelerator:
                         x: float=0.0,
                         xp: float=0.0,
                         y: float=0.0,
-                        yp: float=0.0 ) -> None:
+                        yp: float=0.0) -> None:
         '''Creates a corrector in the accelerator.
 
         Creates a corrector in the accelerator with parameters:
