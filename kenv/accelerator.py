@@ -108,15 +108,23 @@ class Accelerator:
 
     '''
     Bz_beamline = {}
+    Bx_beamline = {}
+    By_beamline = {}
     Ez_beamline = {}
     Gz_beamline = {}
     Bz = interpolate.interp1d
+    Bx = interpolate.interp1d
+    By = interpolate.interp1d
     Ez = interpolate.interp1d
     Gz = interpolate.interp1d
     dBzdz = interpolate.interp1d
+    dBxdz = interpolate.interp1d
+    dBydz = interpolate.interp1d
     dEzdz = interpolate.interp1d
     dGzdz = interpolate.interp1d
     Bzdz = interpolate.interp1d
+    Bxdz = interpolate.interp1d
+    Bydz = interpolate.interp1d
     Ezdz = interpolate.interp1d
     Gzdz = interpolate.interp1d
 
@@ -139,8 +147,8 @@ class Accelerator:
         Creates a solenoid in the accelerator with parameters:
         name --- solenoid's id,
         center [m] --- solenoid's center,
-        max field [T] --- solenoid's maximum field,
-        file name --- experimental profile of the Bz field
+        max_field [T] --- solenoid's maximum field,
+        file_name --- experimental profile of the Bz field
 
         '''
         self.Bz_beamline[name] = Element(center, max_field, file_name, name)
@@ -155,8 +163,8 @@ class Accelerator:
         Creates an accelerating module in the accelerator with parameters:
         name --- accelerating module's id,
         center [m] --- accelerating module's center,
-        max field [MV/m] --- accelerating module's maximum field,
-        file name --- experimental profile of the Ez field
+        max_field [MV/m] --- accelerating module's maximum field,
+        file_name --- experimental profile of the Ez field
 
         '''
         self.Ez_beamline[name] = Element(center, max_field, file_name, name)
@@ -171,11 +179,43 @@ class Accelerator:
         Creates a quadrupole in the accelerator with parameters:
         name --- quadrupole's id,
         center [m] --- quadrupole's center,
-        max field [T/m] --- quadrupole's maximum field,
-        file name --- experimental profile of the Gz field
+        max_field [T/m] --- quadrupole's maximum field,
+        file_name --- experimental profile of the Gz field
 
         '''
         self.Gz_beamline[name] = Element(center, max_field, file_name, name)
+
+    def add_corrector_x(self,
+                        name: str,
+                        center: float,
+                        max_field: float,
+                        file_name: str ) -> None:
+        '''Creates a corrector in the accelerator.
+
+        Creates a corrector in the accelerator with parameters:
+        name --- corrector's id,
+        center [m] --- corrector's center,
+        max_field [T] --- corrector's maximum field,
+        file_name --- experimental profile of the By field
+
+        '''
+        self.By_beamline[name] = Element(center, max_field, file_name, name)
+
+    def add_corrector_y(self,
+                        name: str,
+                        center: float,
+                        max_field: float,
+                        file_name: str ) -> None:
+        '''Creates a corrector in the accelerator.
+
+        Creates a corrector in the accelerator with parameters:
+        name --- corrector's id,
+        center [m] --- corrector's center,
+        max_field [T] --- corrector's maximum field,
+        file_name --- experimental profile of the Bx field
+
+        '''
+        self.Bx_beamline[name] = Element(center, max_field, file_name, name)
 
     def delete_solenoid(self,
                         name: str='all') -> None:
@@ -197,7 +237,7 @@ class Accelerator:
         '''Delete a accelerating module in the accelerator.
 
         Delete a accelerating module in the accelerator with parameters:
-        name --- quadrupole's id
+        name --- accel's id
 
         *if there is no name that will be removed all
 
@@ -222,11 +262,42 @@ class Accelerator:
         else:
             self.Gz_beamline.pop(name)
 
+    def delete_corrector_x(self,
+                           name: str='all') -> None:
+        '''Delete a corrector in the accelerator.
+
+        Delete a corrector in the accelerator with parameters:
+        name --- corrector's id
+
+        *if there is no name that will be removed all
+
+        '''
+        if name == 'all':
+            self.By_beamline = {}
+        else:
+            self.By_beamline.pop(name)
+
+    def delete_corrector_y(self,
+                           name: str='all') -> None:
+        '''Delete a corrector in the accelerator.
+
+        Delete a corrector in the accelerator with parameters:
+        name --- corrector's id
+
+        *if there is no name that will be removed all
+
+        '''
+        if name == 'all':
+            self.Bx_beamline = {}
+        else:
+            self.Bx_beamline.pop(name)
 
     def compile(self) -> None:
         '''Compilation of the accelerator.'''
 
         self.Bz, self.dBzdz, self.Bzdz = read_elements(self.Bz_beamline, self.parameter)
+        self.Bx, self.dBxdz, self.Bxdz = read_elements(self.Bx_beamline, self.parameter)
+        self.By, self.dBydz, self.Bydz = read_elements(self.By_beamline, self.parameter)
         self.Ez, self.dEzdz, self.Ezdz = read_elements(self.Ez_beamline, self.parameter)
         self.Gz, self.dGzdz, self.Gzdz = read_elements(self.Gz_beamline, self.parameter)
 
@@ -241,12 +312,23 @@ class Accelerator:
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
             string +="\t[ %.5f m, %.5f T/m, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+        string += '\tCorrectors x:\n'
+        for element in self.By_beamline.values():
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+        string += '\tCorrectors y:\n'
+        for element in self.Bx_beamline.values():
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+
         return string
 
     add_sol = add_new_solenoid = add_solenoid
     add_acc = add_new_accel = add_accel
     add_quad = add_new_quadrupole = add_quadrupole
+    add_corr_x = add_new_corrector_x = add_corrector_x
+    add_corr_y = add_new_corrector_y = add_corrector_y
 
     del_sol = del_solenoid = delete_solenoid
     del_acc = del_accel = delete_accel
     del_quad = del_quadrupole = delete_quadrupole
+    del_corr_x = del_corrector_x = delete_corrector_x
+    del_corr_y = del_corrector_y = delete_corrector_y

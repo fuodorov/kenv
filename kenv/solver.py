@@ -39,6 +39,8 @@ class KapchinskyEquations:
 
         K_s = (speed_light*self.accelerator.Bz(z) / (2*p*1e6))**2
         K_q = (speed_light*self.accelerator.Gz(z) / (p*1e6))
+        K_corr_x = (speed_light*self.accelerator.By(z) / (p*1e6))
+        K_corr_y = (speed_light*self.accelerator.Bx(z) / (p*1e6))
         K_x = K_s + K_q
         K_y = K_s - K_q
 
@@ -49,10 +51,10 @@ class KapchinskyEquations:
 
         dxdz = xp
         dxpdz = 2*P / (x + y) + emitt_x*emitt_x / x**3 - K_x*x - \
-                dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+                dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - K_corr_x
         dydz = yp
         dypdz = 2*P / (x + y) + emitt_y*emitt_y / y**3 - K_y*y - \
-                dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+                dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g) + K_corr_y
         dphidz = -K_s**0.5
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
@@ -81,13 +83,15 @@ class KapchinskyEquations:
 
         K_s = (speed_light*self.accelerator.Bz(z) / (2*p*1e6))**2
         K_q = (speed_light*self.accelerator.Gz(z) / (p*1e6))
+        K_corr_x = (speed_light*self.accelerator.By(z) / (p*1e6))
+        K_corr_y = (speed_light*self.accelerator.Bx(z) / (p*1e6))
         K_x = K_s + K_q
         K_y = K_s - K_q
 
         dxdz = xp
-        dxpdz = - K_x*x - dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+        dxpdz = - K_x*x - dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - K_corr_x
         dydz = yp
-        dypdz = - K_y*y - dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+        dypdz = - K_y*y - dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g) + K_corr_y
         dphidz = -K_s**0.5
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
@@ -102,7 +106,7 @@ class Simulation:
     larmor_angle
 
     '''
-    
+
     envelope_x = []
     envelope_xp = []
     envelope_y = []
