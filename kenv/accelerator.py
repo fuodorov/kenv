@@ -5,6 +5,7 @@
 
 import numpy as np
 from scipy import interpolate, integrate
+from scipy.optimize import fsolve
 
 __all__ = ['Element',
            'Accelerator',
@@ -18,9 +19,17 @@ class Element:
     z0 [m] --- element position,
     max_field --- maximum field,
     file_name --- field profile,
-    name --- unique element name.
+    name --- unique element name,
+
+    and shifted to [x, xp, y, yp],
+
+    and z_start, z_stop, length
 
     '''
+    z_start = .0e0
+    z_stop = .0e0
+    length = .0e0
+
     def __init__(self,
                  z0: float,
                  max_field: float,
@@ -38,7 +47,7 @@ class Element:
         self.x = x
         self.xp = xp
         self.y = y
-        self.yp = y
+        self.yp = yp
 
 def read_elements(beamline: dict,
                   z:np.arange) -> interpolate.interp1d:
@@ -77,6 +86,7 @@ def read_elements(beamline: dict,
                 fill_value=(0, 0), bounds_error=False
             )
             F = F + f(z)
+
             #derivative
             z_data_prime = z_data
             F_data_prime = np.gradient(F_data, dz)
@@ -85,6 +95,10 @@ def read_elements(beamline: dict,
                 fill_value=(0, 0), bounds_error=False
             )
             F_prime = F_prime + f_prime(z)
+
+            element.length = (integrate.cumtrapz(f(z), z)**2/integrate.cumtrapz(f(z)**2, z))[-1]
+            element.z_start = element.z0 - element.length/2
+            element.z_stop = element.z0 + element.length/2
 
     F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
     F_prime = interpolate.interp1d(z, F_prime, kind='cubic', fill_value=(0, 0), bounds_error=False)
@@ -341,20 +355,29 @@ class Accelerator:
         string = 'Accelerator structure.\n'
         string += '\tSolenoids:\n'
         for element in self.Bz_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tAccelerating modules:\n'
         for element in self.Ez_beamline.values():
-            string +="\t[ %.5f m, %.5f Mv/m, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
-            string +="\t[ %.5f m, %.5f T/m, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tCorrectors x:\n'
         for element in self.By_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tCorrectors y:\n'
         for element in self.Bx_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n" % (element.z0, element.max_field, element.file_name, element.name)
-
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         return string
 
     add_sol = add_new_solenoid = add_solenoid

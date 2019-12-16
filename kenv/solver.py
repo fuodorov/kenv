@@ -17,6 +17,14 @@ class KapchinskyEquations:
         self.beam = beam
         self.accelerator = accelerator
 
+    def transition_coord(X:list, S:list) -> list:
+        '''Transition to another coordinate system.'''
+
+        x, xp, y, yp = X[0], X[1], X[2], X[3]
+        x_t, xp_t, y_t, yp_t = S[0], S[1], S[2], S[3]
+
+        
+
     def envelope_prime(self,
                       z:np.arange,
                       X:list) -> list:
@@ -29,6 +37,7 @@ class KapchinskyEquations:
         xp = X[1]
         y = X[2]
         yp = X[3]
+        phi = X[4]
 
         g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
         dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
@@ -54,8 +63,9 @@ class KapchinskyEquations:
         dydz = yp
         dypdz = 2*P / (x + y) + emitt_y*emitt_y / y**3 - K_y*y - \
                 dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g) + K_corr_y
+        dphidz = -K_s**0.5
 
-        return [dxdz, dxpdz, dydz, dypdz]
+        return [dxdz, dxpdz, dydz, dypdz, dphidz]
 
 
     def centroid_prime(self,
