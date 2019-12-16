@@ -10,6 +10,19 @@ __all__ = ['Sim',
            'Simulation',
            'KapchinskyEquations']
 
+def transition_coord(X:list, S:list) -> list:
+    '''Transition to another coordinate system.'''
+
+    x, xp, y, yp, phi = X[0], X[1], X[2], X[3], X[4]
+    x_t, xp_t, y_t, yp_t = S[0], S[1], S[2], S[3]
+
+    x = x*np.cos(xp_t) - y*np.sin(yp_t) + x_t
+    y = x*np.sin(xp_t) + y*np.cos(yp_t) + y_t
+    xp = xp*np.cos(xp_t) - yp*np.sin(yp_t) + xp_t
+    yp = xp*np.sin(xp_t) + yp*np.cos(yp_t) + yp_t
+
+    return [x, xp, y, yp, phi]
+
 class KapchinskyEquations:
     '''Located derivative for further integration.'''
 
@@ -17,21 +30,24 @@ class KapchinskyEquations:
         self.beam = beam
         self.accelerator = accelerator
 
-    def transition_coord(X:list, S:list) -> list:
-        '''Transition to another coordinate system.'''
-
-        x, xp, y, yp = X[0], X[1], X[2], X[3]
-        x_t, xp_t, y_t, yp_t = S[0], S[1], S[2], S[3]
-
-        
-
     def envelope_prime(self,
                       z:np.arange,
                       X:list) -> list:
         '''Located derivative for further integration
          Kapchinscky equation for envelope beam.
 
-         '''
+        '''
+
+        beamline = self.accelerator.Bz_beamline
+        for element in beamline.values():
+            if z - element.z_start < self.accelerator.step:
+                S = [element.x, element.xp, element.y, element.yp]
+                X = transition_coord(X, S)
+                element.z_start = 0
+            if z - element.z_stop < self.accelerator.step:
+                S = [-element.x,-element.xp,-element.y,-element.yp]
+                X = transition_coord(X, S)
+                element.z_stop = 0
 
         x = X[0]
         xp = X[1]
@@ -67,14 +83,24 @@ class KapchinskyEquations:
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
 
-
     def centroid_prime(self,
                        z:np.arange,
                        X:list) -> list:
         '''Located derivative for further integration
          Kapchinscky equation for centroid trajectory.
 
-         '''
+        '''
+
+        beamline = self.accelerator.Bz_beamline
+        for element in beamline.values():
+            if z - element.z_start < self.accelerator.step:
+                S = [element.x, element.xp, element.y, element.yp]
+                X = transition_coord(X, S)
+                element.z_start = 0
+            if z - element.z_stop < self.accelerator.step:
+                S = [-element.x,-element.xp,-element.y,-element.yp]
+                X = transition_coord(X, S)
+                element.z_stop = 0
 
         x = X[0]
         xp = X[1]
@@ -135,7 +161,7 @@ class Simulation:
         self.accelerator = accelerator
 
     def track(self,
-              rtol:float = 1e-6):
+              rtol:float=1e-6):
         '''Tracking!'''
 
         Equations = KapchinskyEquations(self.beam, self.accelerator)

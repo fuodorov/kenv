@@ -351,6 +351,7 @@ class Accelerator:
         self.Ez, self.dEzdz, self.Ezdz = read_elements(self.Ez_beamline, self.parameter)
         self.Gz, self.dGzdz, self.Gzdz = read_elements(self.Gz_beamline, self.parameter)
 
+
     def __str__(self):
         string = 'Accelerator structure.\n'
         string += '\tSolenoids:\n'
