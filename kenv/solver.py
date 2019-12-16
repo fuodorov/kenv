@@ -29,7 +29,6 @@ class KapchinskyEquations:
         xp = X[1]
         y = X[2]
         yp = X[3]
-        phi = X[4]
 
         g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
         dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
@@ -55,9 +54,8 @@ class KapchinskyEquations:
         dydz = yp
         dypdz = 2*P / (x + y) + emitt_y*emitt_y / y**3 - K_y*y - \
                 dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g) + K_corr_y
-        dphidz = -K_s**0.5
 
-        return [dxdz, dxpdz, dydz, dypdz, dphidz]
+        return [dxdz, dxpdz, dydz, dypdz]
 
 
     def centroid_prime(self,
