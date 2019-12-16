@@ -38,17 +38,6 @@ class KapchinskyEquations:
 
         '''
 
-        beamline = self.accelerator.Bz_beamline
-        for element in beamline.values():
-            if z - element.z_start < self.accelerator.step:
-                S = [element.x, element.xp, element.y, element.yp]
-                X = transition_coord(X, S)
-                element.z_start = 0
-            if z - element.z_stop < self.accelerator.step:
-                S = [-element.x,-element.xp,-element.y,-element.yp]
-                X = transition_coord(X, S)
-                element.z_stop = 0
-
         x = X[0]
         xp = X[1]
         y = X[2]
@@ -90,17 +79,6 @@ class KapchinskyEquations:
          Kapchinscky equation for centroid trajectory.
 
         '''
-
-        beamline = self.accelerator.Bz_beamline
-        for element in beamline.values():
-            if z - element.z_start < self.accelerator.step:
-                S = [element.x, element.xp, element.y, element.yp]
-                X = transition_coord(X, S)
-                element.z_start = 0
-            if z - element.z_stop < self.accelerator.step:
-                S = [-element.x,-element.xp,-element.y,-element.yp]
-                X = transition_coord(X, S)
-                element.z_stop = 0
 
         x = X[0]
         xp = X[1]
@@ -161,7 +139,7 @@ class Simulation:
         self.accelerator = accelerator
 
     def track(self,
-              rtol:float=1e-6):
+              rtol:float=1e-3):
         '''Tracking!'''
 
         Equations = KapchinskyEquations(self.beam, self.accelerator)
