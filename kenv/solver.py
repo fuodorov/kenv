@@ -85,21 +85,11 @@ class KapchinskyEquations:
         y_corr = y*np.cos(offset_yp) - offset_y
         r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
 
-        Bz = self.accelerator.Bz(z)
-        Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - self.accelerator.dBzdz(z)*x_corr/2
-        By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - self.accelerator.dBzdz(z)*y_corr/2
         Gz = self.accelerator.Gz(z)
+        Bz = self.accelerator.Bz(z)
+        Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - self.accelerator.dBzdz(z)*x_corr
+        By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - self.accelerator.dBzdz(z)*y_corr
         Brho = p/self.beam.charge
-
-        #for i in range(2, k):
-        #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k, order=2*k+1)
-        #    print(Bz_diff)!!!
-        #    Bz = Bz + (-1)**k/(misc.factorial(k)**2)*Bz_diff*(r_corr/2)**(2*k)
-        #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k-1, order=2*k+1)
-        #    Bx = Bx + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(x_corr/2)**(2*k-1)
-        #    By = By + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(y_corr/2)**(2*k-1)
-        #     if Bz_diff == 0:
-        #         break
 
         dxdz = xp
         dxpdz = -dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho

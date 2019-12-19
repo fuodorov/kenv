@@ -107,6 +107,7 @@ def read_elements(beamline: dict,
             )
             F_prime = F_prime + f_prime(z)
 
+
             #offset correction
             z_data = np.linspace(element.z_start, element.z_stop, n)
             f_x = interpolate.interp1d(
