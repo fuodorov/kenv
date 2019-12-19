@@ -85,16 +85,20 @@ class KapchinskyEquations:
         y_corr = y*np.cos(offset_yp) - offset_y
         r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
 
+        dBzdz = self.accelerator.dBzdz(z)
+        d2Bzdz2 = misc.derivative(self.accelerator.dBzdz, z, dx=self.accelerator.dz, n=1)
         Gz = self.accelerator.Gz(z)
-        Bz = self.accelerator.Bz(z)
-        Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - self.accelerator.dBzdz(z)*x_corr
-        By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - self.accelerator.dBzdz(z)*y_corr
+        Bz = self.accelerator.Bz(z) - d2Bzdz2*r_corr**2/4*2
+        Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - dBzdz*x_corr/2*2
+        By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - dBzdz*y_corr/2*2
         Brho = p/self.beam.charge
 
+        dEzdz = self.accelerator.dEzdz(z)
+
         dxdz = xp
-        dxpdz = -dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho
+        dxpdz = -dgdz*xp / (beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho
         dydz = yp
-        dypdz = -dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g) + (Bx - xp*Bz) / Brho
+        dypdz = -dgdz*yp / (beta*g) - d2gdz2*y / (2*beta*beta*g) + (Bx - xp*Bz) / Brho
         dphidz = Bz / (2*Brho)
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
