@@ -73,7 +73,7 @@ class KapchinskyEquations:
         d2gdz2 = self.beam.charge*self.accelerator.dEzdz(z)/mass_rest_electron
         g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
         beta = np.sqrt(1 - 1 / (g*g))
-        p = g*beta*mass_rest_electron
+        p = g*beta*mass_rest_electron*1e6/speed_light
 
         offset_x = self.accelerator.Dx(z)
         offset_xp = self.accelerator.Dxp(z)
@@ -86,7 +86,7 @@ class KapchinskyEquations:
         Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - self.accelerator.dBzdz(z)*x_corr/2
         By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - self.accelerator.dBzdz(z)*y_corr/2
         Gz = self.accelerator.Gz(z)
-        Brho = p*1e6/(self.beam.charge*speed_light)
+        Brho = p/self.beam.charge
 
         dxdz = xp
         dxpdz = -dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho
