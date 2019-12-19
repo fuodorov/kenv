@@ -2,7 +2,7 @@
 '''Simulation of the envelope beam in the accelerator.'''
 
 import numpy as np
-from scipy import interpolate, integrate
+from scipy import interpolate, integrate, misc
 from scipy.integrate import solve_ivp
 from .constants import *
 
@@ -57,7 +57,8 @@ class KapchinskyEquations:
 
     def centroid_prime(self,
                        z:np.arange,
-                       X:list) -> list:
+                       X:list,
+                       k=3) -> list:
         '''Located derivative for further integration
          Kapchinscky equation for centroid trajectory.
 
@@ -89,6 +90,15 @@ class KapchinskyEquations:
         By = self.accelerator.By(z) + self.accelerator.Gz(z)*x - self.accelerator.dBzdz(z)*y_corr/2
         Gz = self.accelerator.Gz(z)
         Brho = p/self.beam.charge
+
+        #for i in range(2, k):
+        #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k, order=2*k+1)
+        #    Bz = Bz + (-1)**k/(misc.factorial(k)**2)*Bz_diff*(r_corr/2)**(2*k)
+        #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k-1, order=2*k+1)
+        #    Bx = Bx + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(x_corr/2)**(2*k-1)
+        #    By = By + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(y_corr/2)**(2*k-1)
+        #    if Bz_diff == 0:
+        #        break
 
         dxdz = xp
         dxpdz = -dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho
