@@ -5,7 +5,6 @@
 
 import numpy as np
 from scipy import interpolate, integrate
-from scipy.optimize import fsolve
 
 __all__ = ['Element',
            'Accelerator',
@@ -29,7 +28,7 @@ class Element:
     z_start = .0e0
     z_stop = .0e0
     length = .0e0
-
+    field = .0e0
     def __init__(self,
                  z0: float,
                  max_field: float,
@@ -50,7 +49,7 @@ class Element:
         self.yp = yp
 
 def read_elements(beamline: dict,
-                  z:np.arange) -> interpolate.interp1d:
+                  z:np.arange,*, n=1000) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
@@ -62,9 +61,13 @@ def read_elements(beamline: dict,
     F = 0
     F_prime = 0
     F_int = 0
+    offset_correct_x = 0
+    offset_correct_xp = 0
+    offset_correct_y = 0
+    offset_correct_yp = 0
     if not beamline:
-        z_data = [i/1000 for i in range(1000)]
-        F_data = [0 for i in range(1000)]
+        z_data = [i/n for i in range(n)]
+        F_data = [0 for i in range(n)]
         f = interpolate.interp1d(
             z_data, F_data,
             fill_value=(0, 0), bounds_error=False
@@ -72,6 +75,10 @@ def read_elements(beamline: dict,
         F = F + f(z)
         F_prime = F
         F_int = F
+        offset_correct_x = F
+        offset_correct_xp = F
+        offset_correct_y = F
+        offset_correct_yp = F
     else:
         for element in beamline.values():
             if not (element.file_name in field_files):
@@ -87,6 +94,10 @@ def read_elements(beamline: dict,
             )
             F = F + f(z)
 
+            element.length = (integrate.cumtrapz(f(z), z)**2)[-1]/(integrate.cumtrapz(f(z)**2, z))[-1]
+            element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
+            element.z_start = element.z0 - element.length/2
+            element.z_stop = element.z0 + element.length/2
             #derivative
             z_data_prime = z_data
             F_data_prime = np.gradient(F_data, dz)
@@ -96,9 +107,29 @@ def read_elements(beamline: dict,
             )
             F_prime = F_prime + f_prime(z)
 
-            element.length = (integrate.cumtrapz(f(z), z)**2/integrate.cumtrapz(f(z)**2, z))[-1]
-            element.z_start = element.z0 - element.length/2
-            element.z_stop = element.z0 + element.length/2
+            #offset correction
+            z_data = np.linspace(element.z_start, element.z_stop, n)
+            f_x = interpolate.interp1d(
+                z_data, [element.x for i in range(n)],
+                fill_value=(0,0), bounds_error=False
+            )
+            f_xp = interpolate.interp1d(
+                z_data, [element.xp for i in range(n)],
+                fill_value=(0, 0), bounds_error=False
+            )
+            f_y = interpolate.interp1d(
+                z_data, [element.y for i in range(n)],
+                fill_value=(0, 0), bounds_error=False
+            )
+            f_yp = interpolate.interp1d(
+                z_data, [element.yp for i in range(n)],
+                fill_value=(0, 0), bounds_error=False
+            )
+
+            offset_correct_x = offset_correct_x + f_x(z)
+            offset_correct_xp = offset_correct_xp + f_xp(z)
+            offset_correct_y = offset_correct_y + f_y(z)
+            offset_correct_yp = offset_correct_yp + f_yp(z)
 
     F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
     F_prime = interpolate.interp1d(z, F_prime, kind='cubic', fill_value=(0, 0), bounds_error=False)
@@ -106,8 +137,12 @@ def read_elements(beamline: dict,
     F_int = integrate.cumtrapz(F(z), z)
     F_int = interpolate.interp1d(z[1:], F_int, kind='cubic', fill_value=(F_int[0], F_int[-1]), bounds_error=False)
 
-    return F, F_prime, F_int
+    offset_correct_x = interpolate.interp1d(z, offset_correct_x, kind='linear', fill_value=(0, 0), bounds_error=False)
+    offset_correct_y = interpolate.interp1d(z, offset_correct_y, kind='linear', fill_value=(0, 0), bounds_error=False)
+    offset_correct_xp = interpolate.interp1d(z, offset_correct_xp, kind='linear', fill_value=(0, 0), bounds_error=False)
+    offset_correct_yp = interpolate.interp1d(z, offset_correct_yp, kind='linear', fill_value=(0, 0), bounds_error=False)
 
+    return F, F_prime, F_int, offset_correct_x, offset_correct_xp, offset_correct_y, offset_correct_yp
 
 class Accelerator:
     '''Create an accelerator.
@@ -151,6 +186,10 @@ class Accelerator:
     Bydz = interpolate.interp1d
     Ezdz = interpolate.interp1d
     Gzdz = interpolate.interp1d
+    Dx = interpolate.interp1d
+    Dxp = interpolate.interp1d
+    Dy = interpolate.interp1d
+    Dyp = interpolate.interp1d
 
     def __init__(self,
                  z_start: float,
@@ -202,18 +241,13 @@ class Accelerator:
         file_name --- experimental profile of the Ez field
 
         '''
-        self.Ez_beamline[name] = Element(center, max_field, file_name, name,
-                                         x=x, xp=xp, y=y, yp=yp)
+        self.Ez_beamline[name] = Element(center, max_field, file_name, name)
+
     def add_quadrupole(self,
                        name: str,
                        center: float,
                        max_field: float,
-                       file_name: str,
-                       *,
-                       x: float=0.0,
-                       xp: float=0.0,
-                       y: float=0.0,
-                       yp: float=0.0) -> None:
+                       file_name: str) -> None:
         '''Creates a quadrupole in the accelerator.
 
         Creates a quadrupole in the accelerator with parameters:
@@ -223,18 +257,13 @@ class Accelerator:
         file_name --- experimental profile of the Gz field
 
         '''
-        self.Gz_beamline[name] = Element(center, max_field, file_name, name,
-                                         x=x, xp=xp, y=y, yp=yp)
+        self.Gz_beamline[name] = Element(center, max_field, file_name, name)
+
     def add_corrector_x(self,
                         name: str,
                         center: float,
                         max_field: float,
-                        file_name: str,
-                        *,
-                        x: float=0.0,
-                        xp: float=0.0,
-                        y: float=0.0,
-                        yp: float=0.0) -> None:
+                        file_name: str) -> None:
         '''Creates a corrector in the accelerator.
 
         Creates a corrector in the accelerator with parameters:
@@ -244,18 +273,13 @@ class Accelerator:
         file_name --- experimental profile of the By field
 
         '''
-        self.By_beamline[name] = Element(center, max_field, file_name, name,
-                                         x=x, xp=xp, y=y, yp=yp)
+        self.By_beamline[name] = Element(center, max_field, file_name, name)
+
     def add_corrector_y(self,
                         name: str,
                         center: float,
                         max_field: float,
-                        file_name: str,
-                        *,
-                        x: float=0.0,
-                        xp: float=0.0,
-                        y: float=0.0,
-                        yp: float=0.0) -> None:
+                        file_name: str) -> None:
         '''Creates a corrector in the accelerator.
 
         Creates a corrector in the accelerator with parameters:
@@ -265,8 +289,8 @@ class Accelerator:
         file_name --- experimental profile of the Bx field
 
         '''
-        self.Bx_beamline[name] = Element(center, max_field, file_name, name,
-                                         x=x, xp=xp, y=y, yp=yp)
+        self.Bx_beamline[name] = Element(center, max_field, file_name, name)
+
     def delete_solenoid(self,
                         name: str='all') -> None:
         '''Delete a solenoid in the accelerator.
@@ -345,12 +369,12 @@ class Accelerator:
     def compile(self) -> None:
         '''Compilation of the accelerator.'''
 
-        self.Bz, self.dBzdz, self.Bzdz = read_elements(self.Bz_beamline, self.parameter)
-        self.Bx, self.dBxdz, self.Bxdz = read_elements(self.Bx_beamline, self.parameter)
-        self.By, self.dBydz, self.Bydz = read_elements(self.By_beamline, self.parameter)
-        self.Ez, self.dEzdz, self.Ezdz = read_elements(self.Ez_beamline, self.parameter)
-        self.Gz, self.dGzdz, self.Gzdz = read_elements(self.Gz_beamline, self.parameter)
-
+        zero_box = 0
+        self.Bz, self.dBzdz, self.Bzdz, self.Dx, self.Dxp, self.Dy, self.Dyp  = read_elements(self.Bz_beamline, self.parameter)
+        self.Bx, self.dBxdz, self.Bxdz, *zero_box = read_elements(self.Bx_beamline, self.parameter)
+        self.By, self.dBydz, self.Bydz, *zero_box = read_elements(self.By_beamline, self.parameter)
+        self.Ez, self.dEzdz, self.Ezdz, *zero_box = read_elements(self.Ez_beamline, self.parameter)
+        self.Gz, self.dGzdz, self.Gzdz, *zero_box = read_elements(self.Gz_beamline, self.parameter)
 
     def __str__(self):
         string = 'Accelerator structure.\n'
@@ -361,24 +385,20 @@ class Accelerator:
                 element.x, element.xp, element.y, element.yp)
         string += '\tAccelerating modules:\n'
         for element in self.Ez_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name,
-                element.x, element.xp, element.y, element.yp)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name)
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name,
-                element.x, element.xp, element.y, element.yp)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name)
         string += '\tCorrectors x:\n'
         for element in self.By_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name,
-                element.x, element.xp, element.y, element.yp)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name)
         string += '\tCorrectors y:\n'
         for element in self.Bx_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name,
-                element.x, element.xp, element.y, element.yp)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name)
         return string
 
     add_sol = add_new_solenoid = add_solenoid

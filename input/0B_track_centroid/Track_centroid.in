@@ -1,0 +1,244 @@
+&NEWRUN
+ Head=' Example of ASTRA users manual'
+ 
+ RUN=1
+ 
+ Distribution = 'Example.ini',	Xoff=0.0,	Yoff=0.0,
+ 
+ Loop=F, NLoop=2,  
+ 
+ TRACK_ALL=T,     Auto_phase=F
+ 
+ Phase_Scan=F
+ 
+ H_max=1.0000E-02,     H_min=1.0000E-03
+
+ EmitS=.T.
+ 
+ PhaseS=.T.
+ 
+ TrackS=.T.
+ 
+ RefS=.t.
+ 
+ TcheckS=.T.
+ 
+ CathodeS=.t.
+ 
+ High_res=.T 
+
+ !Q_Schottky=0.1
+
+ C_EmitS = True
+
+Check_ref_part=f
+
+/
+
+
+&SCAN
+   
+ LScan=f
+  
+
+ Scan_para='Q_K(1)'
+ 
+ !Scan_para='MaxE(1)'
+
+ !Scan_para='MaxB(1)' 
+ 
+!Scan_para='MaxB(2)' 
+
+ !Scan_para='S_pos(1)'
+ 
+ S_min=1 S_max=5, S_numb=10
+ 
+ !S_zmin=4  S_zmax=5
+ 
+ !FOM(1)='hor.emit'
+ 
+ !FOM(2)='ver.tr.emit'
+ 
+! FOM(3)='hor.emit' 
+
+ FOM(4)='hor.spot'
+
+ FOM(5)='ver.spot'
+
+ !FOM(6)='rms energy'
+
+ !FOM(7)='momentum'
+
+ FOM(8)='charge'
+
+ FOM(9)='ver emit'
+
+ !FOM(10)='length'
+/
+
+
+
+&OUTPUT
+ 
+ ZSTART=0.7,	ZSTOP=15
+  
+ Zemit=100,       Zphase=20
+ 
+ RefS=T
+ 
+ EmitS=T,     PhaseS=T
+
+ Tr_EmitS=T, 
+
+ 
+/
+
+
+&CHARGE
+ 
+LSPCH=t
+ 
+ Nrad=9, Cell_var=3.0,	Nlong_in=19
+ 
+ min_grid=0.001
+ 
+ Max_Scale=0.001
+ 
+ Lmirror=t 
+
+
+/
+
+&CAVITY
+ 
+ LEField=t,
+ 
+ 
+ File_Efield(1)='DC-3D_liu4',  C_pos(1)=0.0000, C_higher_order(1) = f
+ 
+ Nue(1)=0,	MaxE(1)=-0.0
+
+
+ File_Efield(2)='DC-3D_liu4',  C_pos(2)=7.090, C_higher_order(2) = t
+ 
+ Nue(2)=0,	MaxE(2)=-0.9
+
+
+ File_Efield(3)='DC-3D_liu4',  C_pos(3)=8.472, C_higher_order(3) = t
+ 
+ Nue(3)=0,	MaxE(3)=-0.9
+
+ File_Efield(4)='DC-3D_liu4',  C_pos(4)=9.854, C_higher_order(4) = t
+ 
+ Nue(4)=0,	MaxE(4)=-0.9
+
+
+ File_Efield(5)='DC-3D_liu4',  C_pos(5)=11.236, C_higher_order(5) = t
+ 
+ Nue(5)=0,	MaxE(5)=-0.9
+
+
+ File_Efield(6)='DC-3D_liu4',  C_pos(6)=12.618, C_higher_order(6) = t
+ 
+ Nue(6)=0,	MaxE(6)=-0.9
+
+
+ File_Efield(7)='DC-3D_liu4',  C_pos(7)=14.0, C_higher_order(7) = t
+ 
+ Nue(7)=0,	MaxE(7)=-0.9
+
+/
+ 
+
+&SOLENOID
+ 
+LBField=T,
+ 
+ 
+File_Bfield(1)='B_z(z).dat', S_pos(1)=0.45
+ 
+MaxB(1)=-0.00,  S_smooth(1)=4
+
+ 
+File_Bfield(2)='B_z(z).dat', S_pos(2)=0.95
+ 
+MaxB(2)=0.001,  S_smooth(2)=4
+
+
+File_Bfield(3)='B_z(z).dat', S_pos(3)=2.10
+ 
+MaxB(3)=0.0300,  S_smooth(3)=4
+
+
+File_Bfield(4)='B_z(z).dat', S_pos(4)=2.9077
+ 
+MaxB(4)=0.001,  S_smooth(4)=4
+
+
+File_Bfield(5)='B_z(z).dat', S_pos(5)=4.0024
+ 
+MaxB(5)=0.0300,  S_smooth(5)=4
+
+
+File_Bfield(6)='B_z(z).dat', S_pos(6)=5.642
+
+MaxB(6)=0.0300,  S_smooth(6)=4
+
+
+File_Bfield(7)='B_z(z).dat', S_pos(7)=6.760
+ 
+MaxB(7)=0.001,  S_smooth(7)=4
+
+
+
+/
+
+
+
+
+
+&QUADRUPOLE
+
+LQUAD=f,
+
+Q_length(1)=0.2, Q_K(1)= 6.00,  Q_pos(1)=15.28, Q_bore(1)= 0.075,
+
+Q_length(2)=0.2, Q_K(2)= -7.9,  Q_pos(2)=15.800, Q_bore(2)= 0.075,
+
+Q_length(3)=0.2, Q_K(3)= 6.0,  Q_pos(3)=17.002, Q_bore(3)= 0.075,
+
+Q_length(4)=0.2, Q_K(4)= -6.5,  Q_pos(4)=17.72, Q_bore(4)= 0.075,
+
+Q_length(5)=0.2, Q_K(5)= 6.5,  Q_pos(5)=18.23, Q_bore(5)= 0.075,
+
+Q_length(6)=0.2, Q_K(6)= -5.0,  Q_pos(6)=18.760, Q_bore(6)= 0.075,
+
+Q_length(7)=0.2, Q_K(7)= 5.65,  Q_pos(7)=20.53, Q_bore(7)= 0.075,
+
+Q_length(8)=0.2, Q_K(8)= -6.0,  Q_pos(8)=21.04, Q_bore(8)= 0.075,
+
+Q_length(9)=0.2, Q_K(9)= 3.47,  Q_pos(9)=21.57, Q_bore(9)= 0.075,
+ 
+Q_length(10)=0.2, Q_K(10)= -6.38,  Q_pos(10)=22.22, Q_bore(10)= 0.075,
+
+Q_length(11)=0.2, Q_K(11)= 6.6,  Q_pos(11)=22.75, Q_bore(11)= 0.075,
+
+Q_length(12)=0.2, Q_K(12)= -6.38,  Q_pos(12)=23.44, Q_bore(12)= 0.075,
+
+Q_length(13)=0.2, Q_K(13)= 6.6,  Q_pos(13)=23.96, Q_bore(13)= 0.075,
+/
+
+
+
+&Aperture
+  Lapert=f
+  File_Aperture(1)='aperture.dat'
+
+/
+
+
+
+
+
+
+
