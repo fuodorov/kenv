@@ -58,7 +58,7 @@ class KapchinskyEquations:
     def centroid_prime(self,
                        z:np.arange,
                        X:list,
-                       k=3) -> list:
+                       k=4) -> list:
         '''Located derivative for further integration
          Kapchinscky equation for centroid trajectory.
 
@@ -93,12 +93,13 @@ class KapchinskyEquations:
 
         #for i in range(2, k):
         #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k, order=2*k+1)
+        #    print(Bz_diff)!!!
         #    Bz = Bz + (-1)**k/(misc.factorial(k)**2)*Bz_diff*(r_corr/2)**(2*k)
         #    Bz_diff = misc.derivative(self.accelerator.Bz, z, dx=self.accelerator.dz, n=2*k-1, order=2*k+1)
         #    Bx = Bx + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(x_corr/2)**(2*k-1)
         #    By = By + (-1)**k/(misc.factorial(k)*misc.factorial(k-1))*Bz_diff*(y_corr/2)**(2*k-1)
-        #    if Bz_diff == 0:
-        #        break
+        #     if Bz_diff == 0:
+        #         break
 
         dxdz = xp
         dxpdz = -dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g) - (By - yp*Bz) / Brho
