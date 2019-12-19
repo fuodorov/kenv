@@ -62,6 +62,7 @@ class KapchinskyEquations:
          Kapchinscky equation for centroid trajectory.
 
         '''
+        dz = self.accelerator.dz
 
         x = X[0]
         xp = X[1]
@@ -80,7 +81,8 @@ class KapchinskyEquations:
         offset_y = self.accelerator.Dy(z)
         offset_yp = self.accelerator.Dyp(z)
         x_corr = x*np.cos(offset_xp) - offset_x
-        y_corr = x*np.cos(offset_yp) - offset_y
+        y_corr = y*np.cos(offset_yp) - offset_y
+        r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
 
         Bz = self.accelerator.Bz(z)
         Bx = self.accelerator.Bx(z) + self.accelerator.Gz(z)*y - self.accelerator.dBzdz(z)*x_corr/2
