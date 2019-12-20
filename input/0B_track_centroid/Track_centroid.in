@@ -157,37 +157,37 @@ LBField=T,
  
 File_Bfield(1)='B_z(z).dat', S_pos(1)=0.45
  
-MaxB(1)=-0.00,  S_smooth(1)=4, S_xoff(1)=0.002, S_xrot(1)=0.005
+MaxB(1)=-0.00,  S_smooth(1)=4, S_xoff(1)=0.002, S_xrot(1)=0.005, S_yrot(1)=0.005
 
  
 File_Bfield(2)='B_z(z).dat', S_pos(2)=0.95
  
-MaxB(2)=0.001,  S_smooth(2)=4, S_xoff(2)=0.002, S_xrot(2)=0.005
+MaxB(2)=0.001,  S_smooth(2)=4, S_xoff(2)=0.002, S_xrot(2)=0.005, S_yrot(2)=0.005
 
 
 File_Bfield(3)='B_z(z).dat', S_pos(3)=2.10
  
-MaxB(3)=0.0300,  S_smooth(3)=4, S_xoff(3)=0.002, S_xrot(3)=0.005
+MaxB(3)=0.0300,  S_smooth(3)=4, S_xoff(3)=0.002, S_xrot(3)=0.005, S_yrot(3)=0.005
 
 
 File_Bfield(4)='B_z(z).dat', S_pos(4)=2.9077
  
-MaxB(4)=0.001,  S_smooth(4)=4, S_xoff(4)=0.002, S_xrot(4)=0.005
+MaxB(4)=0.001,  S_smooth(4)=4, S_xoff(4)=0.002, S_xrot(4)=0.005, S_yrot(4)=0.005
 
 
 File_Bfield(5)='B_z(z).dat', S_pos(5)=4.0024
  
-MaxB(5)=0.0300,  S_smooth(5)=4, S_xoff(5)=0.002, S_xrot(5)=0.005
+MaxB(5)=0.0300,  S_smooth(5)=4, S_xoff(5)=0.002, S_xrot(5)=0.005, S_yrot(5)=0.005
 
 
 File_Bfield(6)='B_z(z).dat', S_pos(6)=5.642
 
-MaxB(6)=0.0300,  S_smooth(6)=4, S_xoff(6)=0.002, S_xrot(6)=0.005
+MaxB(6)=0.0300,  S_smooth(6)=4, S_xoff(6)=0.002, S_xrot(6)=0.005, S_yrot(6)=0.005
 
 
 File_Bfield(7)='B_z(z).dat', S_pos(7)=6.760
  
-MaxB(7)=0.001,  S_smooth(7)=4, S_xoff(7)=0.002, S_xrot(7)=0.005
+MaxB(7)=0.001,  S_smooth(7)=4, S_xoff(7)=0.002, S_xrot(7)=0.005, S_yrot(7)=0.005
 
 
 

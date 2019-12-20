@@ -77,11 +77,8 @@ class KapchinskyEquations:
         offset_xp = self.accelerator.Dxp(z)
         offset_y = self.accelerator.Dy(z)
         offset_yp = self.accelerator.Dyp(z)
-        theta = np.sqrt((offset_xp)**2 + (offset_yp)**2)
         x_corr = x - offset_x
-        xp_corr = xp
         y_corr = y - offset_y
-        yp_corr = yp
         r_corr = np.sqrt((x_corr)**2 + (y_corr)**2)
 
         Bx = self.accelerator.Bx(z)
@@ -90,22 +87,22 @@ class KapchinskyEquations:
         dBzdz = self.accelerator.dBzdz(z)
         d2Bzdz2 = misc.derivative(self.accelerator.dBzdz, z, dx=self.accelerator.dz, n=1)
         Gz = self.accelerator.Gz(z)
-        Bz = Bz - d2Bzdz2*r_corr**2/4 - d2Bzdz2*r_corr**2/4      # row remainder
-        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 - dBzdz*x_corr/2 + Bz*offset_xp   # row remainder
-        By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2 + Bz*offset_yp  # row remainder
+        Bz = Bz - d2Bzdz2*r_corr**2/4 - d2Bzdz2*r_corr**2/4                     # row remainder
+        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 - dBzdz*x_corr/2 + Bz*offset_xp    # row remainder
+        By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2 + Bz*offset_yp    # row remainder
         Brho = p/self.beam.charge
 
         Ez = self.accelerator.Ez(z)*1e6
         dEzdz = self.accelerator.dEzdz(z)*1e6
         d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z, dx=self.accelerator.dz, n=1)
-        Ex = - dEzdz*x_corr/2 - dEzdz*x_corr/2              # row remainder
-        Ey = - dEzdz*y_corr/2 - dEzdz*y_corr/2              # row remainder
-        Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4 # row remainder
+        Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4               # row remainder
+        Ex = - dEzdz*x_corr/2 - dEzdz*x_corr/2 + Ez*offset_xp             # row remainder
+        Ey = - dEzdz*y_corr/2 - dEzdz*y_corr/2 + Ez*offset_yp             # row remainder
 
-        dxdz = xp_corr
-        dxpdz = (Ex - Ez*xp_corr) / (beta*speed_light*Brho) - (By - yp_corr*Bz) / Brho
-        dydz = yp_corr
-        dypdz = (Ey - Ez*yp_corr) / (beta*speed_light*Brho) + (Bx - xp_corr*Bz) / Brho
+        dxdz = xp
+        dxpdz = (Ex - Ez*xp) / (beta*speed_light*Brho) - (By - yp*Bz) / Brho
+        dydz = yp
+        dypdz = (Ey - Ez*yp) / (beta*speed_light*Brho) + (Bx - xp*Bz) / Brho
         dphidz = Bz / (2*Brho)
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]

@@ -4272,7 +4272,7 @@
  S_XOFF  = 7*2.000000000000000E-003  , 63*0.000000000000000E+000  ,
  S_YOFF  = 70*0.000000000000000E+000  ,
  S_XROT  = 7*5.000000000000000E-003  , 63*0.000000000000000E+000  ,
- S_YROT  = 70*0.000000000000000E+000  
+ S_YROT  = 7*5.000000000000000E-003  , 63*0.000000000000000E+000  
  /
  &QUADRUPOLE
  LOOP    = F,
@@ -4937,9 +4937,9 @@
  STAT    = 188*F, T, F, T, F, T, F, T, F, T, F, T, F, T, F, T, F, 198*T
  /
  End of Input deck
-Example.ini                     0.0000D+00  0.7663D-06  F
-track_centroid.0000.001         0.0000D+00  7.6630D-07  F
+Example.ini                     0.0000D+00  0.7664D-06  F
+track_centroid.0000.001         0.0000D+00  7.6635D-07  F
 
-     execution started:   20.12.2019     17:13
-     execution finished:  20.12.2019     17:13
-     execution time:  1.23 sek                         
+     execution started:   20.12.2019     22:24
+     execution finished:  20.12.2019     22:24
+     execution time:  1.22 sek                         
