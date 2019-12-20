@@ -63,7 +63,6 @@ class KapchinskyEquations:
          Kapchinscky equation for centroid trajectory.
 
         '''
-        dz = self.accelerator.dz
 
         x = X[0]
         xp = X[1]
