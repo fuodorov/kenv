@@ -6,3 +6,4 @@ matplotlib
 bokeh
 holoviews
 PyQt5
+pandas

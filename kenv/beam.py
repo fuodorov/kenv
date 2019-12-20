@@ -87,7 +87,7 @@ class Beam:
                     +'\tCurrent\t%0.0f A'%(self.current) + '\n' \
                     +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
                     +'\tTotal momentum\t%0.3f MeV/c'%(self.momentum) + '\n' \
-                    +'\tRel. factor g\t%0.3f'%(self.gamma) + '\n' \
+                    +'\tRel. factor\t%0.3f'%(self.gamma) + '\n' \
                     +'\tRadius x\t%0.1f mm'%(self.radius_x*1e3) + '\n' \
                     +'\tRadius y\t%0.1f mm'%(self.radius_y*1e3) + '\n' \
                     +'\tRadius x prime\t%0.1f mrad'%(self.radius_xp*1e3) + '\n' \
