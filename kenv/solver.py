@@ -113,7 +113,9 @@ class Simulation:
     Basic parameters after track:
     gamma,
     envelope_x and envelope_y,
+    envelope_xp and envelope_yp,
     centroid_x and centroid_y,
+    centroid_xp and centroid_yp,
     larmor_angle
 
     '''

@@ -20,7 +20,7 @@ class Element:
     file_name --- field profile,
     name --- unique element name,
 
-    and shifted to [x, xp, y, yp],
+    and shifted by x, xp, y, yp,
 
     and z_start, z_stop, length
 
@@ -107,7 +107,6 @@ def read_elements(beamline: dict,
             )
             F_prime = F_prime + f_prime(z)
 
-
             #offset correction
             z_data = np.linspace(element.z_start, element.z_stop, n)
             f_x = interpolate.interp1d(
@@ -161,6 +160,7 @@ class Accelerator:
     Bx_beamline, By_beamline,
     function:
     Ez, Bz, Gz, Bx, By,
+    Dx, Dxp, Dy, Dyp,
     and
     dEzdz, dBzdz, dGzdz, dBxdz, dBydz,
     and
@@ -218,6 +218,7 @@ class Accelerator:
         center [m] --- solenoid's center,
         max_field [T] --- solenoid's maximum field,
         file_name --- experimental profile of the Bz field
+        and shifted by x [m], xp [rad], y [m], yp [rad]
 
         '''
         self.Bz_beamline[name] = Element(center, max_field, file_name, name,
@@ -240,6 +241,7 @@ class Accelerator:
         center [m] --- accelerating module's center,
         max_field [MV/m] --- accelerating module's maximum field,
         file_name --- experimental profile of the Ez field
+        and shifted by x [m], xp [rad], y [m], yp [rad]
 
         '''
         self.Ez_beamline[name] = Element(center, max_field, file_name, name,
@@ -249,12 +251,7 @@ class Accelerator:
                        name: str,
                        center: float,
                        max_field: float,
-                       file_name: str,
-                       *,
-                       x: float=0.0,
-                       xp: float=0.0,
-                       y: float=0.0,
-                       yp: float=0.0) -> None:
+                       file_name: str) -> None:
         '''Creates a quadrupole in the accelerator.
 
         Creates a quadrupole in the accelerator with parameters:
@@ -264,8 +261,7 @@ class Accelerator:
         file_name --- experimental profile of the Gz field
 
         '''
-        self.Gz_beamline[name] = Element(center, max_field, file_name, name,
-                                         x=x, xp=xp, y=y, yp=yp)
+        self.Gz_beamline[name] = Element(center, max_field, file_name, name)
 
     def add_corrector_x(self,
                         name: str,
@@ -383,17 +379,12 @@ class Accelerator:
         self.By, self.dBydz, self.Bydz, *zero_box = read_elements(self.By_beamline, self.parameter)
         self.Bz, self.dBzdz, self.Bzdz, Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz  = read_elements(self.Bz_beamline, self.parameter)
         self.Ez, self.dEzdz, self.Ezdz, Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_elements(self.Ez_beamline, self.parameter)
-        self.Gz, self.dGzdz, self.Gzdz, Dx_Gz, Dxp_Gz, Dy_Gz, Dyp_Gz = read_elements(self.Gz_beamline, self.parameter)
+        self.Gz, self.dGzdz, self.Gzdz, *zero_box = read_elements(self.Gz_beamline, self.parameter)
 
-        self.Dx = Dx_Bz(self.z) + Dx_Ez(self.z) + Dx_Gz(self.z)
-        self.Dxp = Dxp_Bz(self.z) + Dxp_Ez(self.z) + Dxp_Gz(self.z)
-        self.Dy = Dy_Bz(self.z) + Dy_Ez(self.z) + Dy_Gz(self.z)
-        self.Dyp = Dyp_Bz(self.z) + Dyp_Ez(self.z) + Dyp_Gz(self.z)
-
-        self.Dx = interpolate.interp1d(self.z, self.Dx, kind='linear', fill_value=(0, 0), bounds_error=False)
-        self.Dxp = interpolate.interp1d(self.z, self.Dxp, kind='linear', fill_value=(0, 0), bounds_error=False)
-        self.Dy = interpolate.interp1d(self.z, self.Dy, kind='linear', fill_value=(0, 0), bounds_error=False)
-        self.Dyp = interpolate.interp1d(self.z, self.Dyp, kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dx = interpolate.interp1d(self.z, Dx_Bz(self.z) + Dx_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dxp = interpolate.interp1d(self.z, Dxp_Bz(self.z) + Dxp_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dy = interpolate.interp1d(self.z, Dy_Bz(self.z) + Dy_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dyp = interpolate.interp1d(self.z, Dyp_Bz(self.z) + Dyp_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
 
     def __str__(self):
         string = 'Accelerator structure.\n'
@@ -409,9 +400,8 @@ class Accelerator:
                 element.x, element.xp, element.y, element.yp)
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name,
-                element.x, element.xp, element.y, element.yp)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name)
         string += '\tCorrectors x:\n'
         for element in self.By_beamline.values():
             string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
