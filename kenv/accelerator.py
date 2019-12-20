@@ -111,7 +111,7 @@ def read_elements(beamline: dict,
             #offset correction
             z_data = np.linspace(element.z_start, element.z_stop, n)
             f_x = interpolate.interp1d(
-                z_data, [element.x for i in range(n)],
+                z_data, [element.x + (z_data[i]-element.z0)*element.xp for i in range(n)],
                 fill_value=(0,0), bounds_error=False
             )
             f_xp = interpolate.interp1d(
@@ -119,7 +119,7 @@ def read_elements(beamline: dict,
                 fill_value=(0, 0), bounds_error=False
             )
             f_y = interpolate.interp1d(
-                z_data, [element.y for i in range(n)],
+                z_data, [element.y + (z_data[i]-element.z0)*element.yp for i in range(n)],
                 fill_value=(0, 0), bounds_error=False
             )
             f_yp = interpolate.interp1d(

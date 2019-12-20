@@ -77,11 +77,12 @@ class KapchinskyEquations:
         offset_xp = self.accelerator.Dxp(z)
         offset_y = self.accelerator.Dy(z)
         offset_yp = self.accelerator.Dyp(z)
-        x_corr = x*np.cos(offset_xp) - offset_x
+        theta = np.sqrt((offset_xp)**2 + (offset_yp)**2)
+        x_corr = x - offset_x
         xp_corr = xp
-        y_corr = y*np.cos(offset_yp) - offset_y
+        y_corr = y - offset_y
         yp_corr = yp
-        r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
+        r_corr = np.sqrt((x_corr)**2 + (y_corr)**2)
 
         Bx = self.accelerator.Bx(z)
         By = self.accelerator.By(z)
@@ -89,10 +90,9 @@ class KapchinskyEquations:
         dBzdz = self.accelerator.dBzdz(z)
         d2Bzdz2 = misc.derivative(self.accelerator.dBzdz, z, dx=self.accelerator.dz, n=1)
         Gz = self.accelerator.Gz(z)
-
-        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 - dBzdz*x_corr/2    # row remainder
-        By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2    # row remainder
         Bz = Bz - d2Bzdz2*r_corr**2/4 - d2Bzdz2*r_corr**2/4      # row remainder
+        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 - dBzdz*x_corr/2 + Bz*offset_xp   # row remainder
+        By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2 + Bz*offset_yp  # row remainder
         Brho = p/self.beam.charge
 
         Ez = self.accelerator.Ez(z)*1e6
