@@ -187,14 +187,10 @@ class Accelerator:
     Bydz = interpolate.interp1d
     Ezdz = interpolate.interp1d
     Gzdz = interpolate.interp1d
-    Dx_Bz = interpolate.interp1d
-    Dxp_Bz = interpolate.interp1d
-    Dy_Bz = interpolate.interp1d
-    Dyp_Bz = interpolate.interp1d
-    Dx_Ez = interpolate.interp1d
-    Dxp_Ez = interpolate.interp1d
-    Dy_Ez = interpolate.interp1d
-    Dyp_Ez = interpolate.interp1d
+    Dx = interpolate.interp1d
+    Dxp = interpolate.interp1d
+    Dy = interpolate.interp1d
+    Dyp = interpolate.interp1d
 
     def __init__(self,
                  z_start: float,
@@ -253,7 +249,12 @@ class Accelerator:
                        name: str,
                        center: float,
                        max_field: float,
-                       file_name: str) -> None:
+                       file_name: str,
+                       *,
+                       x: float=0.0,
+                       xp: float=0.0,
+                       y: float=0.0,
+                       yp: float=0.0) -> None:
         '''Creates a quadrupole in the accelerator.
 
         Creates a quadrupole in the accelerator with parameters:
@@ -263,7 +264,8 @@ class Accelerator:
         file_name --- experimental profile of the Gz field
 
         '''
-        self.Gz_beamline[name] = Element(center, max_field, file_name, name)
+        self.Gz_beamline[name] = Element(center, max_field, file_name, name,
+                                         x=x, xp=xp, y=y, yp=yp)
 
     def add_corrector_x(self,
                         name: str,
@@ -376,11 +378,22 @@ class Accelerator:
         '''Compilation of the accelerator.'''
 
         zero_box = 0
-        self.Bz, self.dBzdz, self.Bzdz, self.Dx_Bz, self.Dxp_Bz, self.Dy_Bz, self.Dyp_Bz  = read_elements(self.Bz_beamline, self.parameter)
+
         self.Bx, self.dBxdz, self.Bxdz, *zero_box = read_elements(self.Bx_beamline, self.parameter)
         self.By, self.dBydz, self.Bydz, *zero_box = read_elements(self.By_beamline, self.parameter)
-        self.Ez, self.dEzdz, self.Ezdz, self.Dx_Ez, self.Dxp_Ez, self.Dy_Ez, self.Dyp_Ez = read_elements(self.Ez_beamline, self.parameter)
-        self.Gz, self.dGzdz, self.Gzdz, *zero_box = read_elements(self.Gz_beamline, self.parameter)
+        self.Bz, self.dBzdz, self.Bzdz, Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz  = read_elements(self.Bz_beamline, self.parameter)
+        self.Ez, self.dEzdz, self.Ezdz, Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_elements(self.Ez_beamline, self.parameter)
+        self.Gz, self.dGzdz, self.Gzdz, Dx_Gz, Dxp_Gz, Dy_Gz, Dyp_Gz = read_elements(self.Gz_beamline, self.parameter)
+
+        self.Dx = Dx_Bz(self.z) + Dx_Ez(self.z) + Dx_Gz(self.z)
+        self.Dxp = Dxp_Bz(self.z) + Dxp_Ez(self.z) + Dxp_Gz(self.z)
+        self.Dy = Dy_Bz(self.z) + Dy_Ez(self.z) + Dy_Gz(self.z)
+        self.Dyp = Dyp_Bz(self.z) + Dyp_Ez(self.z) + Dyp_Gz(self.z)
+
+        self.Dx = interpolate.interp1d(self.z, self.Dx, kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dxp = interpolate.interp1d(self.z, self.Dxp, kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dy = interpolate.interp1d(self.z, self.Dy, kind='linear', fill_value=(0, 0), bounds_error=False)
+        self.Dyp = interpolate.interp1d(self.z, self.Dyp, kind='linear', fill_value=(0, 0), bounds_error=False)
 
     def __str__(self):
         string = 'Accelerator structure.\n'
@@ -396,8 +409,9 @@ class Accelerator:
                 element.x, element.xp, element.y, element.yp)
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tCorrectors x:\n'
         for element in self.By_beamline.values():
             string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
