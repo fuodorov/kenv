@@ -11,7 +11,7 @@
  
  Phase_Scan=F
  
- H_max=1.0000E-02,     H_min=1.0000E-03
+ H_max=1.0000E-01,     H_min=1.0000E-02
 
  EmitS=.T.
  
@@ -100,9 +100,9 @@ LSPCH=t
  
  Nrad=9, Cell_var=3.0,	Nlong_in=19
  
- min_grid=0.001
+ min_grid=0.1
  
- Max_Scale=0.001
+ Max_Scale=0.1
  
  Lmirror=t 
 
@@ -157,37 +157,37 @@ LBField=T,
  
 File_Bfield(1)='B_z(z).dat', S_pos(1)=0.45
  
-MaxB(1)=-0.00,  S_smooth(1)=4
+MaxB(1)=-0.00,  S_smooth(1)=4, S_xoff(1)=0.000, S_xrot(1)=0.003
 
  
 File_Bfield(2)='B_z(z).dat', S_pos(2)=0.95
  
-MaxB(2)=0.001,  S_smooth(2)=4
+MaxB(2)=0.001,  S_smooth(2)=4, S_xoff(2)=0.000, S_xrot(2)=0.003
 
 
 File_Bfield(3)='B_z(z).dat', S_pos(3)=2.10
  
-MaxB(3)=0.0300,  S_smooth(3)=4
+MaxB(3)=0.0300,  S_smooth(3)=4, S_xoff(3)=0.000, S_xrot(3)=0.003
 
 
 File_Bfield(4)='B_z(z).dat', S_pos(4)=2.9077
  
-MaxB(4)=0.001,  S_smooth(4)=4
+MaxB(4)=0.001,  S_smooth(4)=4, S_xoff(4)=0.000, S_xrot(4)=0.003
 
 
 File_Bfield(5)='B_z(z).dat', S_pos(5)=4.0024
  
-MaxB(5)=0.0300,  S_smooth(5)=4
+MaxB(5)=0.0300,  S_smooth(5)=4, S_xoff(5)=0.000, S_xrot(5)=0.003
 
 
 File_Bfield(6)='B_z(z).dat', S_pos(6)=5.642
 
-MaxB(6)=0.0300,  S_smooth(6)=4
+MaxB(6)=0.0300,  S_smooth(6)=4, S_xoff(6)=0.000, S_xrot(6)=0.003
 
 
 File_Bfield(7)='B_z(z).dat', S_pos(7)=6.760
  
-MaxB(7)=0.001,  S_smooth(7)=4
+MaxB(7)=0.001,  S_smooth(7)=4, S_xoff(7)=0.000, S_xrot(7)=0.003
 
 
 

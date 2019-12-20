@@ -41,10 +41,10 @@ class KapchinskyEquations:
         K_x = K_s + K_q
         K_y = K_s - K_q
 
-        emitt_x = self.beam.normalized_emittance_x / (p/mass_rest_electron)
-        emitt_y = self.beam.normalized_emittance_y / (p/mass_rest_electron)
+        emitt_x = self.beam.normalized_emittance_x / (g*beta)
+        emitt_y = self.beam.normalized_emittance_y / (g*beta)
 
-        P = 2*self.beam.current / (alfven_current*(p/mass_rest_electron)**3)
+        P = 2*self.beam.current / (alfven_current * (g*beta)**3)
 
         dxdz = xp
         dxpdz = 2*P / (x + y) + emitt_x*emitt_x / x**3 - K_x*x - \
@@ -57,8 +57,7 @@ class KapchinskyEquations:
 
     def centroid_prime(self,
                        z:np.arange,
-                       X:list,
-                       k=4) -> list:
+                       X:list) -> list:
         '''Located derivative for further integration
          Kapchinscky equation for centroid trajectory.
 
@@ -79,7 +78,9 @@ class KapchinskyEquations:
         offset_y = self.accelerator.Dy(z)
         offset_yp = self.accelerator.Dyp(z)
         x_corr = x*np.cos(offset_xp) - offset_x
+        xp_corr = xp
         y_corr = y*np.cos(offset_yp) - offset_y
+        yp_corr = yp
         r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
 
         Bx = self.accelerator.Bx(z)
@@ -101,10 +102,10 @@ class KapchinskyEquations:
         Ey = - dEzdz*y_corr/2 - dEzdz*y_corr/2              # row remainder
         Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4 # row remainder
 
-        dxdz = xp
-        dxpdz = (Ex - Ez*xp) / (beta*speed_light*Brho) - (By - yp*Bz) / Brho
-        dydz = yp
-        dypdz = (Ey - Ez*yp) / (beta*speed_light*Brho) + (Bx - xp*Bz) / Brho
+        dxdz = xp_corr
+        dxpdz = (Ex - Ez*xp_corr) / (beta*speed_light*Brho) - (By - yp_corr*Bz) / Brho
+        dydz = yp_corr
+        dypdz = (Ey - Ez*yp_corr) / (beta*speed_light*Brho) + (Bx - xp_corr*Bz) / Brho
         dphidz = Bz / (2*Brho)
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]

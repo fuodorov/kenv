@@ -96,8 +96,8 @@ def read_elements(beamline: dict,
 
             element.length = (integrate.cumtrapz(f(z), z)**2)[-1]/(integrate.cumtrapz(f(z)**2, z))[-1]
             element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
-            element.z_start = element.z0 - element.length/2
-            element.z_stop = element.z0 + element.length/2
+            element.z_start = element.z0 - element.length
+            element.z_stop = element.z0 + element.length
             #derivative
             z_data_prime = z_data
             F_data_prime = np.gradient(F_data, dz)
