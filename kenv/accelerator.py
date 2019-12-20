@@ -83,6 +83,8 @@ def read_elements(beamline: dict,
         for element in beamline.values():
             if not (element.file_name in field_files):
                 field_files[element.file_name] = np.loadtxt(element.file_name)
+            if element.z0 >= max(z):
+                break
             M = field_files[element.file_name]
             z_data = M[:,0]
             F_data = M[:,1]
@@ -94,7 +96,7 @@ def read_elements(beamline: dict,
             )
             F = F + f(z)
 
-            element.length = (integrate.cumtrapz(f(z), z)**2)[-1]/(integrate.cumtrapz(f(z)**2, z))[-1]
+            element.length = ((integrate.cumtrapz(f(z), z)[-1])**2)/((integrate.cumtrapz(f(z)**2, z))[-1])
             element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
             element.z_start = element.z0 - element.length
             element.z_stop = element.z0 + element.length
@@ -167,30 +169,19 @@ class Accelerator:
     Ezdz, Bzdz, Gzdz, Bxdz, Bydz
 
     '''
-    Bz_beamline = {}
-    Bx_beamline = {}
-    By_beamline = {}
+    Bx_beamline, By_beamline, Bz_beamline = {}, {}, {}
     Ez_beamline = {}
     Gz_beamline = {}
-    Bz = interpolate.interp1d
-    Bx = interpolate.interp1d
-    By = interpolate.interp1d
+    Bx, By, Bz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
     Ez = interpolate.interp1d
     Gz = interpolate.interp1d
-    dBzdz = interpolate.interp1d
-    dBxdz = interpolate.interp1d
-    dBydz = interpolate.interp1d
+    dBxdz, dBydz, dBzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
     dEzdz = interpolate.interp1d
     dGzdz = interpolate.interp1d
-    Bzdz = interpolate.interp1d
-    Bxdz = interpolate.interp1d
-    Bydz = interpolate.interp1d
+    Bxdz, Bydz, Bzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
     Ezdz = interpolate.interp1d
     Gzdz = interpolate.interp1d
-    Dx = interpolate.interp1d
-    Dxp = interpolate.interp1d
-    Dy = interpolate.interp1d
-    Dyp = interpolate.interp1d
+    Dx, Dxp, Dy, Dyp = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
 
     def __init__(self,
                  z_start: float,
