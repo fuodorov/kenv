@@ -187,10 +187,14 @@ class Accelerator:
     Bydz = interpolate.interp1d
     Ezdz = interpolate.interp1d
     Gzdz = interpolate.interp1d
-    Dx = interpolate.interp1d
-    Dxp = interpolate.interp1d
-    Dy = interpolate.interp1d
-    Dyp = interpolate.interp1d
+    Dx_Bz = interpolate.interp1d
+    Dxp_Bz = interpolate.interp1d
+    Dy_Bz = interpolate.interp1d
+    Dyp_Bz = interpolate.interp1d
+    Dx_Ez = interpolate.interp1d
+    Dxp_Ez = interpolate.interp1d
+    Dy_Ez = interpolate.interp1d
+    Dyp_Ez = interpolate.interp1d
 
     def __init__(self,
                  z_start: float,
@@ -242,7 +246,8 @@ class Accelerator:
         file_name --- experimental profile of the Ez field
 
         '''
-        self.Ez_beamline[name] = Element(center, max_field, file_name, name)
+        self.Ez_beamline[name] = Element(center, max_field, file_name, name,
+                                         x=x, xp=xp, y=y, yp=yp)
 
     def add_quadrupole(self,
                        name: str,
@@ -371,10 +376,10 @@ class Accelerator:
         '''Compilation of the accelerator.'''
 
         zero_box = 0
-        self.Bz, self.dBzdz, self.Bzdz, self.Dx, self.Dxp, self.Dy, self.Dyp  = read_elements(self.Bz_beamline, self.parameter)
+        self.Bz, self.dBzdz, self.Bzdz, self.Dx_Bz, self.Dxp_Bz, self.Dy_Bz, self.Dyp_Bz  = read_elements(self.Bz_beamline, self.parameter)
         self.Bx, self.dBxdz, self.Bxdz, *zero_box = read_elements(self.Bx_beamline, self.parameter)
         self.By, self.dBydz, self.Bydz, *zero_box = read_elements(self.By_beamline, self.parameter)
-        self.Ez, self.dEzdz, self.Ezdz, *zero_box = read_elements(self.Ez_beamline, self.parameter)
+        self.Ez, self.dEzdz, self.Ezdz, self.Dx_Ez, self.Dxp_Ez, self.Dy_Ez, self.Dyp_Ez = read_elements(self.Ez_beamline, self.parameter)
         self.Gz, self.dGzdz, self.Gzdz, *zero_box = read_elements(self.Gz_beamline, self.parameter)
 
     def __str__(self):
@@ -386,8 +391,9 @@ class Accelerator:
                 element.x, element.xp, element.y, element.yp)
         string += '\tAccelerating modules:\n'
         for element in self.Ez_beamline.values():
-            string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\
-             % (element.z0, element.max_field, element.file_name, element.name)
+            string +="\t[ %.5f m, %.5f T, '%s', '%s', %.5f m, %.5f rad, %.5f m, %.5f rad],\n"\
+             % (element.z0, element.max_field, element.file_name, element.name,
+                element.x, element.xp, element.y, element.yp)
         string += '\tQuadrupoles:\n'
         for element in self.Gz_beamline.values():
             string +="\t[ %.5f m, %.5f T, '%s', '%s'],\n"\

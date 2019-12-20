@@ -74,10 +74,10 @@ class KapchinskyEquations:
         beta = np.sqrt(1 - 1 / (g*g))
         p = g*beta*mass_rest_electron*1e6/speed_light
 
-        offset_x = self.accelerator.Dx(z)
-        offset_xp = self.accelerator.Dxp(z)
-        offset_y = self.accelerator.Dy(z)
-        offset_yp = self.accelerator.Dyp(z)
+        offset_x = self.accelerator.Dx_Bz(z) + self.accelerator.Dx_Ez(z)
+        offset_xp = self.accelerator.Dxp_Bz(z) + self.accelerator.Dxp_Ez(z)
+        offset_y = self.accelerator.Dy_Bz(z) + self.accelerator.Dy_Ez(z)
+        offset_yp = self.accelerator.Dyp_Bz(z) + self.accelerator.Dyp_Ez(z)
         x_corr = x*np.cos(offset_xp) - offset_x
         y_corr = y*np.cos(offset_yp) - offset_y
         r_corr = np.sqrt((x*np.cos(offset_xp))**2 + (y*np.cos(offset_yp))**2) - np.sqrt(offset_x**2 + offset_y**2)
