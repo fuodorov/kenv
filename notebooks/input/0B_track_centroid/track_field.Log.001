@@ -34,8 +34,8 @@
  CHECK_REF_PART  = F,
  L_RM_BACK       = F,
  LMONITOR        = F,
- H_MAX   =  1.000000000000000E-002,
- H_MIN   =  1.000000000000000E-003,
+ H_MAX   =  1.000000000000000E-004,
+ H_MIN   =  1.000000000000000E-005,
  DEBUNCH =  0.000000000000000E+000,
  MAX_STEP        =      100000,
  Z_MIN   =  1.000000000000000E+015,
@@ -4939,6 +4939,6 @@
 Example.ini                     0.0000D+00  0.0000D+00  F
 track_field.0100.001            0.0000D+00  0.0000D+00  F
 
-     execution started:   20.11.2019     13:37
-     execution finished:  20.11.2019     13:37
-     execution time:  0.48 sek                         
+     execution started:   20.12.2019     11:48
+     execution finished:  20.12.2019     11:48
+     execution time:  5.77 sek                         
