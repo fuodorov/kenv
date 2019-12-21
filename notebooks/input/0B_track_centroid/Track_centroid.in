@@ -157,7 +157,7 @@ LBField=T,
  
 File_Bfield(1)='B_z(z).dat', S_pos(1)=0.45
  
-MaxB(1)=-0.00,  S_smooth(1)=4, S_xoff(1)=0.002,S_yoff(1)=0.003, S_xrot(1)=0.005, S_yrot(1)=0.005
+MaxB(1)=-0.00,  S_smooth(1)=4, S_xoff(1)=0.002,S_yoff(1)=0.003, S_xrot(1)=0.005, S_yrot(1)=0.002
 
  
 File_Bfield(2)='B_z(z).dat', S_pos(2)=0.95
