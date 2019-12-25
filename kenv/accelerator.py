@@ -85,49 +85,73 @@ def read_elements(beamline: dict,
                 field_files[element.file_name] = np.loadtxt(element.file_name)
             if element.z0 >= max(z):
                 break
-            M = field_files[element.file_name]
-            z_data = M[:,0]
-            F_data = M[:,1]
-            dz = 2*(z_data[-1] - z_data[0])/len(z_data)
+            if not element.max_field == 0:
+                M = field_files[element.file_name]
+                z_data = M[:,0]
+                F_data = M[:,1]
+                dz = 2*(z_data[-1] - z_data[0])/len(z_data)
 
-            f = interpolate.interp1d(
-                element.z0+z_data, element.max_field*F_data, kind='cubic',
-                fill_value=(0, 0), bounds_error=False
-            )
+                f = interpolate.interp1d(
+                    element.z0+z_data, element.max_field*F_data, kind='cubic',
+                    fill_value=(0, 0), bounds_error=False
+                )
+
+                #derivative
+                F_data_prime = np.gradient(F_data, dz)
+                f_prime = interpolate.interp1d(
+                    element.z0+z_data, element.max_field*F_data_prime, kind='cubic',
+                    fill_value=(0, 0), bounds_error=False
+                )
+
+                #offset correction
+                element.length = ((integrate.cumtrapz(f(z), z)[-1])**2)/((integrate.cumtrapz(f(z)**2, z))[-1])
+                element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
+                element.z_start = element.z0 - element.length
+                element.z_stop = element.z0 + element.length
+
+                z_data = np.linspace(element.z_start, element.z_stop, n)
+
+                f_x = interpolate.interp1d(
+                    z_data, [element.x + (z_data[i]-element.z0)*element.xp for i in range(n)],
+                    fill_value=(0,0), bounds_error=False
+                )
+                f_xp = interpolate.interp1d(
+                    z_data, [element.xp for i in range(n)],
+                    fill_value=(0, 0), bounds_error=False
+                )
+                f_y = interpolate.interp1d(
+                    z_data, [element.y + (z_data[i]-element.z0)*element.yp for i in range(n)],
+                    fill_value=(0, 0), bounds_error=False
+                )
+                f_yp = interpolate.interp1d(
+                    z_data, [element.yp for i in range(n)],
+                    fill_value=(0, 0), bounds_error=False
+                )
+
+            else:
+                M = field_files[element.file_name]
+                z_data = M[:,0]
+                F_data = M[:,1]
+                dz = 2*(z_data[-1] - z_data[0])/len(z_data)
+
+                f = interpolate.interp1d(
+                    element.z0+z_data, element.max_field*F_data, kind='cubic',
+                    fill_value=(0, 0), bounds_error=False
+                )
+
+                f_prime = f
+                f_x = f
+                f_xp = f
+                f_y = f
+                f_yp = f
+
+                element.length = 0
+                element.field = 0
+                element.z_start = element.z0
+                element.z_stop = element.z0
+
             F = F + f(z)
-
-            element.length = ((integrate.cumtrapz(f(z), z)[-1])**2)/((integrate.cumtrapz(f(z)**2, z))[-1])
-            element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
-            element.z_start = element.z0 - element.length
-            element.z_stop = element.z0 + element.length
-            #derivative
-            z_data_prime = z_data
-            F_data_prime = np.gradient(F_data, dz)
-            f_prime = interpolate.interp1d(
-                element.z0+z_data_prime, element.max_field*F_data_prime, kind='cubic',
-                fill_value=(0, 0), bounds_error=False
-            )
             F_prime = F_prime + f_prime(z)
-
-            #offset correction
-            z_data = np.linspace(element.z_start, element.z_stop, n)
-            f_x = interpolate.interp1d(
-                z_data, [element.x + (z_data[i]-element.z0)*element.xp for i in range(n)],
-                fill_value=(0,0), bounds_error=False
-            )
-            f_xp = interpolate.interp1d(
-                z_data, [element.xp for i in range(n)],
-                fill_value=(0, 0), bounds_error=False
-            )
-            f_y = interpolate.interp1d(
-                z_data, [element.y + (z_data[i]-element.z0)*element.yp for i in range(n)],
-                fill_value=(0, 0), bounds_error=False
-            )
-            f_yp = interpolate.interp1d(
-                z_data, [element.yp for i in range(n)],
-                fill_value=(0, 0), bounds_error=False
-            )
-
             offset_correct_x = offset_correct_x + f_x(z)
             offset_correct_xp = offset_correct_xp + f_xp(z)
             offset_correct_y = offset_correct_y + f_y(z)
