@@ -36,8 +36,8 @@ class KapchinskyEquations:
         beta = np.sqrt(1 - 1 / (g*g))
         p = g*beta*mass_rest_electron
 
-        K_s = (self.beam.charge*speed_light*self.accelerator.Bz(z) / (2*p*1e6))**2
-        K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*1e6))
+        K_s = (self.beam.charge*speed_light*self.accelerator.Bz(z) / (2*p*MeV))**2
+        K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*MeV))
         K_x = K_s + K_q
         K_y = K_s - K_q
 
@@ -71,7 +71,7 @@ class KapchinskyEquations:
 
         g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
         beta = np.sqrt(1 - 1 / (g*g))
-        p = g*beta*mass_rest_electron*1e6/speed_light
+        p = g*beta*mass_rest_electron*MeV/speed_light
 
         offset_x = self.accelerator.Dx(z)
         offset_xp = self.accelerator.Dxp(z)
@@ -92,8 +92,8 @@ class KapchinskyEquations:
         By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2 + Bz*offset_yp    # row remainder
         Brho = p/self.beam.charge
 
-        Ez = self.accelerator.Ez(z)*1e6
-        dEzdz = self.accelerator.dEzdz(z)*1e6
+        Ez = self.accelerator.Ez(z)*MeV
+        dEzdz = self.accelerator.dEzdz(z)*MeV
         d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z, dx=self.accelerator.dz, n=1)*1e6
         Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4               # row remainder
         Ex = - dEzdz*x_corr/2 - dEzdz*x_corr/2 + Ez*offset_xp             # row remainder
@@ -120,24 +120,24 @@ class Simulation:
 
     '''
 
-    envelope_x = []
-    envelope_xp = []
-    envelope_y = []
-    envelope_yp = []
-
-    centroid_x = []
-    centroid_xp = []
-    centroid_y = []
-    centroid_yp = []
-
-    larmor_angle = []
-
     def __init__(self,
                  beam,
                  accelerator):
 
         self.beam = beam
         self.accelerator = accelerator
+
+        self.envelope_x = []
+        self.envelope_xp = []
+        self.envelope_y = []
+        self.envelope_yp = []
+
+        self.centroid_x = []
+        self.centroid_xp = []
+        self.centroid_y = []
+        self.centroid_yp = []
+
+        self.larmor_angle = []
 
     def track(self,
               rtol:float=1e-6):

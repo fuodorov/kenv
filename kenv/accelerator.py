@@ -25,10 +25,7 @@ class Element:
     and z_start, z_stop, length
 
     '''
-    z_start = .0e0
-    z_stop = .0e0
-    length = .0e0
-    field = .0e0
+
     def __init__(self,
                  z0: float,
                  max_field: float,
@@ -47,6 +44,11 @@ class Element:
         self.xp = xp
         self.y = y
         self.yp = yp
+
+        self.z_start = .0e0
+        self.z_stop = .0e0
+        self.length = .0e0
+        self.field = .0e0
 
 def read_elements(beamline: dict,
                   z:np.arange,*, n=1000) -> interpolate.interp1d:
@@ -193,19 +195,6 @@ class Accelerator:
     Ezdz, Bzdz, Gzdz, Bxdz, Bydz
 
     '''
-    Bx_beamline, By_beamline, Bz_beamline = {}, {}, {}
-    Ez_beamline = {}
-    Gz_beamline = {}
-    Bx, By, Bz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
-    Ez = interpolate.interp1d
-    Gz = interpolate.interp1d
-    dBxdz, dBydz, dBzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
-    dEzdz = interpolate.interp1d
-    dGzdz = interpolate.interp1d
-    Bxdz, Bydz, Bzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
-    Ezdz = interpolate.interp1d
-    Gzdz = interpolate.interp1d
-    Dx, Dxp, Dy, Dyp = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
 
     def __init__(self,
                  z_start: float,
@@ -215,6 +204,20 @@ class Accelerator:
         self.z_stop = self.stop = z_stop
         self.dz = self.step = dz
         self.z = self.parameter = np.arange(z_start, z_stop, dz)
+
+        self.Bx_beamline, self.By_beamline, self.Bz_beamline = {}, {}, {}
+        self.Ez_beamline = {}
+        self.Gz_beamline = {}
+        self.Bx, self.By, self.Bz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
+        self.Ez = interpolate.interp1d
+        self.Gz = interpolate.interp1d
+        self.dBxdz, self.dBydz, self.dBzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
+        self.dEzdz = interpolate.interp1d
+        self.dGzdz = interpolate.interp1d
+        self.Bxdz, self.Bydz, self.Bzdz = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
+        self.Ezdz = interpolate.interp1d
+        self.Gzdz = interpolate.interp1d
+        self.Dx, self.Dxp, self.Dy, self.Dyp = interpolate.interp1d, interpolate.interp1d, interpolate.interp1d, interpolate.interp1d
 
     def add_solenoid(self,
                      name: str,
