@@ -94,7 +94,7 @@ class KapchinskyEquations:
 
         Ez = self.accelerator.Ez(z)*MeV
         dEzdz = self.accelerator.dEzdz(z)*MeV
-        d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z, dx=self.accelerator.dz, n=1)*1e6
+        d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z, dx=self.accelerator.dz, n=1)*MeV
         Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4               # row remainder
         Ex = - dEzdz*x_corr/2 - dEzdz*x_corr/2 + Ez*offset_xp             # row remainder
         Ey = - dEzdz*y_corr/2 - dEzdz*y_corr/2 + Ez*offset_yp             # row remainder
