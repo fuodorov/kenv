@@ -23,9 +23,7 @@ KENV completely written in Python.
 
 ## Installation
 
-* Install [Python](https://www.python.org/downloads/).
-
-* In order to quickly install all the required python libraries in the new environment, just download [requirements](https://github.com/fuodorov/kenv/blob/master/requirements.txt) and run the command on the command line:
+In order to quickly install all the required [Python](https://www.python.org/downloads/) libraries in the new environment, just download [requirements](https://github.com/fuodorov/kenv/blob/master/requirements.txt) and run the command on the command line:
 
 ```
 pip install -r requirements.txt
