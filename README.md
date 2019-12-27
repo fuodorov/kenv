@@ -23,6 +23,10 @@ KENV completely written in Python.
 
 ## Installation
 
+Install [Python](https://www.python.org/downloads/).
+
+In order to quickly install all the required python libraries in the new environment, just run the command at the command prompt:
+
 ```
-pip install kenv
+pip install -r requirements.txt
 ```
