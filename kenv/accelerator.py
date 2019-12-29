@@ -8,8 +8,8 @@ from scipy import interpolate, integrate
 
 __all__ = ['Element',
            'Accelerator',
-           'read_field',
-           'read_offset']
+           'read_fields',
+           'read_offsets']
 
 
 class Element:
@@ -51,7 +51,7 @@ class Element:
         self.length = .0e0
         self.field = .0e0
 
-def read_field(beamline: dict,
+def read_fields(beamline: dict,
                 z:np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
@@ -114,7 +114,7 @@ def read_field(beamline: dict,
 
     return F, F_prime, F_int
 
-def read_offset(beamline: dict,
+def read_offsets(beamline: dict,
                 z:np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
@@ -402,14 +402,14 @@ class Accelerator:
     def compile(self) -> None:
         '''Compilation of the accelerator.'''
 
-        self.Bx, self.dBxdz, self.Bxdz = read_field(self.Bx_beamline, self.parameter)
-        self.By, self.dBydz, self.Bydz = read_field(self.By_beamline, self.parameter)
-        self.Bz, self.dBzdz, self.Bzdz = read_field(self.Bz_beamline, self.parameter)
-        self.Ez, self.dEzdz, self.Ezdz = read_field(self.Ez_beamline, self.parameter)
-        self.Gz, self.dGzdz, self.Gzdz = read_field(self.Gz_beamline, self.parameter)
+        self.Bx, self.dBxdz, self.Bxdz = read_fields(self.Bx_beamline, self.parameter)
+        self.By, self.dBydz, self.Bydz = read_fields(self.By_beamline, self.parameter)
+        self.Bz, self.dBzdz, self.Bzdz = read_fields(self.Bz_beamline, self.parameter)
+        self.Ez, self.dEzdz, self.Ezdz = read_fields(self.Ez_beamline, self.parameter)
+        self.Gz, self.dGzdz, self.Gzdz = read_fields(self.Gz_beamline, self.parameter)
 
-        Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz = read_offset(self.Bz_beamline, self.parameter)
-        Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_offset(self.Ez_beamline, self.parameter)
+        Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz = read_offsets(self.Bz_beamline, self.parameter)
+        Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_offsets(self.Ez_beamline, self.parameter)
 
         self.Dx = interpolate.interp1d(self.z, Dx_Bz(self.z) + Dx_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
         self.Dxp = interpolate.interp1d(self.z, Dxp_Bz(self.z) + Dxp_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
