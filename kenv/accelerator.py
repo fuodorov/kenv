@@ -52,7 +52,7 @@ class Element:
         self.field = .0e0
 
 def read_fields(beamline: dict,
-                z:np.arange) -> interpolate.interp1d:
+                z: np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
@@ -115,7 +115,7 @@ def read_fields(beamline: dict,
     return F, F_prime, F_int
 
 def read_offsets(beamline: dict,
-                z:np.arange) -> interpolate.interp1d:
+                z: np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
