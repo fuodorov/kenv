@@ -8,7 +8,8 @@ from scipy import interpolate, integrate
 
 __all__ = ['Element',
            'Accelerator',
-           'read_elements']
+           'read_field',
+           'read_offset']
 
 
 class Element:
@@ -50,8 +51,8 @@ class Element:
         self.length = .0e0
         self.field = .0e0
 
-def read_elements(beamline: dict,
-                  z:np.arange,*, n=1000) -> interpolate.interp1d:
+def read_field(beamline: dict,
+                z:np.arange) -> interpolate.interp1d:
     '''Sews elements into a function of z.
 
     Sews elements into a function of z with parameters:
@@ -59,17 +60,13 @@ def read_elements(beamline: dict,
     z [m] --- coordinate.
 
     '''
+
     field_files = {}
-    F = 0
-    F_prime = 0
-    F_int = 0
-    offset_correct_x = 0
-    offset_correct_xp = 0
-    offset_correct_y = 0
-    offset_correct_yp = 0
+    F, F_prime, F_int = 0, 0, 0
+
     if not beamline:
-        z_data = [i/n for i in range(n)]
-        F_data = [0 for i in range(n)]
+        z_data = [i/len(z) for i in range(len(z))]
+        F_data = [0 for i in range(len(z))]
         f = interpolate.interp1d(
             z_data, F_data,
             fill_value=(0, 0), bounds_error=False
@@ -77,100 +74,114 @@ def read_elements(beamline: dict,
         F = F + f(z)
         F_prime = F
         F_int = F
-        offset_correct_x = F
-        offset_correct_xp = F
-        offset_correct_y = F
-        offset_correct_yp = F
     else:
         for element in beamline.values():
             if not (element.file_name in field_files):
                 field_files[element.file_name] = np.loadtxt(element.file_name)
-            if element.z0 >= max(z):
-                break
+            M = field_files[element.file_name]
+            z_data = M[:,0] + element.z0
+            F_data = M[:,1]
+            dz = 2*(z_data[-1] - z_data[0])/len(z_data)
+
+            f = interpolate.interp1d(
+                z_data, element.max_field*F_data, kind='cubic',
+                fill_value=(0, 0), bounds_error=False
+            )
+
+            f_prime = interpolate.interp1d(
+                z_data, element.max_field*np.gradient(F_data, dz), kind='cubic',
+                fill_value=(0, 0), bounds_error=False
+            )
+
+            F = F + f(z)
+            F_prime = F_prime + f_prime(z)
+
             if not element.max_field == 0:
-                M = field_files[element.file_name]
-                z_data = M[:,0]
-                F_data = M[:,1]
-                dz = 2*(z_data[-1] - z_data[0])/len(z_data)
-
-                f = interpolate.interp1d(
-                    element.z0+z_data, element.max_field*F_data, kind='cubic',
-                    fill_value=(0, 0), bounds_error=False
-                )
-
-                #derivative
-                F_data_prime = np.gradient(F_data, dz)
-                f_prime = interpolate.interp1d(
-                    element.z0+z_data, element.max_field*F_data_prime, kind='cubic',
-                    fill_value=(0, 0), bounds_error=False
-                )
-
-                #offset correction
-                element.length = ((integrate.cumtrapz(f(z), z)[-1])**2)/((integrate.cumtrapz(f(z)**2, z))[-1])
-                element.field = (integrate.cumtrapz(f(z)**2, z)[-1])/(integrate.cumtrapz(f(z), z)[-1])
+                element.length = ((integrate.cumtrapz(f(z_data), z_data)[-1])**2)/((integrate.cumtrapz(f(z_data)**2, z_data))[-1])
+                element.field = (integrate.cumtrapz(f(z_data)**2, z_data)[-1])/(integrate.cumtrapz(f(z_data), z_data)[-1])
                 element.z_start = element.z0 - element.length
                 element.z_stop = element.z0 + element.length
-
-                z_data = np.linspace(element.z_start, element.z_stop, n)
-
-                f_x = interpolate.interp1d(
-                    z_data, [element.x + (z_data[i]-element.z0)*element.xp for i in range(n)],
-                    fill_value=(0,0), bounds_error=False
-                )
-                f_xp = interpolate.interp1d(
-                    z_data, [element.xp for i in range(n)],
-                    fill_value=(0, 0), bounds_error=False
-                )
-                f_y = interpolate.interp1d(
-                    z_data, [element.y + (z_data[i]-element.z0)*element.yp for i in range(n)],
-                    fill_value=(0, 0), bounds_error=False
-                )
-                f_yp = interpolate.interp1d(
-                    z_data, [element.yp for i in range(n)],
-                    fill_value=(0, 0), bounds_error=False
-                )
-
             else:
-                M = field_files[element.file_name]
-                z_data = M[:,0]
-                F_data = M[:,1]
-                dz = 2*(z_data[-1] - z_data[0])/len(z_data)
-
-                f = interpolate.interp1d(
-                    element.z0+z_data, element.max_field*F_data, kind='cubic',
-                    fill_value=(0, 0), bounds_error=False
-                )
-
-                f_prime = f
-                f_x = f
-                f_xp = f
-                f_y = f
-                f_yp = f
-
                 element.length = 0
                 element.field = 0
                 element.z_start = element.z0
                 element.z_stop = element.z0
 
-            F = F + f(z)
-            F_prime = F_prime + f_prime(z)
+    F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
+    F_int = integrate.cumtrapz(F(z), z)
+    F_prime = interpolate.interp1d(z, F_prime, kind='cubic', fill_value=(0, 0), bounds_error=False)
+    F_int = interpolate.interp1d(z[1:], F_int, kind='cubic', fill_value=(F_int[0], F_int[-1]), bounds_error=False)
+
+    return F, F_prime, F_int
+
+def read_offset(beamline: dict,
+                z:np.arange) -> interpolate.interp1d:
+    '''Sews elements into a function of z.
+
+    Sews elements into a function of z with parameters:
+    beamline --- set of accelerator elements,
+    z [m] --- coordinate.
+
+    '''
+
+    field_files = {}
+    F = 0
+    offset_correct_x, offset_correct_y, offset_correct_xp, offset_correct_yp  = 0, 0, 0, 0
+
+    if not beamline:
+        z_data = [i/len(z) for i in range(len(z))]
+        F_data = [0 for i in range(len(z))]
+        f = interpolate.interp1d(
+            z_data, F_data,
+            fill_value=(0, 0), bounds_error=False
+        )
+        F = F + f(z)
+        offset_correct_x, offset_correct_y, offset_correct_xp, offset_correct_yp = F, F, F, F
+    else:
+        for element in beamline.values():
+            if not (element.file_name in field_files):
+                field_files[element.file_name] = np.loadtxt(element.file_name)
+            M = field_files[element.file_name]
+            z_data = M[:,0] + element.z0
+            F_data = M[:,1]
+
+            if not element.length == 0:
+                z_data = np.linspace(element.z_start, element.z_stop, len(z_data))
+
+                f_x = interpolate.interp1d(
+                    z_data, [element.x + (z_data[i]-element.z0)*element.xp for i in range(len(z_data))],
+                    fill_value=(0,0), bounds_error=False
+                )
+                f_xp = interpolate.interp1d(
+                    z_data, [element.xp for i in range(len(z_data))],
+                    fill_value=(0, 0), bounds_error=False
+                )
+                f_y = interpolate.interp1d(
+                    z_data, [element.y + (z_data[i]-element.z0)*element.yp for i in range(len(z_data))],
+                    fill_value=(0, 0), bounds_error=False
+                )
+                f_yp = interpolate.interp1d(
+                    z_data, [element.yp for i in range(len(z_data))],
+                    fill_value=(0, 0), bounds_error=False
+                )
+            else:
+                f = interpolate.interp1d(
+                    z_data, 0*F_data, kind='cubic',
+                    fill_value=(0, 0), bounds_error=False
+                )
+                f_x, f_xp, f_y, f_yp = f, f, f, f
+
             offset_correct_x = offset_correct_x + f_x(z)
             offset_correct_xp = offset_correct_xp + f_xp(z)
             offset_correct_y = offset_correct_y + f_y(z)
             offset_correct_yp = offset_correct_yp + f_yp(z)
-
-    F = interpolate.interp1d(z, F, kind='cubic', fill_value=(0, 0), bounds_error=False)
-    F_prime = interpolate.interp1d(z, F_prime, kind='cubic', fill_value=(0, 0), bounds_error=False)
-
-    F_int = integrate.cumtrapz(F(z), z)
-    F_int = interpolate.interp1d(z[1:], F_int, kind='cubic', fill_value=(F_int[0], F_int[-1]), bounds_error=False)
 
     offset_correct_x = interpolate.interp1d(z, offset_correct_x, kind='linear', fill_value=(0, 0), bounds_error=False)
     offset_correct_y = interpolate.interp1d(z, offset_correct_y, kind='linear', fill_value=(0, 0), bounds_error=False)
     offset_correct_xp = interpolate.interp1d(z, offset_correct_xp, kind='linear', fill_value=(0, 0), bounds_error=False)
     offset_correct_yp = interpolate.interp1d(z, offset_correct_yp, kind='linear', fill_value=(0, 0), bounds_error=False)
 
-    return F, F_prime, F_int, offset_correct_x, offset_correct_xp, offset_correct_y, offset_correct_yp
+    return offset_correct_x, offset_correct_xp, offset_correct_y, offset_correct_yp
 
 class Accelerator:
     '''Create an accelerator.
@@ -391,13 +402,14 @@ class Accelerator:
     def compile(self) -> None:
         '''Compilation of the accelerator.'''
 
-        zero_box = 0
+        self.Bx, self.dBxdz, self.Bxdz = read_field(self.Bx_beamline, self.parameter)
+        self.By, self.dBydz, self.Bydz = read_field(self.By_beamline, self.parameter)
+        self.Bz, self.dBzdz, self.Bzdz = read_field(self.Bz_beamline, self.parameter)
+        self.Ez, self.dEzdz, self.Ezdz = read_field(self.Ez_beamline, self.parameter)
+        self.Gz, self.dGzdz, self.Gzdz = read_field(self.Gz_beamline, self.parameter)
 
-        self.Bx, self.dBxdz, self.Bxdz, *zero_box = read_elements(self.Bx_beamline, self.parameter)
-        self.By, self.dBydz, self.Bydz, *zero_box = read_elements(self.By_beamline, self.parameter)
-        self.Bz, self.dBzdz, self.Bzdz, Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz  = read_elements(self.Bz_beamline, self.parameter)
-        self.Ez, self.dEzdz, self.Ezdz, Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_elements(self.Ez_beamline, self.parameter)
-        self.Gz, self.dGzdz, self.Gzdz, *zero_box = read_elements(self.Gz_beamline, self.parameter)
+        Dx_Bz, Dxp_Bz, Dy_Bz, Dyp_Bz = read_offset(self.Bz_beamline, self.parameter)
+        Dx_Ez, Dxp_Ez, Dy_Ez, Dyp_Ez = read_offset(self.Ez_beamline, self.parameter)
 
         self.Dx = interpolate.interp1d(self.z, Dx_Bz(self.z) + Dx_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
         self.Dxp = interpolate.interp1d(self.z, Dxp_Bz(self.z) + Dxp_Ez(self.z), kind='linear', fill_value=(0, 0), bounds_error=False)
