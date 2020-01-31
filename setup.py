@@ -4,7 +4,6 @@ import kenv
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-
 setup(
     name='kenv',
     version=kenv.__version__,
