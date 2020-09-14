@@ -5,12 +5,13 @@ import numpy as np
 from scipy import interpolate, integrate, misc
 from scipy.integrate import solve_ivp
 from .constants import *
+from .beam import *
 
 __all__ = ['Sim',
            'Simulation',
-           'KapchinskyEquations']
+           'Equations']
 
-class KapchinskyEquations:
+class Equations:
     '''Located derivative for further integration.'''
 
     def __init__(self, beam, accelerator):
@@ -87,17 +88,17 @@ class KapchinskyEquations:
         dBzdz = self.accelerator.dBzdz(z)
         d2Bzdz2 = misc.derivative(self.accelerator.dBzdz, z, dx=self.accelerator.dz, n=1)
         Gz = self.accelerator.Gz(z)
-        Bz = Bz - d2Bzdz2*r_corr**2/4 - d2Bzdz2*r_corr**2/4                     # row remainder
-        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 - dBzdz*x_corr/2 + Bz*offset_xp    # row remainder
-        By = By + Gz*x_corr - dBzdz*y_corr/2 - dBzdz*y_corr/2 + Bz*offset_yp    # row remainder
+        Bz = Bz - d2Bzdz2*r_corr**2/4                          # row remainder
+        Bx = Bx + Gz*y_corr - dBzdz*x_corr/2 + Bz*offset_xp    # row remainder
+        By = By + Gz*x_corr - dBzdz*y_corr/2 + Bz*offset_yp    # row remainder
         Brho = p/self.beam.charge
 
         Ez = self.accelerator.Ez(z)*MeV
         dEzdz = self.accelerator.dEzdz(z)*MeV
         d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z, dx=self.accelerator.dz, n=1)*MeV
-        Ez = Ez - d2Ezdz2*r_corr**2/4 - d2Ezdz2*r_corr**2/4               # row remainder
-        Ex = - dEzdz*x_corr/2 - dEzdz*x_corr/2 + Ez*offset_xp             # row remainder
-        Ey = - dEzdz*y_corr/2 - dEzdz*y_corr/2 + Ez*offset_yp             # row remainder
+        Ez = Ez - d2Ezdz2*r_corr**2/4                    # row remainder
+        Ex = - dEzdz*x_corr/2 + Ez*offset_xp             # row remainder
+        Ey = - dEzdz*y_corr/2 + Ez*offset_yp             # row remainder
 
         dxdz = xp
         dxpdz = (Ex - Ez*xp) / (beta*speed_light*Brho) - (By - yp*Bz) / Brho
@@ -106,6 +107,48 @@ class KapchinskyEquations:
         dphidz = Bz / (2*Brho)
 
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
+
+    def particle_prime(self,
+                       z:np.arange,
+                       X:list, envelope_x, envelope_y) -> list:
+        '''Located derivative for further integration
+         Kapchinscky equation for envelope beam.
+
+        '''
+
+        x = X[0]
+        xp = X[1]
+        y = X[2]
+        yp = X[3]
+
+        g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
+        dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
+        d2gdz2 = self.beam.charge*self.accelerator.dEzdz(z)/mass_rest_electron
+        beta = np.sqrt(1 - 1 / (g*g))
+        p = g*beta*mass_rest_electron
+
+        K_s = (self.beam.charge*speed_light*self.accelerator.Bz(z) / (2*p*MeV))**2
+        K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*MeV))
+        K_x = K_s + K_q
+        K_y = K_s - K_q
+
+        P = 2*self.beam.current / (alfven_current * (g*beta)**3)
+        if abs(x) > envelope_x(z) and abs(y) > envelope_y(z):
+            dxdz = xp
+            dxpdz = 2*P*(envelope_x(z)**2+envelope_y(z)**2)**0.5 / x - K_x*x - \
+                    dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+            dydz = yp
+            dypdz = 2*P*(envelope_x(z)**2+envelope_y(z)**2)**0.5 / y - K_y*y - \
+                    dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+        else:
+            dxdz = xp
+            dxpdz = 2*P / (envelope_x(z)+envelope_y(z))/envelope_x(z)*x - K_x*x - \
+                    dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
+            dydz = yp
+            dypdz = 2*P / (envelope_x(z)+envelope_y(z))/envelope_y(z)*y - K_y*y - \
+                    dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
+
+        return [dxdz, dxpdz, dydz, dypdz]
 
 class Simulation:
     '''Simulation of the envelope beam in the accelerator.
@@ -122,11 +165,12 @@ class Simulation:
 
     def __init__(self,
                  beam,
-                 accelerator):
+                 accelerator,
+                 particle=Particle(x=0, y=0, xp=0, yp=0)):
 
         self.beam = beam
         self.accelerator = accelerator
-
+        self.particle = particle
         self.envelope_x = []
         self.envelope_xp = []
         self.envelope_y = []
@@ -137,6 +181,11 @@ class Simulation:
         self.centroid_y = []
         self.centroid_yp = []
 
+        self.particle_x = []
+        self.particle_xp = []
+        self.particle_y = []
+        self.particle_yp = []
+
         self.larmor_angle = []
 
     def track(self,
@@ -144,23 +193,20 @@ class Simulation:
         '''Tracking!'''
 
         # initial conditions
-        equations = KapchinskyEquations(self.beam, self.accelerator)
+        equations = Equations(self.beam, self.accelerator)
 
         X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
                             self.beam.radius_y, self.beam.radius_yp])
         X0_centroid = np.array([self.beam.x, self.beam.xp,
                                 self.beam.y, self.beam.yp,
                                 self.beam.larmor_angle])
+        X0_particle = np.array([self.particle.x, self.particle.xp,
+                                self.particle.y, self.particle.yp])
         # solver
         beam_envelope = solve_ivp(equations.envelope_prime,
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
         y0=X0_beam, t_eval=self.accelerator.parameter, rtol=rtol).y
 
-        centroid_trajectory = solve_ivp(equations.centroid_prime,
-        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
-
-        # Result
         self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
 
         self.envelope_x = beam_envelope[0,:]
@@ -168,17 +214,20 @@ class Simulation:
         self.envelope_y = beam_envelope[2,:]
         self.envelope_yp = beam_envelope[3,:]
 
+        self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
+        centroid_trajectory = solve_ivp(equations.centroid_prime,
+        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
+        y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
+
         self.centroid_x = centroid_trajectory[0,:]
         self.centroid_xp = centroid_trajectory[1,:]
         self.centroid_y = centroid_trajectory[2,:]
         self.centroid_yp = centroid_trajectory[3,:]
         self.larmor_angle = centroid_trajectory[4,:]
-
-        # To function
-        self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
         self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.centroid_xp = interpolate.interp1d(self.accelerator.parameter, self.centroid_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
@@ -187,5 +236,22 @@ class Simulation:
         self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
         self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
+        def wrapper(t, y):
+            return equations.particle_prime(t,y, self.envelope_x, self.envelope_y)
+
+        particle_trajectory = solve_ivp(wrapper,
+        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
+        y0=X0_particle, t_eval=self.accelerator.parameter, rtol=rtol).y
+
+        self.particle_x = particle_trajectory[0,:]
+        self.particle_xp = particle_trajectory[1,:]
+        self.particle_y = particle_trajectory[2,:]
+        self.particle_yp = particle_trajectory[3,:]
+
+        self.particle_x = interpolate.interp1d(self.accelerator.parameter, self.particle_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.particle_xp = interpolate.interp1d(self.accelerator.parameter, self.particle_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.particle_y = interpolate.interp1d(self.accelerator.parameter, self.particle_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        self.particle_yp = interpolate.interp1d(self.accelerator.parameter, self.particle_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
 Sim = Simulation

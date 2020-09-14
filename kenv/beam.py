@@ -4,8 +4,27 @@
 import numpy as np
 from .constants import *
 
-__all__ = ['Beam']
+__all__ = ['Beam', 'Particle']
 
+class Particle:
+    '''Creating an particle'''
+    def __init__(self, *,
+                 x: float=.0e0,
+                 y: float=.0e0,
+                 xp: float=.0e0,
+                 yp: float=.0e0):
+        self.x = x
+        self.y = y
+        self.xp = xp
+        self.yp = yp
+
+    def __str__(self):
+            return 'Particle parameters:' + '\n' \
+                    +'\tHorizontal position\t%0.1f mm'%(self.x*1e3) + '\n' \
+                    +'\tVertical position\t%0.1f mm'%(self.y*1e3) + '\n' \
+                    +'\tHorizontal angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
+                    +'\tVertical angle\t%0.1f mrad'%(self.yp*1e3)
+                    
 class Beam:
     '''Creating an electron beam.
 
@@ -29,7 +48,7 @@ class Beam:
 
     '''
 
-    def __init__(self,*,
+    def __init__(self, *,
                  current: float=.0e0,
                  energy: float=.0e0,
                  radius: float=.0e0,
