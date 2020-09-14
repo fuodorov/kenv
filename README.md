@@ -28,3 +28,7 @@ In order to quickly install all the required [Python](https://www.python.org/dow
 ```
 pip install -r requirements.txt
 ```
+
+## Publications
+
+[Publication](http://www1.jinr.ru/Pepan_letters/panl_2020_2/13_nikifor.pdf) in Particles and Nuclei. 
