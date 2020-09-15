@@ -133,7 +133,7 @@ class Equations:
         K_y = K_s - K_q
 
         P = 2*self.beam.current / (alfven_current * (g*beta)**3)
-        if abs(x) > envelope_x(z) and abs(y) > envelope_y(z):
+        if abs(x) >= envelope_x(z) and abs(y) >= envelope_y(z):
             dxdz = xp
             dxpdz = 2*P*(envelope_x(z)**2+envelope_y(z)**2)**0.5 / x - K_x*x - \
                     dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
@@ -227,7 +227,7 @@ class Simulation:
         self.centroid_xp = centroid_trajectory[1,:]
         self.centroid_y = centroid_trajectory[2,:]
         self.centroid_yp = centroid_trajectory[3,:]
-        self.larmor_angle = centroid_trajectory[4,:]
+        phi = self.larmor_angle = centroid_trajectory[4,:]
 
         self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.centroid_xp = interpolate.interp1d(self.accelerator.parameter, self.centroid_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
@@ -244,10 +244,10 @@ class Simulation:
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
         y0=X0_particle, t_eval=self.accelerator.parameter, rtol=rtol).y
 
-        self.particle_x = particle_trajectory[0,:]
-        self.particle_xp = particle_trajectory[1,:]
-        self.particle_y = particle_trajectory[2,:]
-        self.particle_yp = particle_trajectory[3,:]
+        self.particle_x = particle_trajectory[0,:]*np.cos(phi) - particle_trajectory[2,:]*np.sin(phi)
+        self.particle_y = particle_trajectory[0,:]*np.sin(phi) + particle_trajectory[2,:]*np.cos(phi)
+        self.particle_xp = particle_trajectory[1,:]*np.cos(phi) - particle_trajectory[3,:]*np.sin(phi)
+        self.particle_yp = particle_trajectory[1,:]*np.sin(phi) + particle_trajectory[3,:]*np.cos(phi)
 
         self.particle_x = interpolate.interp1d(self.accelerator.parameter, self.particle_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
         self.particle_xp = interpolate.interp1d(self.accelerator.parameter, self.particle_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
