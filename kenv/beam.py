@@ -24,7 +24,7 @@ class Particle:
                     +'\tVertical position\t%0.1f mm'%(self.y*1e3) + '\n' \
                     +'\tHorizontal angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
                     +'\tVertical angle\t%0.1f mrad'%(self.yp*1e3)
-                    
+
 class Beam:
     '''Creating an electron beam.
 
@@ -119,4 +119,4 @@ class Beam:
                     +'\tNormalized emittance x\t%0.1f mm*mrad'%\
                     (self.normalized_emittance_x*1e6) + '\n' \
                     +'\tNormalized emittance y\t%0.1f mm*mrad'%\
-                    (self.normalized_emittance_y*1e6) + '\n' \
+                    (self.normalized_emittance_y*1e6) + '\n'

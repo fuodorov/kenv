@@ -5,7 +5,7 @@ from .beam import *
 from .accelerator import *
 from .solver import *
 
-__version__ = '0.1.9'
+__version__ = '0.1.9.1'
 __doc__ = '''Kapchinscky ENVelope (KENV) -
  solver of the Kapchinsky-Vladimirsky envelope equation'''
 
