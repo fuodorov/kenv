@@ -133,19 +133,19 @@ class Equations:
         K_y = K_s - K_q
 
         P = 2*self.beam.current / (alfven_current * (g*beta)**3)
-        if abs(x) >= envelope_x(z) and abs(y) >= envelope_y(z):
+        if x*x + y*y > envelope_x(z)**2 + envelope_y(z)**2:
             dxdz = xp
-            dxpdz = 2*P*(envelope_x(z)**2+envelope_y(z)**2)**0.5 / x - K_x*x - \
+            dxpdz = 2*P * ((envelope_x(z)+envelope_y(z))/2*envelope_x(z)) / x - K_x*x - \
                     dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
             dydz = yp
-            dypdz = 2*P*(envelope_x(z)**2+envelope_y(z)**2)**0.5 / y - K_y*y - \
+            dypdz = 2*P * ((envelope_x(z)+envelope_y(z))/2*envelope_y(z)) / y - K_y*y - \
                     dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
         else:
             dxdz = xp
-            dxpdz = 2*P / (envelope_x(z)+envelope_y(z))/envelope_x(z)*x - K_x*x - \
+            dxpdz = 2*P / ((envelope_x(z)+envelope_y(z))/2*envelope_x(z)) * x - K_x*x - \
                     dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
             dydz = yp
-            dypdz = 2*P / (envelope_x(z)+envelope_y(z))/envelope_y(z)*y - K_y*y - \
+            dypdz = 2*P / ((envelope_x(z)+envelope_y(z))/2*envelope_y(z)) * y - K_y*y - \
                     dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
 
         return [dxdz, dxpdz, dydz, dypdz]
@@ -189,7 +189,9 @@ class Simulation:
         self.larmor_angle = []
 
     def track(self,
-              rtol:float=1e-6):
+              rtol:float=1e-4,
+              atol:float=1e-6,
+              method:str='RK23'):
         '''Tracking!'''
 
         # initial conditions
@@ -205,7 +207,7 @@ class Simulation:
         # solver
         beam_envelope = solve_ivp(equations.envelope_prime,
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_beam, t_eval=self.accelerator.parameter, rtol=rtol).y
+        y0=X0_beam, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
         self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
 
@@ -221,7 +223,7 @@ class Simulation:
 
         centroid_trajectory = solve_ivp(equations.centroid_prime,
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_centroid, t_eval=self.accelerator.parameter, rtol=rtol).y
+        y0=X0_centroid, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
         self.centroid_x = centroid_trajectory[0,:]
         self.centroid_xp = centroid_trajectory[1,:]
@@ -242,7 +244,7 @@ class Simulation:
 
         particle_trajectory = solve_ivp(wrapper,
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_particle, t_eval=self.accelerator.parameter, rtol=rtol).y
+        y0=X0_particle, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
         self.particle_x = particle_trajectory[0,:]*np.cos(phi) - particle_trajectory[2,:]*np.sin(phi)
         self.particle_y = particle_trajectory[0,:]*np.sin(phi) + particle_trajectory[2,:]*np.cos(phi)
