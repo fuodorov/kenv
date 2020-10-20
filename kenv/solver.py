@@ -14,9 +14,11 @@ __all__ = ['Sim',
 class Equations:
     '''Located derivative for further integration.'''
 
-    def __init__(self, beam, accelerator):
+    def __init__(self, beam, accelerator,
+                 particle=Particle()):
         self.beam = beam
         self.accelerator = accelerator
+        self.particle = particle
 
     def envelope_prime(self,
                        z:np.arange,
@@ -121,7 +123,10 @@ class Equations:
         y = X[2]
         yp = X[3]
 
-        g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
+        if self.particle.energy == 0.0:
+            g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
+        else:
+            g = self.particle.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
         dgdz = self.beam.charge*self.accelerator.Ez(z)/mass_rest_electron
         d2gdz2 = self.beam.charge*self.accelerator.dEzdz(z)/mass_rest_electron
         beta = np.sqrt(1 - 1 / (g*g))
@@ -133,7 +138,7 @@ class Equations:
         K_y = K_s - K_q
 
         P = 2*self.beam.current / (alfven_current * (g*beta)**3)
-        if x*x + y*y > envelope_x(z)**2 + envelope_y(z)**2:
+        if (x*x + y*y > envelope_x(z)**2 + envelope_y(z)**2) and (x != 0.0  and y !=0.0):
             dxdz = xp
             dxpdz = 2*P * ((envelope_x(z)+envelope_y(z))/2*envelope_x(z)) / x - K_x*x - \
                     dgdz*xp / (beta*beta*g) - d2gdz2*x / (2*beta*beta*g)
@@ -166,7 +171,7 @@ class Simulation:
     def __init__(self,
                  beam,
                  accelerator,
-                 particle=Particle(x=0, y=0, xp=0, yp=0)):
+                 particle=Particle()):
 
         self.beam = beam
         self.accelerator = accelerator
@@ -189,13 +194,14 @@ class Simulation:
         self.larmor_angle = []
 
     def track(self,
-              rtol:float=1e-4,
-              atol:float=1e-6,
-              method:str='RK23'):
+              particle: bool=False,
+              rtol: float=1e-4,
+              atol: float=1e-6,
+              method: str='RK23'):
         '''Tracking!'''
 
         # initial conditions
-        equations = Equations(self.beam, self.accelerator)
+        equations = Equations(self.beam, self.accelerator, self.particle)
 
         X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
                             self.beam.radius_y, self.beam.radius_yp])
@@ -239,21 +245,22 @@ class Simulation:
 
         self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
-        def wrapper(t, y):
-            return equations.particle_prime(t,y, self.envelope_x, self.envelope_y)
+        if particle == True:
+            def wrapper(t, y):
+                return equations.particle_prime(t,y, self.envelope_x, self.envelope_y)
 
-        particle_trajectory = solve_ivp(wrapper,
-        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_particle, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
+            particle_trajectory = solve_ivp(wrapper,
+            t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
+            y0=X0_particle, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
-        self.particle_x = particle_trajectory[0,:]*np.cos(phi) - particle_trajectory[2,:]*np.sin(phi)
-        self.particle_y = particle_trajectory[0,:]*np.sin(phi) + particle_trajectory[2,:]*np.cos(phi)
-        self.particle_xp = particle_trajectory[1,:]*np.cos(phi) - particle_trajectory[3,:]*np.sin(phi)
-        self.particle_yp = particle_trajectory[1,:]*np.sin(phi) + particle_trajectory[3,:]*np.cos(phi)
+            self.particle_x = particle_trajectory[0,:]*np.cos(phi) - particle_trajectory[2,:]*np.sin(phi)
+            self.particle_y = particle_trajectory[0,:]*np.sin(phi) + particle_trajectory[2,:]*np.cos(phi)
+            self.particle_xp = particle_trajectory[1,:]*np.cos(phi) - particle_trajectory[3,:]*np.sin(phi)
+            self.particle_yp = particle_trajectory[1,:]*np.sin(phi) + particle_trajectory[3,:]*np.cos(phi)
 
-        self.particle_x = interpolate.interp1d(self.accelerator.parameter, self.particle_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.particle_xp = interpolate.interp1d(self.accelerator.parameter, self.particle_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.particle_y = interpolate.interp1d(self.accelerator.parameter, self.particle_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.particle_yp = interpolate.interp1d(self.accelerator.parameter, self.particle_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.particle_x = interpolate.interp1d(self.accelerator.parameter, self.particle_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.particle_xp = interpolate.interp1d(self.accelerator.parameter, self.particle_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.particle_y = interpolate.interp1d(self.accelerator.parameter, self.particle_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.particle_yp = interpolate.interp1d(self.accelerator.parameter, self.particle_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
 Sim = Simulation

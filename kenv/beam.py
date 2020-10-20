@@ -12,18 +12,24 @@ class Particle:
                  x: float=.0e0,
                  y: float=.0e0,
                  xp: float=.0e0,
-                 yp: float=.0e0):
+                 yp: float=.0e0,
+                 energy: float=.0e0):
         self.x = x
         self.y = y
         self.xp = xp
         self.yp = yp
+        self.energy = energy
+        self.gamma = gamma = self.energy / mass_rest_electron + 1
+        self.beta = beta = np.sqrt(1 - 1 / (gamma*gamma))
+        self.p = self.momentum = gamma*beta*mass_rest_electron
 
     def __str__(self):
             return 'Particle parameters:' + '\n' \
                     +'\tHorizontal position\t%0.1f mm'%(self.x*1e3) + '\n' \
                     +'\tVertical position\t%0.1f mm'%(self.y*1e3) + '\n' \
                     +'\tHorizontal angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
-                    +'\tVertical angle\t%0.1f mrad'%(self.yp*1e3)
+                    +'\tVertical angle\t%0.1f mrad'%(self.yp*1e3)+ '\n' \
+                    +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n'
 
 class Beam:
     '''Creating an electron beam.
