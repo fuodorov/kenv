@@ -41,8 +41,8 @@ class Equations:
 
         K_s = (self.beam.charge*speed_light*self.accelerator.Bz(z) / (2*p*MeV))**2
         K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*MeV))
-        K_x = K_s + K_q
-        K_y = K_s - K_q
+        K_x = K_s - K_q
+        K_y = K_s + K_q
 
         emitt_x = self.beam.normalized_emittance_x / (g*beta)
         emitt_y = self.beam.normalized_emittance_y / (g*beta)
@@ -134,8 +134,8 @@ class Equations:
 
         K_s = (self.beam.charge*speed_light*self.accelerator.Bz(z) / (2*p*MeV))**2
         K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*MeV))
-        K_x = K_s + K_q
-        K_y = K_s - K_q
+        K_x = K_s - K_q
+        K_y = K_s + K_q
 
         P = 2*self.beam.current / (alfven_current * (g*beta)**3)
         if (x*x + y*y > envelope_x(z)**2 + envelope_y(z)**2) and (x != 0.0  and y !=0.0):
@@ -195,8 +195,8 @@ class Simulation:
 
     def track(self,
               particle: bool=False,
-              rtol: float=1e-4,
-              atol: float=1e-6,
+              rtol: float=1e-5,
+              atol: float=1e-8,
               method: str='RK23'):
         '''Tracking!'''
 
