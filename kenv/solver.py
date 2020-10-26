@@ -122,6 +122,7 @@ class Equations:
         xp = X[1]
         y = X[2]
         yp = X[3]
+        phi = X[4]
 
         if self.particle.energy == 0.0:
             g = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(z)/mass_rest_electron
@@ -136,6 +137,8 @@ class Equations:
         K_q = (self.beam.charge*speed_light*self.accelerator.Gz(z) / (p*MeV))
         K_x = K_s - K_q
         K_y = K_s + K_q
+
+        Brho = g*beta*mass_rest_electron*MeV/speed_light/self.beam.charge
 
         P = 2*self.beam.current / (alfven_current * (g*beta)**3)
         if (x*x + y*y > envelope_x(z)**2 + envelope_y(z)**2) and (x != 0.0  and y !=0.0):
@@ -153,7 +156,9 @@ class Equations:
             dypdz = 2*P / ((envelope_x(z)+envelope_y(z))/2*envelope_y(z)) * y - K_y*y - \
                     dgdz*yp / (beta*beta*g) - d2gdz2*y / (2*beta*beta*g)
 
-        return [dxdz, dxpdz, dydz, dypdz]
+        dphidz = self.accelerator.Bz(z) / (2*Brho)
+
+        return [dxdz, dxpdz, dydz, dypdz, dphidz]
 
 class Simulation:
     '''Simulation of the envelope beam in the accelerator.
@@ -192,6 +197,7 @@ class Simulation:
         self.particle_yp = []
 
         self.larmor_angle = []
+        self.particle_larmor_angle = []
 
     def track(self,
               particle: bool=False,
@@ -209,7 +215,8 @@ class Simulation:
                                 self.beam.y, self.beam.yp,
                                 self.beam.larmor_angle])
         X0_particle = np.array([self.particle.x, self.particle.xp,
-                                self.particle.y, self.particle.yp])
+                                self.particle.y, self.particle.yp,
+                                self.particle.larmor_angle])
         # solver
         beam_envelope = solve_ivp(equations.envelope_prime,
         t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
@@ -253,14 +260,16 @@ class Simulation:
             t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
             y0=X0_particle, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
-            self.particle_x = particle_trajectory[0,:]*np.cos(phi) - particle_trajectory[2,:]*np.sin(phi)
-            self.particle_y = particle_trajectory[0,:]*np.sin(phi) + particle_trajectory[2,:]*np.cos(phi)
-            self.particle_xp = particle_trajectory[1,:]*np.cos(phi) - particle_trajectory[3,:]*np.sin(phi)
-            self.particle_yp = particle_trajectory[1,:]*np.sin(phi) + particle_trajectory[3,:]*np.cos(phi)
+            psi = self.particle_larmor_angle = particle_trajectory[4,:]
+            self.particle_x = particle_trajectory[0,:]*np.cos(psi) - particle_trajectory[2,:]*np.sin(psi)
+            self.particle_y = particle_trajectory[0,:]*np.sin(psi) + particle_trajectory[2,:]*np.cos(psi)
+            self.particle_xp = particle_trajectory[1,:]*np.cos(psi) - particle_trajectory[3,:]*np.sin(psi)
+            self.particle_yp = particle_trajectory[1,:]*np.sin(psi) + particle_trajectory[3,:]*np.cos(psi)
 
             self.particle_x = interpolate.interp1d(self.accelerator.parameter, self.particle_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.particle_xp = interpolate.interp1d(self.accelerator.parameter, self.particle_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.particle_y = interpolate.interp1d(self.accelerator.parameter, self.particle_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.particle_yp = interpolate.interp1d(self.accelerator.parameter, self.particle_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.particle_larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.particle_larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
 Sim = Simulation

@@ -13,7 +13,8 @@ class Particle:
                  y: float=.0e0,
                  xp: float=.0e0,
                  yp: float=.0e0,
-                 energy: float=.0e0):
+                 energy: float=.0e0,
+                 larmor_angle: float=.0e0):
         self.x = x
         self.y = y
         self.xp = xp
@@ -22,6 +23,7 @@ class Particle:
         self.gamma = gamma = self.energy / mass_rest_electron + 1
         self.beta = beta = np.sqrt(1 - 1 / (gamma*gamma))
         self.p = self.momentum = gamma*beta*mass_rest_electron
+        self.larmor_angle = larmor_angle
 
     def __str__(self):
             return 'Particle parameters:' + '\n' \
