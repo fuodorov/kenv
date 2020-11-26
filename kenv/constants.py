@@ -1,5 +1,5 @@
 # constants.py
-'''Constants.'''
+"""Constants."""
 
 __all__ = ['mc2',
            'speed_light',

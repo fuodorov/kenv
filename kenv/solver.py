@@ -1,5 +1,5 @@
 # solver.py
-'''Simulation of the envelope beam in the accelerator.'''
+"""Simulation of the envelope beam in the accelerator."""
 
 import numpy as np
 from scipy import interpolate, integrate, misc
@@ -12,7 +12,7 @@ __all__ = ['Sim',
            'Equations']
 
 class Equations:
-    '''Located derivative for further integration.'''
+    """Located derivative for further integration."""
 
     def __init__(self, beam, accelerator,
                  particle=Particle()):
@@ -23,10 +23,10 @@ class Equations:
     def envelope_prime(self,
                        z:np.arange,
                        X:list) -> list:
-        '''Located derivative for further integration
+        """Located derivative for further integration
          Kapchinscky equation for envelope beam.
 
-        '''
+        """
 
         x = X[0]
         xp = X[1]
@@ -61,10 +61,10 @@ class Equations:
     def centroid_prime(self,
                        z:np.arange,
                        X:list) -> list:
-        '''Located derivative for further integration
+        """Located derivative for further integration
          Kapchinscky equation for centroid trajectory.
 
-        '''
+        """
 
         x = X[0]
         xp = X[1]
@@ -113,10 +113,10 @@ class Equations:
     def particle_prime(self,
                        z:np.arange,
                        X:list, envelope_x, envelope_y) -> list:
-        '''Located derivative for further integration
+        """Located derivative for further integration
          Kapchinscky equation for envelope beam.
 
-        '''
+        """
 
         x = X[0]
         xp = X[1]
@@ -161,7 +161,7 @@ class Equations:
         return [dxdz, dxpdz, dydz, dypdz, dphidz]
 
 class Simulation:
-    '''Simulation of the envelope beam in the accelerator.
+    """Simulation of the envelope beam in the accelerator.
 
     Basic parameters after track:
     gamma,
@@ -171,7 +171,7 @@ class Simulation:
     centroid_xp and centroid_yp,
     larmor_angle
 
-    '''
+    """
 
     def __init__(self,
                  beam,
@@ -204,7 +204,7 @@ class Simulation:
               rtol: float=1e-5,
               atol: float=1e-8,
               method: str='RK23'):
-        '''Tracking!'''
+        """Tracking!"""
 
         # initial conditions
         equations = Equations(self.beam, self.accelerator, self.particle)

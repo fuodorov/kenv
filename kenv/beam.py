@@ -1,5 +1,5 @@
 # beam.py
-'''Creating an electron beam.'''
+"""Creating an electron beam."""
 
 import numpy as np
 from .constants import *
@@ -7,7 +7,7 @@ from .constants import *
 __all__ = ['Beam', 'Particle']
 
 class Particle:
-    '''Creating an particle'''
+    """Creating an particle"""
     def __init__(self, *,
                  x: float=.0e0,
                  y: float=.0e0,
@@ -34,7 +34,7 @@ class Particle:
                     +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n'
 
 class Beam:
-    '''Creating an electron beam.
+    """Creating an electron beam.
 
     Creating a round electron beam with parameters:
     current [A],
@@ -54,7 +54,7 @@ class Beam:
     and with shifted centroid:
     x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]
 
-    '''
+    """
 
     def __init__(self, *,
                  current: float=.0e0,
