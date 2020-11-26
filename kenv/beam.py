@@ -108,23 +108,28 @@ class Beam:
         self.beta = beta = np.sqrt(1 - 1 / (gamma*gamma))
 
         self.p = self.momentum = gamma*beta*mass_rest_electron
+        self.px = self.p*self.radius_xp
+        self.py = self.p*self.radius_yp
+        self.pz = self.p
+        self.description = ''
 
     def __str__(self):
-            return 'Beam parameters:' + '\n' \
-                    +'\tCurrent\t%0.0f A'%(self.current) + '\n' \
-                    +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
-                    +'\tTotal momentum\t%0.3f MeV/c'%(self.momentum) + '\n' \
-                    +'\tRel. factor\t%0.3f'%(self.gamma) + '\n' \
-                    +'\tRadius x\t%0.1f mm'%(self.radius_x*1e3) + '\n' \
-                    +'\tRadius y\t%0.1f mm'%(self.radius_y*1e3) + '\n' \
-                    +'\tRadius x prime\t%0.1f mrad'%(self.radius_xp*1e3) + '\n' \
-                    +'\tRadius y prime\t%0.1f mrad'%(self.radius_yp*1e3) + '\n' \
-                    +'\tHorizontal centroid position\t%0.1f mm'%(self.x*1e3) + '\n' \
-                    +'\tVertical centroid position\t%0.1f mm'%(self.y*1e3) + '\n' \
-                    +'\tHorizontal centroid angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
-                    +'\tVertical centroid angle\t%0.1f mrad'%(self.yp*1e3) + '\n' \
-                    +'\tLarmor angle\t%0.1f rad'%(self.larmor_angle) + '\n' \
-                    +'\tNormalized emittance x\t%0.1f mm*mrad'%\
-                    (self.normalized_emittance_x*1e6) + '\n' \
-                    +'\tNormalized emittance y\t%0.1f mm*mrad'%\
-                    (self.normalized_emittance_y*1e6) + '\n'
+        self.description = 'Beam parameters:' + '\n' \
+                +'\tCurrent\t%0.0f A'%(self.current) + '\n' \
+                +'\tEnergy\t%0.3f MeV'%(self.energy) + '\n' \
+                +'\tTotal momentum\t%0.3f MeV/c'%(self.momentum) + '\n' \
+                +'\tRel. factor\t%0.3f'%(self.gamma) + '\n' \
+                +'\tRadius x\t%0.1f mm'%(self.radius_x*1e3) + '\n' \
+                +'\tRadius y\t%0.1f mm'%(self.radius_y*1e3) + '\n' \
+                +'\tRadius x prime\t%0.1f mrad'%(self.radius_xp*1e3) + '\n' \
+                +'\tRadius y prime\t%0.1f mrad'%(self.radius_yp*1e3) + '\n' \
+                +'\tHorizontal centroid position\t%0.1f mm'%(self.x*1e3) + '\n' \
+                +'\tVertical centroid position\t%0.1f mm'%(self.y*1e3) + '\n' \
+                +'\tHorizontal centroid angle\t%0.1f mrad'%(self.xp*1e3) + '\n' \
+                +'\tVertical centroid angle\t%0.1f mrad'%(self.yp*1e3) + '\n' \
+                +'\tLarmor angle\t%0.1f rad'%(self.larmor_angle) + '\n' \
+                +'\tNormalized emittance x\t%0.1f mm*mrad'%\
+                (self.normalized_emittance_x*1e6) + '\n' \
+                +'\tNormalized emittance y\t%0.1f mm*mrad'%\
+                (self.normalized_emittance_y*1e6) + '\n'
+        return self.description
