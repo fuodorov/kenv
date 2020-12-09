@@ -203,8 +203,8 @@ class Simulation:
               particle: bool=False,
               centroid: bool=False,
               envelope: bool=True,
-              rtol: float=1e-5,
-              atol: float=1e-8,
+              rtol: float=1e-4,
+              atol: float=1e-7,
               method: str='RK23'):
         """Tracking!"""
 
@@ -230,6 +230,8 @@ class Simulation:
             self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
         if centroid:
             X0_centroid = np.array([self.beam.x, self.beam.xp,
                                     self.beam.y, self.beam.yp,
@@ -250,7 +252,6 @@ class Simulation:
             self.centroid_yp = interpolate.interp1d(self.accelerator.parameter, self.centroid_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
-            self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
         if particle:
             X0_particle = np.array([self.particle.x, self.particle.xp,
                                     self.particle.y, self.particle.yp,
