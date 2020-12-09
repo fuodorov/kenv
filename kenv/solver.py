@@ -199,8 +199,10 @@ class Simulation:
         self.larmor_angle = []
         self.particle_larmor_angle = []
 
-    def track(self,
+    def track(self, *,
               particle: bool=False,
+              centroid: bool=False,
+              envelope: bool=True,
               rtol: float=1e-5,
               atol: float=1e-8,
               method: str='RK23'):
@@ -209,50 +211,50 @@ class Simulation:
         # initial conditions
         equations = Equations(self.beam, self.accelerator, self.particle)
 
-        X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
-                            self.beam.radius_y, self.beam.radius_yp])
-        X0_centroid = np.array([self.beam.x, self.beam.xp,
-                                self.beam.y, self.beam.yp,
-                                self.beam.larmor_angle])
-        X0_particle = np.array([self.particle.x, self.particle.xp,
-                                self.particle.y, self.particle.yp,
-                                self.particle.larmor_angle])
-        # solver
-        beam_envelope = solve_ivp(equations.envelope_prime,
-        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_beam, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
+        if envelope:
+            X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
+                                self.beam.radius_y, self.beam.radius_yp])
+            # solver
+            beam_envelope = solve_ivp(equations.envelope_prime,
+            t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
+            y0=X0_beam, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
-        self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
+            self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
 
-        self.envelope_x = beam_envelope[0,:]
-        self.envelope_xp = beam_envelope[1,:]
-        self.envelope_y = beam_envelope[2,:]
-        self.envelope_yp = beam_envelope[3,:]
+            self.envelope_x = beam_envelope[0,:]
+            self.envelope_xp = beam_envelope[1,:]
+            self.envelope_y = beam_envelope[2,:]
+            self.envelope_yp = beam_envelope[3,:]
 
-        self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.envelope_x = interpolate.interp1d(self.accelerator.parameter, self.envelope_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        if centroid:
+            X0_centroid = np.array([self.beam.x, self.beam.xp,
+                                    self.beam.y, self.beam.yp,
+                                    self.beam.larmor_angle])
+            centroid_trajectory = solve_ivp(equations.centroid_prime,
+            t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
+            y0=X0_centroid, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
 
-        centroid_trajectory = solve_ivp(equations.centroid_prime,
-        t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
-        y0=X0_centroid, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
+            self.centroid_x = centroid_trajectory[0,:]
+            self.centroid_xp = centroid_trajectory[1,:]
+            self.centroid_y = centroid_trajectory[2,:]
+            self.centroid_yp = centroid_trajectory[3,:]
+            phi = self.larmor_angle = centroid_trajectory[4,:]
 
-        self.centroid_x = centroid_trajectory[0,:]
-        self.centroid_xp = centroid_trajectory[1,:]
-        self.centroid_y = centroid_trajectory[2,:]
-        self.centroid_yp = centroid_trajectory[3,:]
-        phi = self.larmor_angle = centroid_trajectory[4,:]
+            self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.centroid_xp = interpolate.interp1d(self.accelerator.parameter, self.centroid_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.centroid_y = interpolate.interp1d(self.accelerator.parameter, self.centroid_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.centroid_yp = interpolate.interp1d(self.accelerator.parameter, self.centroid_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
+            self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
-        self.centroid_x = interpolate.interp1d(self.accelerator.parameter, self.centroid_x, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.centroid_xp = interpolate.interp1d(self.accelerator.parameter, self.centroid_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.centroid_y = interpolate.interp1d(self.accelerator.parameter, self.centroid_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.centroid_yp = interpolate.interp1d(self.accelerator.parameter, self.centroid_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-        self.larmor_angle = interpolate.interp1d(self.accelerator.parameter, self.larmor_angle, kind='cubic', fill_value=(0, 0), bounds_error=False)
-
-        self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
-
-        if particle == True:
+            self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
+        if particle:
+            X0_particle = np.array([self.particle.x, self.particle.xp,
+                                    self.particle.y, self.particle.yp,
+                                    self.particle.larmor_angle])
             def wrapper(t, y):
                 return equations.particle_prime(t,y, self.envelope_x, self.envelope_y)
 
