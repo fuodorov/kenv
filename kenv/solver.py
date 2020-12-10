@@ -211,6 +211,9 @@ class Simulation:
         # initial conditions
         equations = Equations(self.beam, self.accelerator, self.particle)
 
+        self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
+        self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
+
         if envelope:
             X0_beam = np.array([self.beam.radius_x, self.beam.radius_xp,
                                 self.beam.radius_y, self.beam.radius_yp])
@@ -218,8 +221,6 @@ class Simulation:
             beam_envelope = solve_ivp(equations.envelope_prime,
             t_span=[self.accelerator.parameter[0], self.accelerator.parameter[-1]],
             y0=X0_beam, t_eval=self.accelerator.parameter, method=method, rtol=rtol, atol=atol).y
-
-            self.gamma = self.beam.gamma + self.beam.charge*self.accelerator.Ezdz(self.accelerator.parameter)/mass_rest_electron
 
             self.envelope_x = beam_envelope[0,:]
             self.envelope_xp = beam_envelope[1,:]
@@ -230,7 +231,6 @@ class Simulation:
             self.envelope_xp = interpolate.interp1d(self.accelerator.parameter, self.envelope_xp, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.envelope_y = interpolate.interp1d(self.accelerator.parameter, self.envelope_y, kind='cubic', fill_value=(0, 0), bounds_error=False)
             self.envelope_yp = interpolate.interp1d(self.accelerator.parameter, self.envelope_yp, kind='cubic', fill_value=(0, 0), bounds_error=False)
-            self.gamma = interpolate.interp1d(self.accelerator.parameter, self.gamma, kind='cubic', fill_value=(0, 0), bounds_error=False)
 
         if centroid:
             X0_centroid = np.array([self.beam.x, self.beam.xp,
