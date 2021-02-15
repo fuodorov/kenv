@@ -1,6 +1,3 @@
-# constants.py
-"""Constants."""
-
 __all__ = ['mc2',
            'speed_light',
            'alfven_current',
