@@ -1,5 +1,5 @@
 API reference
-================
+==================
 
 The sections below describe the main objects that are accessible in
 the ``kenv`` package, and which are used to set up a simulation.

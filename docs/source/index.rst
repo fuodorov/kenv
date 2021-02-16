@@ -33,7 +33,7 @@ that are accessible through KENV.
   api_reference/api_reference
 
 Contributing to KENV
----------------------
+----------------------
 
 KENV is open-source, and the source code is hosted `here <http://github.com/fuodorov/kenv>`_, on
 Github.

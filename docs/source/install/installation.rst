@@ -2,7 +2,7 @@ Installation
 ==================================
 
 Installing KENV
-------------------
+----------------------------------
 
 The installation requires the `Python <https://www.python.org/downloads/>`__.
 
