@@ -1,4 +1,4 @@
-Installation on a local computer
+Installation
 ==================================
 
 Installing KENV
