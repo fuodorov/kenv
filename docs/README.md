@@ -1,9 +1,9 @@
 This directory contains the source files for the documentation of KENV.
 
-The documentation is written using [Sphinx](http://www.sphinx-doc.org/en/stable/). The source files are located in `source/` and are written in [reStructuredText format] (http://www.sphinx-doc.org/en/stable/rest.html#rst-primer).
+The documentation is written using [Sphinx](http://www.sphinx-doc.org/en/stable/). The source files are located in `source/` and are written in [reStructuredText format](http://www.sphinx-doc.org/en/stable/rest.html#rst-primer).
 
 In order to generate the documentation in html format, first make sure
-that you have Sphinx installed (`pip install Sphinx sphinx_rtd_theme`), and that FBPIC
+that you have Sphinx installed (`pip install sphinx`), and that KENV
 is properly installed. Then type:
 ```
 make html
