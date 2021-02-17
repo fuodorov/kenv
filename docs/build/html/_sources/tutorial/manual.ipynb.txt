@@ -12,7 +12,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Libraries\n",
+    "## Including libraries\n",
     "First connect the necessary libraries and configure the graphics parameters."
    ]
   },
