@@ -43,7 +43,7 @@ We welcome contributions to the code!
 Research & Attribution
 ----------------------
 
-KENV was developed by `Vyacheslav Fedorov <https://fuodorov.github.io>`_, `Danila Nikiforov <mailto:nikdanila@bk.ru>`_ and `Alexey Petrenko <https://inp.nsk.su/~petrenko/>`_  at `Budker Institute of Nuclear Physics <https://inp.nsk.su>`_,
+KENV was developed by `Vyacheslav Fedorov <https://fuodorov.github.io>`_, `Danila Nikiforov <mailto:nikdanila@bk.ru>`_ and `Alexey Petrenko <https://inp.nsk.su/~petrenko/>`_  at `Budker Institute of Nuclear Physics <https://inp.nsk.su>`_.
 
 KENV's algorithms are documented in following scientific publications:
 
