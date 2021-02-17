@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Theory &#8212; KENV 0.3.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Algorithm &amp; Features" href="algorithm_and_features.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="Theory">
+<h1>Theory<a class="headerlink" href="#Theory" title="Permalink to this headline">¶</a></h1>
+<p>The derivation of the Kapchinsky-Vladimirsky differential equations is shown here.</p>
+<div class="section" id="Maxwell-Equations">
+<h2>Maxwell Equations<a class="headerlink" href="#Maxwell-Equations" title="Permalink to this headline">¶</a></h2>
+<p>Bulk current density of the beam <span class="math notranslate nohighlight">\(\jmath = \rho\upsilon\)</span>, where <span class="math notranslate nohighlight">\(\rho\)</span> is the bulk charge density, <span class="math notranslate nohighlight">\(\upsilon\)</span> is the beam velocity. We write the differential equations of Maxwell:</p>
+<div class="math notranslate nohighlight">
+\[\nabla\vec {D} = 4\pi\rho,\]</div>
+<div class="math notranslate nohighlight">
+\[\nabla\times\vec {H} =\frac {4\pi\vec {\jmath}} {c},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\vec {D}\)</span> is the induction of the electric field, <span class="math notranslate nohighlight">\(\vec {H}\)</span> is the magnetic field strength, <span class="math notranslate nohighlight">\(c\)</span> is the speed of light. We use the Stokes theorem on the integration of differential forms to obtain Maxwell’s equations in integral form:</p>
+<div class="math notranslate nohighlight">
+\[\oint\limits _ {\eth V}\vec {D}\vec {dS} = 4\pi\int\limits_V\rho {dV},\]</div>
+<div class="math notranslate nohighlight">
+\[\oint\limits _ {\eth S}\vec {H}\vec {dl} =\frac {4\pi} {c}\int\limits_S\vec {\jmath}\vec {dS}.\]</div>
+<p>Find <span class="math notranslate nohighlight">\(D_r\)</span> for a cylindrical beam of radius <span class="math notranslate nohighlight">\(a\)</span> with constant density <span class="math notranslate nohighlight">\(\rho_0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D_r =\frac {4\pi} {r}\int\limits ^ r_0\rho (\xi)\xi d\xi =
+\begin{equation*}
+ \begin{cases}
+   \displaystyle 2\pi\rho_0 r, r &lt;a,
+    \\
+   \displaystyle\frac {2\pi\rho_0 a ^ 2} {r}, r&gt; a.
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+<p>Given that in a vacuum <span class="math notranslate nohighlight">\(D = E\)</span>, <span class="math notranslate nohighlight">\(H = B\)</span>, <span class="math notranslate nohighlight">\(E\)</span> - electric field strength, <span class="math notranslate nohighlight">\(B\)</span> - magnetic field induction, and in flat space in a Cartesian coordinate system <span class="math notranslate nohighlight">\(H_\alpha =\beta D_r\)</span>, where <span class="math notranslate nohighlight">\(\displaystyle\beta =\frac {\upsilon} {c}\)</span>, the radial component of the force <span class="math notranslate nohighlight">\(F_r\)</span> from the Lorentz force <span class="math notranslate nohighlight">\(\vec {F} = e\vec {E} +\displaystyle\frac {e} {c}\vec {\upsilon}\times\vec {B}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[F_r = eE_r -\frac {e\upsilon_z B_\alpha} {c} = eE_r (1-\displaystyle\frac {\upsilon ^ 2} {c ^ 2}) =\displaystyle\frac {eE_r} {\gamma ^ 2}.\]</div>
+<p>It is useful to express the field through the current <span class="math notranslate nohighlight">\(I =\rho_0\upsilon\pi a ^ 2\)</span> then:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}E_r =
+\begin{equation*}
+ \begin{cases}
+   \displaystyle\frac {2 I r} {a ^ 2\upsilon}, r &lt;a,
+    \\
+   \displaystyle\frac {2 I} {r\upsilon}, r&gt; a.
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+</div>
+<div class="section" id="Equations-of-motion">
+<h2>Equations of motion<a class="headerlink" href="#Equations-of-motion" title="Permalink to this headline">¶</a></h2>
+<p>Newton’s second law <span class="math notranslate nohighlight">\(\dot p_r = F_r\)</span>, we use the paraxial approximation and consider <span class="math notranslate nohighlight">\(\gamma = const\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\gamma m\ddot r =\displaystyle\frac {eE_r} {\gamma ^ 2} =\displaystyle\frac {2 I e} {\gamma ^ 2 a ^ 2\upsilon} r,\]</div>
+<p>we got a linear equation, but since all the particles are moving, we need to take into account that <span class="math notranslate nohighlight">\(a = a (t)\)</span>. The solution of the linear equation can be represented as a linear transformation of the phase plane. Since a segment on the phase plane under a non-degenerate linear transformation goes into a segment, it can be characterized by a single point. Therefore, we choose the extreme point $ r = a $, which will characterize the extreme trajectory:</p>
+<div class="math notranslate nohighlight">
+\[\gamma m\ddot r =\displaystyle\frac {2 I e} {\gamma ^ 2 a\upsilon}.\]</div>
+<p>We proceed to differentiation with respect to $ z $, taking into account that <span class="math notranslate nohighlight">\(\displaystyle dt =\frac {dz} {v}\)</span>, then:</p>
+<div class="math notranslate nohighlight">
+\[a '' =\displaystyle\frac {e} {a}\frac {2I} {m\gamma ^ 3\upsilon ^ 3}.\]</div>
+<p>We introduce the characteristic Alfven current <span class="math notranslate nohighlight">\(I_a =\displaystyle\frac {mc ^ 3} {e}\approx\)</span> 17 kA, therefore:</p>
+<div class="math notranslate nohighlight">
+\[a '' =\displaystyle\frac {2I} {I_a (\beta\gamma) ^ 3}\frac {1} {a}.\]</div>
+<p>We take into account external focusing, assuming a superposition of fields (it is not always true, for example, in nonlinear media this is not true), we obtain:</p>
+<div class="math notranslate nohighlight">
+\[a '' + k (z) a -\displaystyle\frac {2I} {I_a (\beta\gamma) ^ 3}\frac {1} {a} = 0,\]</div>
+<p>which resembles the equation of the envelope:</p>
+<div class="math notranslate nohighlight">
+\[w '' + kw -\displaystyle\frac {1} {w ^ 3} = 0,\]</div>
+<p>where <span class="math notranslate nohighlight">\(w =\displaystyle\sqrt\beta.\)</span></p>
+<div class="section" id="Envelope-equations-for-an-elliptical-beam-with-Kapchinsky-Vladimirsky-distribution-with-external-focusing-by-linear-fields">
+<h3>Envelope equations for an elliptical beam with Kapchinsky-Vladimirsky distribution with external focusing by linear fields<a class="headerlink" href="#Envelope-equations-for-an-elliptical-beam-with-Kapchinsky-Vladimirsky-distribution-with-external-focusing-by-linear-fields" title="Permalink to this headline">¶</a></h3>
+<p>Kapchinsky-Vladimirsky distribution:</p>
+<div class="math notranslate nohighlight">
+\[f = A\delta (1 -\displaystyle\frac {\beta_x x '^ 2 + 2\alpha_x xx' +\gamma_x x ^ 2} {\epsilon_x} -\displaystyle\frac {\beta_y y '^ 2 + 2\alpha_y yy '+\gamma_y y ^ 2} {\epsilon_y}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the Courant-Snyder invariant. Axes of the ellipse:</p>
+<div class="math notranslate nohighlight">
+\[a =\sqrt {\epsilon_x\beta_x}, b =\sqrt {\epsilon_y\beta_y}.\]</div>
+<p>The field is obtained linearly inside the charged elliptical cylinder:</p>
+<div class="math notranslate nohighlight">
+\[E_x =\displaystyle\frac {4I} {\upsilon}\frac {x} {a (a + b)},\]</div>
+<div class="math notranslate nohighlight">
+\[E_y =\displaystyle\frac {4I} {\upsilon}\frac {y} {b (a + b)}.\]</div>
+<p>Check that <span class="math notranslate nohighlight">\(\nabla\vec {E} = 4\pi\rho:\)</span></p>
+<div class="math notranslate nohighlight">
+\[\displaystyle I =\rho\upsilon\pi ab,\]</div>
+<div class="math notranslate nohighlight">
+\[\nabla\vec {E} =\displaystyle\frac {4I (a + b)} {\pi (a + b) ab} =\displaystyle\frac {4I} {\pi ab} = 4\pi\rho.\]</div>
+<p>Since the fields are linear, they are added to the fields of the focusing lens. Substitute <span class="math notranslate nohighlight">\(\displaystyle a =\sqrt\epsilon_x w_x, b =\sqrt\epsilon_y w_y:\)</span> in the envelope equation</p>
+<div class="math notranslate nohighlight">
+\[a '' + k_ {xt} a -\frac {\epsilon_x ^ 2} {a ^ 3} = 0,\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_ {xt} = k_x + k_ {xsc}\)</span> is the total stiffness, <span class="math notranslate nohighlight">\(k_x\)</span> is the stiffness of the lens, and <span class="math notranslate nohighlight">\(\displaystyle k_ {xsc} =\frac {4I} {I_a (\beta\gamma) ^ 3}\frac {1} {a (a + b)}.\)</span> As a result, we obtain a system of equations connected through a space charge:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation*}
+ \begin{cases}
+   \displaystyle a '' + k_xa -\frac {4I} {I_a (\beta\gamma) ^ 3}\frac {1} {(a + b)} -\frac {\epsilon_x ^ 2} {a ^ 3} = 0,
+   \\
+   \displaystyle b '' + k_yb -\frac {4I} {I_a (\beta\gamma) ^ 3}\frac {1} {(a + b)} -\frac {\epsilon_y ^ 2} {b ^ 3} = 0.
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+</div>
+</div>
+<div class="section" id="Quantitative-criterion-for-the-applicability-of-the-flow-laminarity-approximation">
+<h2>Quantitative criterion for the applicability of the flow laminarity approximation<a class="headerlink" href="#Quantitative-criterion-for-the-applicability-of-the-flow-laminarity-approximation" title="Permalink to this headline">¶</a></h2>
+<p>This system of equations makes it possible to take into account 2 effects that interfere with focusing the beam at a point — the finiteness of the emmittance and the space charge. Members work the same way, so you can compare these values.</p>
+<p>When the current <span class="math notranslate nohighlight">\(I\)</span> is small - weak repulsion, if the current <span class="math notranslate nohighlight">\(I\)</span> is large - strong repulsion, therefore, the emmittance can be discarded and the flow can be considered laminar. Obviously, a quantitative criterion for the applicability of laminar flow is as follows:</p>
+<div class="math notranslate nohighlight">
+\[\displaystyle\sqrt {\frac {2I} {I_a (\beta\gamma) ^ 3}}\gg\sqrt {\frac {\epsilon} {\beta}}.\]</div>
+<p>It can be seen that the space charge affects the envelope more where the <span class="math notranslate nohighlight">\(\beta\)</span> function is greater, and in the vicinity of the focus, the influence of the space charge can be neglected.</p>
+</div>
+<div class="section" id="Bush’s-Theorem">
+<h2>Bush’s Theorem<a class="headerlink" href="#Bush’s-Theorem" title="Permalink to this headline">¶</a></h2>
+<p>As an addition to the derivation of the equation of the envelope of the beam, we prove an important auxiliary theorem called the Bush theorem. It connects the angular velocity of a charged particle moving in an axially symmetric magnetic field with a magnetic flux enveloped in a circle centered on the axis and passing through the point at which the particle is located.</p>
+<p>Consider the charge $ q $ moving in a magnetic field <span class="math notranslate nohighlight">\(\vec B = (B_r, 0, B_z)\)</span>. We equate the <span class="math notranslate nohighlight">\(\theta\)</span> component of the Lorentz force with the time derivative of the momentum divided by <span class="math notranslate nohighlight">\(r\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[F_\theta = -q (\ddot r B_z -\dot z B_r) =\frac {d} {rdt} (\gamma m r ^ 2\dot\theta).\]</div>
+<p>The flow penetrating the area covered by a circle of radius $ r $, the center of which is located on the axis, and it passes through the point at which the charge is located, is written in the form <span class="math notranslate nohighlight">\(\psi =\int\limits ^ r_0 2\pi r B_z dr\)</span> . When a particle moves by <span class="math notranslate nohighlight">\(\vec {dl} = (dr, dz)\)</span>, the rate of change of the flow covered by this circle can be found from the second Maxwell equation <span class="math notranslate nohighlight">\(\nabla\vec {B} = 0.\)</span> Thus,</p>
+<div class="math notranslate nohighlight">
+\[\dot\psi = 2\pi r (-B_r\dot z + B_z\dot r).\]</div>
+<p>After integration over time, from the above equations we obtain the following expression:</p>
+<div class="math notranslate nohighlight">
+\[\dot\theta = (-\frac {q} {2\pi\gamma m r ^ 2}) (\psi -\psi_0).\]</div>
+</div>
+<div class="section" id="Paraxial-Ray-Equation">
+<h2>Paraxial Ray Equation<a class="headerlink" href="#Paraxial-Ray-Equation" title="Permalink to this headline">¶</a></h2>
+<p>Here we write the equation of the paraxial ray in the form corresponding to a system with axial symmetry under the assumptions made earlier. To derive the equation of the paraxial ray, we equate the force of radial acceleration to the forces of electric and magnetic from the side of external fields. It must be remembered that the value <span class="math notranslate nohighlight">\(\gamma =\gamma (t).\)</span></p>
+<div class="math notranslate nohighlight">
+\[\frac {d} {dt} (\gamma m\dot r) -\gamma m r (\dot\theta) ^ 2 = q (E_r + r\dot\theta B_z).\]</div>
+<p>We apply the Bush theorem and the independence of <span class="math notranslate nohighlight">\(B_z\)</span> from <span class="math notranslate nohighlight">\(r:\)</span></p>
+<div class="math notranslate nohighlight">
+\[-\dot\theta =\frac {q} {2\gamma m} (B_z -\frac {\psi_0} {\pi r}).\]</div>
+<p>Exclude <span class="math notranslate nohighlight">\(\dot\theta\)</span> and substitute <span class="math notranslate nohighlight">\(\displaystyle\dot\gamma\approx\frac {\beta q E_z} {mc}:\)</span></p>
+<div class="math notranslate nohighlight">
+\[\ddot r +\frac {\beta q E_z} {\gamma mc}\dot r +\frac {q ^ 2 B ^ 2_z} {4\gamma ^ 2 m ^ 2} r -\frac {q ^ 2\psi ^ 2_0} {4\pi ^ 2\gamma ^ 2 m ^ 2} (\frac {1} {r ^ 3}) -\frac {q E_r} {\gamma m} = 0.\]</div>
+</div>
+<div class="section" id="Envelope-equation-for-round-and-elliptical-beams">
+<h2>Envelope equation for round and elliptical beams<a class="headerlink" href="#Envelope-equation-for-round-and-elliptical-beams" title="Permalink to this headline">¶</a></h2>
+<p>Given that:</p>
+<div class="math notranslate nohighlight">
+\[\dot r = \beta c r ',\]</div>
+<div class="math notranslate nohighlight">
+\[\ddot r = r '' (\dot z) ^ 2 + r '\ddot z \approx r' '\beta ^ 2 c ^ 2 + r' \beta '\beta c ^ 2.\]</div>
+<p>And also, if there are no charges in the beam region, then expanding into a Taylor series in the vicinity of the axis and leaving only the first term, taking</p>
+<div class="math notranslate nohighlight">
+\[\nabla \vec {E} = 0\]</div>
+<div class="math notranslate nohighlight">
+\[E_r = -0.5 r E'_z \approx - 0.5 r \gamma '' mc ^ 2 / q.\]</div>
+<p>Then we can finally write the envelope equation for a round beam of radius <span class="math notranslate nohighlight">\(r\)</span> with a Kapchinsky-Vladimirsky distribution with external focusing by linear fields:</p>
+<div class="math notranslate nohighlight">
+\[\displaystyle r '' + \frac {1} {\beta ^ 2 \gamma} \gamma 'r' + \frac {1} {2 \beta ^ 2 \gamma} \gamma''r + kr - \frac { 2I} {I_a (\beta \gamma) ^ 3} \frac {1} {r} - \frac {\epsilon ^ 2} {r ^ 3} = 0;\]</div>
+<p>and for an elliptical beam:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation*}
+ \begin{cases}
+   \displaystyle a '' + \frac {1} {\beta ^ 2 \gamma} \gamma 'a' + \frac {1} {2 \beta ^ 2 \gamma} \gamma''a + k_xa - \frac { 4I} {I_a (\beta \gamma) ^ 3} \frac {1} {(a + b)} - \frac {\epsilon_x ^ 2} {a ^ 3} = 0,
+   \\
+   \displaystyle b '' + \frac {1} {\beta ^ 2 \gamma} \gamma 'b' + \frac {1} {2 \beta ^ 2 \gamma} \gamma''b + k_yb - \frac { 4I} {I_a (\beta \gamma) ^ 3} \frac {1} {(a + b)} - \frac {\epsilon_y ^ 2} {b ^ 3} = 0.
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+</div>
+<div class="section" id="Magnetic-Lenses">
+<h2>Magnetic Lenses<a class="headerlink" href="#Magnetic-Lenses" title="Permalink to this headline">¶</a></h2>
+<p>The focusing elements can be: solenoids and magnetic quadrupole lenses.</p>
+<div class="section" id="Solenoids">
+<h3>Solenoids<a class="headerlink" href="#Solenoids" title="Permalink to this headline">¶</a></h3>
+<p><span class="math notranslate nohighlight">\(k_x = k_y = k_s\)</span> - stiffness of the solenoid:</p>
+<div class="math notranslate nohighlight">
+\[k_s = \left (\frac {eB_z} {2m_ec \beta \gamma} \right) ^ 2 = \left (\frac {e B_z} {2 \beta \gamma \cdot 0.511 \cdot 10 ^ 6 e \cdot \mathrm {volt} / c} \right) ^ 2 =
+\left (\frac {cB_z [\mathrm {T}]} {2 \beta \gamma \cdot 0.511 \cdot 10 ^ 6 \cdot \mathrm {volt}} \right) ^ 2.\]</div>
+</div>
+<div class="section" id="Quadrupoles">
+<h3>Quadrupoles<a class="headerlink" href="#Quadrupoles" title="Permalink to this headline">¶</a></h3>
+<p>$ k_q = <span class="math">\displaystyle `:nbsphinx-math:</span>frac {eG}` {pc}$ is the quadrupole stiffness, where $ G = <span class="math">\displaystyle `:nbsphinx-math:</span>frac {partial B_x}` {<span class="math">\partial `y} = :nbsphinx-math:</span>displaystyle <cite>:nbsphinx-math:</cite>frac {partial B_y}` {<span class="math">\partial `x }$ is the magnetic field gradient, and :math:`k_x = k_q, k_y = -k_q.</span></p>
+<div class="math notranslate nohighlight">
+\[k_q = \left (\frac {eG} {m_ec \beta \gamma} \right) = \left (\frac {eG} {\beta \gamma \cdot 0.511 \cdot 10 ^ 6 e \cdot \mathrm {volt} / c} \right) =
+\left (\frac {cG} {\beta \gamma \cdot 0.511 \cdot 10 ^ 6 \cdot \mathrm {volt}} \right).\]</div>
+</div>
+</div>
+<div class="section" id="Longitudinal-beam-dynamics">
+<h2>Longitudinal beam dynamics<a class="headerlink" href="#Longitudinal-beam-dynamics" title="Permalink to this headline">¶</a></h2>
+<p>The equation for the longitudinal dynamics of the beam can be solved independently of the equation for the envelope, so that the ready-made function of the beam energy of $ z $ is already used in the equation for the envelope. Assuming that the electron velocity is close enough to the speed of light and therefore its longitudinal coordinate is <span class="math notranslate nohighlight">\(z \approx ct\)</span>, and the momentum is <span class="math notranslate nohighlight">\(p_z \approx \gamma mc\)</span></p>
+<div class="math notranslate nohighlight">
+\[\frac {d \gamma} {dz} \approx \frac {eE_z} {mc ^ 2},\]</div>
+<p>Then it is enough to integrate the function <span class="math notranslate nohighlight">\(E_z (z)\)</span> once.</p>
+</div>
+<div class="section" id="Solution-of-the-envelope-equation-for-an-elliptical-beam-with-focusing-elements">
+<h2>Solution of the envelope equation for an elliptical beam with focusing elements<a class="headerlink" href="#Solution-of-the-envelope-equation-for-an-elliptical-beam-with-focusing-elements" title="Permalink to this headline">¶</a></h2>
+<p>The envelope equation for an elliptical beam with half axes $ a, b $ with the Kapchinsky-Vladimirsky distribution with external focusing by linear fields:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation*}
+ \begin{cases}
+   \displaystyle a '' + \frac {1} {\beta ^ 2 \gamma} \gamma 'a' + \frac {1} {2 \beta ^ 2 \gamma} \gamma''a + ka - \frac { 2P} {(a + b)} - \frac {\epsilon_x ^ 2} {a ^ 3} = 0,
+   \\
+   \displaystyle b '' + \frac {1} {\beta ^ 2 \gamma} \gamma 'b' + \frac {1} {2 \beta ^ 2 \gamma} \gamma''b - kb - \frac { 2P} {(a + b)} - \frac {\epsilon_y ^ 2} {b ^ 3} = 0.
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+<p>Let <span class="math notranslate nohighlight">\(\displaystyle x = \frac {da} {dz}, y = \frac {db} {dz}, \displaystyle \frac {d \gamma} {dz} \approx \frac {e E_z} {mc ^ 2 },\)</span> then:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\displaystyle
+\left \{\begin{matrix}
+\displaystyle \frac {dx} {dz} = - \frac {1} {\beta ^ 2 \gamma} \gamma 'a' - \frac {1} {2 \beta ^ 2 \gamma} \gamma'a - ka + \frac {2P} {(a + b)} + \frac {\epsilon_x ^ 2} {a ^ 3} \\
+ \displaystyle \frac {da} {dz} = x \\
+ \displaystyle \frac {dy} {dz} = - \frac {1} {\beta ^ 2 \gamma} \gamma 'b' - \frac {1} {2 \beta ^ 2 \gamma} \gamma''b + kb + \frac {2P} {(a + b)} + \frac {\epsilon_x ^ 2} {b ^ 3} \\
+ \displaystyle \frac {db} {dz} = y
+\end{matrix} \right.\end{split}\]</div>
+<p>Let <span class="math notranslate nohighlight">\(\vec X = \begin{bmatrix} x \\ a \\ y \\ b \end{bmatrix}\)</span>, we now compose the differential equation <span class="math notranslate nohighlight">\(X '= F (X).\)</span></p>
+</div>
+<div class="section" id="Trajectory-equation-for-one-particle">
+<h2>Trajectory equation for one particle<a class="headerlink" href="#Trajectory-equation-for-one-particle" title="Permalink to this headline">¶</a></h2>
+<p>The vector potential in the solenoid has only one component and is easily expressed in terms of <span class="math notranslate nohighlight">\(B_z (z)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[A_ \phi (z, r) = \sum_0 ^ {inf} \dfrac {(- 1) ^ n} {n! (N + 1)!} B_z ^ {2n} (\dfrac {r} {2}) ^ {2n + 1/2}.\]</div>
+<p>Therefore, the Lagrangian in a cylindrical coordinate system has the form:</p>
+<div class="math notranslate nohighlight">
+\[L = -mc ^ 2 (1- \beta ^ 2) ^ {1/2} + \dfrac {e} {c} A_ \phi r \dot \phi.\]</div>
+<p>Axial symmetry implies the existence of an integral of motion:</p>
+<div class="math notranslate nohighlight">
+\[P_ \phi = \gamma mr ^ 2 \dot \phi + \dfrac {e} {c} r A_ \phi = \gamma mr ^ 2 \dot \phi_0.\]</div>
+<p>Differentiating by <span class="math notranslate nohighlight">\(z\)</span> we get:</p>
+<div class="math notranslate nohighlight">
+\[\phi '- \phi_0' = - \dfrac {e} {pc} \dfrac {A_ \phi} {r}.\]</div>
+<p>And in the paraxial approximation:</p>
+<div class="math notranslate nohighlight">
+\[\phi '- \phi_0' = - \dfrac {e} {pc} B_z (z).\]</div>
+<p>From:</p>
+<div class="math notranslate nohighlight">
+\[\delta \phi = -\int \dfrac {e} {2pc} B_z (z) dz.\]</div>
+<p>Then the equations of the trajectory in the given coordinates look like this:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation*}
+ \begin{cases}
+   \displaystyle \tilde x '' + \frac {1} {\beta ^ 2 \gamma} \gamma '\tilde x' + \frac {1} {2 \beta ^ 2 \gamma} \gamma '' \tilde x + k_s \tilde x = 0,
+   \\
+   \displaystyle \tilde y '' + \frac {1} {\beta ^ 2 \gamma} \gamma '\tilde y' + \frac {1} {2 \beta ^ 2 \gamma} \gamma '' \tilde y + k_s \tilde y = 0,
+ \end{cases}
+\end{equation*}\end{split}\]</div>
+</div>
+<div class="section" id="Literature">
+<h2>Literature<a class="headerlink" href="#Literature" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><ol class="upperalpha simple" start="10">
+<li><p>Lawson <a class="reference external" href="https://books.google.ru/books/about/The_Physics_of_Charged_particle_Beams.html?id=j87vAAAAMAAJ&amp;redir_esc=y">“Physics of charged particle beams”</a></p></li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">KENV</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/api_reference.html">API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="overview.html">Overview</a><ul>
+      <li>Previous: <a href="overview.html" title="previous chapter">Overview</a></li>
+      <li>Next: <a href="algorithm_and_features.html" title="next chapter">Algorithm &amp; Features</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, KENV contributors.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/overview/theory.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

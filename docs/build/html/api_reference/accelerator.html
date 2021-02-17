@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Accelerator class &#8212; KENV 0.3.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Simulation class" href="simulation.html" />
+    <link rel="prev" title="The Beam class" href="beam.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="the-accelerator-class">
+<h1>The Accelerator class<a class="headerlink" href="#the-accelerator-class" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#kenv.accelerator.Accelerator" title="kenv.accelerator.Accelerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Accelerator</span></code></a> class is top-level class in KENV. It contains all
+the accelerator data, and has the high-level method <a class="reference internal" href="#kenv.accelerator.Accelerator.compile" title="kenv.accelerator.Accelerator.compile"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">compile</span></code></a>
+that performs the accelerator.</p>
+<dl class="py class">
+<dt id="kenv.accelerator.Accelerator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">kenv.accelerator.</span></code><code class="sig-name descname"><span class="pre">Accelerator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_stop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an accelerator.</p>
+<p>Create an accelerator with parameters:
+z_start [m] — the beginning of the accelerator,
+z_stop [m] — end of the accelerator,
+dz [m] — step method along the accelerator.</p>
+<p>Can add a solenoids, quadrupoles and accelerating modules.</p>
+<p>Accelerator’s parameters after compile:
+beamline:
+Bz_beamline, Ez_beamline, Gz_beamline,
+Bx_beamline, By_beamline,
+function:
+Ez, Bz, Gz, Bx, By,
+Dx, Dxp, Dy, Dyp,
+and
+dEzdz, dBzdz, dGzdz, dBxdz, dBydz,
+and
+Ezdz, Bzdz, Gzdz, Bxdz, Bydz</p>
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.add_accel">
+<code class="sig-name descname"><span class="pre">add_accel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.add_accel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.add_accel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an accelerating module in the accelerator.</p>
+<p>Creates an accelerating module in the accelerator with parameters:
+name — accelerating module’s id,
+center [m] — accelerating module’s center,
+max_field [MV/m] — accelerating module’s maximum field,
+file_name — experimental profile of the Ez field
+and shifted by x [m], xp [rad], y [m], yp [rad]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.add_corrector_x">
+<code class="sig-name descname"><span class="pre">add_corrector_x</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.add_corrector_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.add_corrector_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a corrector in the accelerator.</p>
+<p>Creates a corrector in the accelerator with parameters:
+name — corrector’s id,
+center [m] — corrector’s center,
+max_field [T] — corrector’s maximum field,
+file_name — experimental profile of the By field</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.add_corrector_y">
+<code class="sig-name descname"><span class="pre">add_corrector_y</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.add_corrector_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.add_corrector_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a corrector in the accelerator.</p>
+<p>Creates a corrector in the accelerator with parameters:
+name — corrector’s id,
+center [m] — corrector’s center,
+max_field [T] — corrector’s maximum field,
+file_name — experimental profile of the Bx field</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.add_quadrupole">
+<code class="sig-name descname"><span class="pre">add_quadrupole</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.add_quadrupole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.add_quadrupole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a quadrupole in the accelerator.</p>
+<p>Creates a quadrupole in the accelerator with parameters:
+name — quadrupole’s id,
+center [m] — quadrupole’s center,
+max_field [T/m] — quadrupole’s maximum field,
+file_name — experimental profile of the Gz field</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.add_solenoid">
+<code class="sig-name descname"><span class="pre">add_solenoid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.add_solenoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.add_solenoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a solenoid in the accelerator.</p>
+<p>Creates a solenoid in the accelerator with parameters:
+name — solenoid’s id,
+center [m] — solenoid’s center,
+max_field [T] — solenoid’s maximum field,
+file_name — experimental profile of the Bz field
+and shifted by x [m], xp [rad], y [m], yp [rad]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kenv.accelerator.Accelerator.compile">
+<code class="sig-name descname"><span class="pre">compile</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/kenv/accelerator.html#Accelerator.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.accelerator.Accelerator.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compilation of the accelerator.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">KENV</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_reference.html">API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="api_reference.html">API reference</a><ul>
+      <li>Previous: <a href="beam.html" title="previous chapter">The Beam class</a></li>
+      <li>Next: <a href="simulation.html" title="next chapter">The Simulation class</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, KENV contributors.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/api_reference/accelerator.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

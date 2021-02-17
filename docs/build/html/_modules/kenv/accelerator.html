@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kenv.accelerator &#8212; KENV 0.3.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for kenv.accelerator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">integrate</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Element&#39;</span><span class="p">,</span> <span class="s1">&#39;Accelerator&#39;</span><span class="p">,</span> <span class="s1">&#39;read_fields&#39;</span><span class="p">,</span> <span class="s1">&#39;read_offsets&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Element</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sets one accelerator element.</span>
+
+<span class="sd">    Sets one accelerator element with parameters:</span>
+<span class="sd">    z0 [m] --- element position,</span>
+<span class="sd">    max_field --- maximum field,</span>
+<span class="sd">    file_name --- field profile,</span>
+<span class="sd">    name --- unique element name,</span>
+
+<span class="sd">    and shifted by x, xp, y, yp,</span>
+
+<span class="sd">    and z_start, z_stop, length</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">z0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="n">z0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_field</span> <span class="o">=</span> <span class="n">max_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yp</span> <span class="o">=</span> <span class="n">yp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
+
+
+<span class="k">def</span> <span class="nf">read_fields</span><span class="p">(</span><span class="n">beamline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sews elements into a function of z.</span>
+
+<span class="sd">    Sews elements into a function of z with parameters:</span>
+<span class="sd">    beamline --- set of accelerator elements,</span>
+<span class="sd">    z [m] --- coordinate.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">field_files</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">F</span><span class="p">,</span> <span class="n">F_prime</span><span class="p">,</span> <span class="n">F_int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">beamline</span><span class="p">:</span>
+        <span class="n">z_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span>
+        <span class="n">F_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="n">z_data</span><span class="p">,</span> <span class="n">F_data</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">F</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">F_prime</span> <span class="o">=</span> <span class="n">F</span>
+        <span class="n">F_int</span> <span class="o">=</span> <span class="n">F</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span> <span class="ow">in</span> <span class="n">field_files</span><span class="p">):</span>
+                <span class="n">field_files</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">field_files</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span>
+            <span class="n">z_data</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span>
+            <span class="n">F_data</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">z_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">)</span>
+
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                <span class="n">z_data</span><span class="p">,</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">max_field</span> <span class="o">*</span> <span class="n">F_data</span><span class="p">,</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+            <span class="n">f_prime</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                <span class="n">z_data</span><span class="p">,</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">max_field</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">F_data</span><span class="p">,</span> <span class="n">dz</span><span class="p">),</span>
+                <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">F_prime</span> <span class="o">=</span> <span class="n">F_prime</span> <span class="o">+</span> <span class="n">f_prime</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">element</span><span class="o">.</span><span class="n">max_field</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">int_f</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">cumtrapz</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">z_data</span><span class="p">),</span> <span class="n">z_data</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">int_ff</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">cumtrapz</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">z_data</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">z_data</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">int_f</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">int_ff</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">int_ff</span> <span class="o">/</span> <span class="n">int_f</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span> <span class="o">-</span> <span class="n">element</span><span class="o">.</span><span class="n">length</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span> <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">length</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span>
+
+    <span class="n">F</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">F_int</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">cumtrapz</span><span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">z</span><span class="p">)</span>
+    <span class="n">F_prime</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">F_prime</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                                   <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">F_int</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">F_int</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                                 <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">F_int</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">F_int</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                                 <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">F</span><span class="p">,</span> <span class="n">F_prime</span><span class="p">,</span> <span class="n">F_int</span>
+
+
+<span class="k">def</span> <span class="nf">read_offsets</span><span class="p">(</span><span class="n">beamline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sews elements into a function of z.</span>
+
+<span class="sd">    Sews elements into a function of z with parameters:</span>
+<span class="sd">    beamline --- set of accelerator elements,</span>
+<span class="sd">    z [m] --- coordinate.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">field_files</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">offset_correct_x</span><span class="p">,</span> <span class="n">offset_correct_y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">offset_correct_xp</span><span class="p">,</span> <span class="n">offset_correct_yp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">beamline</span><span class="p">:</span>
+        <span class="n">z_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span>
+        <span class="n">F_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="n">z_data</span><span class="p">,</span> <span class="n">F_data</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">F</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">offset_correct_x</span><span class="p">,</span> <span class="n">offset_correct_y</span> <span class="o">=</span> <span class="n">F</span><span class="p">,</span> <span class="n">F</span>
+        <span class="n">offset_correct_xp</span><span class="p">,</span> <span class="n">offset_correct_yp</span> <span class="o">=</span> <span class="n">F</span><span class="p">,</span> <span class="n">F</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span> <span class="ow">in</span> <span class="n">field_files</span><span class="p">):</span>
+                <span class="n">field_files</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">field_files</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span>
+            <span class="n">z_data</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span>
+            <span class="n">F_data</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">element</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">z_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">z_start</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">z_stop</span><span class="p">,</span>
+                                     <span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">))</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">xp</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">xp</span>
+                <span class="n">y</span><span class="p">,</span> <span class="n">yp</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">yp</span>
+                <span class="n">z0</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">z0</span>
+                <span class="n">f_x</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">z_data</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z0</span><span class="p">)</span> <span class="o">*</span> <span class="n">xp</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">))],</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="n">f_xp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">z_data</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">xp</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">))],</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="n">f_y</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">z_data</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z0</span><span class="p">)</span> <span class="o">*</span> <span class="n">yp</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">))],</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="n">f_yp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">z_data</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">yp</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_data</span><span class="p">))],</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">z_data</span><span class="p">,</span>
+                    <span class="mi">0</span> <span class="o">*</span> <span class="n">F_data</span><span class="p">,</span>
+                    <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">,</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="n">f_x</span><span class="p">,</span> <span class="n">f_xp</span><span class="p">,</span> <span class="n">f_y</span><span class="p">,</span> <span class="n">f_yp</span> <span class="o">=</span> <span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">f</span>
+
+            <span class="n">offset_correct_x</span> <span class="o">=</span> <span class="n">offset_correct_x</span> <span class="o">+</span> <span class="n">f_x</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">offset_correct_xp</span> <span class="o">=</span> <span class="n">offset_correct_xp</span> <span class="o">+</span> <span class="n">f_xp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">offset_correct_y</span> <span class="o">=</span> <span class="n">offset_correct_y</span> <span class="o">+</span> <span class="n">f_y</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">offset_correct_yp</span> <span class="o">=</span> <span class="n">offset_correct_yp</span> <span class="o">+</span> <span class="n">f_yp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">offset_correct_x</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">z</span><span class="p">,</span>
+        <span class="n">offset_correct_x</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">offset_correct_y</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">z</span><span class="p">,</span>
+        <span class="n">offset_correct_y</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">offset_correct_xp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">z</span><span class="p">,</span>
+        <span class="n">offset_correct_xp</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">offset_correct_yp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">z</span><span class="p">,</span>
+        <span class="n">offset_correct_yp</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">offset_correct_x</span><span class="p">,</span> <span class="n">offset_correct_xp</span><span class="p">,</span>
+            <span class="n">offset_correct_y</span><span class="p">,</span> <span class="n">offset_correct_yp</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Accelerator"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator">[docs]</a><span class="k">class</span> <span class="nc">Accelerator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create an accelerator.</span>
+
+<span class="sd">    Create an accelerator with parameters:</span>
+<span class="sd">    z_start [m] --- the beginning of the accelerator,</span>
+<span class="sd">    z_stop [m] --- end of the accelerator,</span>
+<span class="sd">    dz [m] --- step method along the accelerator.</span>
+
+<span class="sd">    Can add a solenoids, quadrupoles and accelerating modules.</span>
+
+<span class="sd">    Accelerator&#39;s parameters after compile:</span>
+<span class="sd">    beamline:</span>
+<span class="sd">    Bz_beamline, Ez_beamline, Gz_beamline,</span>
+<span class="sd">    Bx_beamline, By_beamline,</span>
+<span class="sd">    function:</span>
+<span class="sd">    Ez, Bz, Gz, Bx, By,</span>
+<span class="sd">    Dx, Dxp, Dy, Dyp,</span>
+<span class="sd">    and</span>
+<span class="sd">    dEzdz, dBzdz, dGzdz, dBxdz, dBydz,</span>
+<span class="sd">    and</span>
+<span class="sd">    Ezdz, Bzdz, Gzdz, Bxdz, Bydz</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">z_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">z_stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">z_start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="n">z_stop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">dz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">z_start</span><span class="p">,</span> <span class="n">z_stop</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dBxdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dBydz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dBzdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dEzdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dGzdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bxdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bydz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bzdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ezdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gzdz</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Dxp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Dyp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span>
+
+<div class="viewcode-block" id="Accelerator.add_solenoid"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.add_solenoid">[docs]</a>    <span class="k">def</span> <span class="nf">add_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                     <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                     <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="o">*</span><span class="p">,</span>
+                     <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                     <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                     <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                     <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates a solenoid in the accelerator.</span>
+
+<span class="sd">        Creates a solenoid in the accelerator with parameters:</span>
+<span class="sd">        name --- solenoid&#39;s id,</span>
+<span class="sd">        center [m] --- solenoid&#39;s center,</span>
+<span class="sd">        max_field [T] --- solenoid&#39;s maximum field,</span>
+<span class="sd">        file_name --- experimental profile of the Bz field</span>
+<span class="sd">        and shifted by x [m], xp [rad], y [m], yp [rad]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+                                         <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">yp</span><span class="o">=</span><span class="n">yp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Accelerator.add_accel"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.add_accel">[docs]</a>    <span class="k">def</span> <span class="nf">add_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                  <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                  <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="o">*</span><span class="p">,</span>
+                  <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                  <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                  <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                  <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates an accelerating module in the accelerator.</span>
+
+<span class="sd">        Creates an accelerating module in the accelerator with parameters:</span>
+<span class="sd">        name --- accelerating module&#39;s id,</span>
+<span class="sd">        center [m] --- accelerating module&#39;s center,</span>
+<span class="sd">        max_field [MV/m] --- accelerating module&#39;s maximum field,</span>
+<span class="sd">        file_name --- experimental profile of the Ez field</span>
+<span class="sd">        and shifted by x [m], xp [rad], y [m], yp [rad]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+                                         <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">yp</span><span class="o">=</span><span class="n">yp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Accelerator.add_quadrupole"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.add_quadrupole">[docs]</a>    <span class="k">def</span> <span class="nf">add_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                       <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                       <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates a quadrupole in the accelerator.</span>
+
+<span class="sd">        Creates a quadrupole in the accelerator with parameters:</span>
+<span class="sd">        name --- quadrupole&#39;s id,</span>
+<span class="sd">        center [m] --- quadrupole&#39;s center,</span>
+<span class="sd">        max_field [T/m] --- quadrupole&#39;s maximum field,</span>
+<span class="sd">        file_name --- experimental profile of the Gz field</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Accelerator.add_corrector_x"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.add_corrector_x">[docs]</a>    <span class="k">def</span> <span class="nf">add_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates a corrector in the accelerator.</span>
+
+<span class="sd">        Creates a corrector in the accelerator with parameters:</span>
+<span class="sd">        name --- corrector&#39;s id,</span>
+<span class="sd">        center [m] --- corrector&#39;s center,</span>
+<span class="sd">        max_field [T] --- corrector&#39;s maximum field,</span>
+<span class="sd">        file_name --- experimental profile of the By field</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Accelerator.add_corrector_y"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.add_corrector_y">[docs]</a>    <span class="k">def</span> <span class="nf">add_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates a corrector in the accelerator.</span>
+
+<span class="sd">        Creates a corrector in the accelerator with parameters:</span>
+<span class="sd">        name --- corrector&#39;s id,</span>
+<span class="sd">        center [m] --- corrector&#39;s center,</span>
+<span class="sd">        max_field [T] --- corrector&#39;s maximum field,</span>
+<span class="sd">        file_name --- experimental profile of the Bx field</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">delete_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a solenoid in the accelerator.</span>
+
+<span class="sd">        Delete a solenoid in the accelerator with parameters:</span>
+<span class="sd">        name --- solenoid&#39;s id</span>
+
+<span class="sd">        *if there is no name that will be removed all</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a accelerating module in the accelerator.</span>
+
+<span class="sd">        Delete a accelerating module in the accelerator with parameters:</span>
+<span class="sd">        name --- accel&#39;s id</span>
+
+<span class="sd">        *if there is no name that will be removed all</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a quadrupole in the accelerator.</span>
+
+<span class="sd">        Delete a quadrupole in the accelerator with parameters:</span>
+<span class="sd">        name --- quadrupole&#39;s id</span>
+
+<span class="sd">        *if there is no name that will be removed all</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                           <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a corrector in the accelerator.</span>
+
+<span class="sd">        Delete a corrector in the accelerator with parameters:</span>
+<span class="sd">        name --- corrector&#39;s id</span>
+
+<span class="sd">        *if there is no name that will be removed all</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                           <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a corrector in the accelerator.</span>
+
+<span class="sd">        Delete a corrector in the accelerator with parameters:</span>
+<span class="sd">        name --- corrector&#39;s id</span>
+
+<span class="sd">        *if there is no name that will be removed all</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Accelerator.compile"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Compilation of the accelerator.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dBxdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bxdz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">By</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dBydz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bydz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dBzdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bzdz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dEzdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ezdz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGzdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gzdz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="n">Dx_Bz</span><span class="p">,</span> <span class="n">Dxp_Bz</span><span class="p">,</span> <span class="n">Dy_Bz</span><span class="p">,</span> <span class="n">Dyp_Bz</span> <span class="o">=</span> <span class="n">read_offsets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="n">Dx_Ez</span><span class="p">,</span> <span class="n">Dxp_Ez</span><span class="p">,</span> <span class="n">Dy_Ez</span><span class="p">,</span> <span class="n">Dyp_Ez</span> <span class="o">=</span> <span class="n">read_offsets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dx</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">Dx_Bz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dx_Ez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dxp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">Dxp_Bz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dxp_Ez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dy</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">Dy_Bz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dy_Ez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Dyp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">Dyp_Bz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">Dyp_Ez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;Accelerator structure.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Solenoids:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">[ </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">z0</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">max_field</span><span class="si">}</span><span class="s2"> T, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">xp</span><span class="si">}</span><span class="s2"> rad, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">y</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">yp</span><span class="si">}</span><span class="s2"> rad] </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Accelerating modules:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">[ </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">z0</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">max_field</span><span class="si">}</span><span class="s2"> T, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">xp</span><span class="si">}</span><span class="s2"> rad, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">y</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">yp</span><span class="si">}</span><span class="s2"> rad] </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Quadrupoles:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">[ </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">z0</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">max_field</span><span class="si">}</span><span class="s2"> T, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Correctors x:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">[ </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">z0</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">max_field</span><span class="si">}</span><span class="s2"> T, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Correctors y:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">[ </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">z0</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">max_field</span><span class="si">}</span><span class="s2"> T, &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string</span>
+
+    <span class="n">add_sol</span> <span class="o">=</span> <span class="n">add_new_solenoid</span> <span class="o">=</span> <span class="n">add_solenoid</span>
+    <span class="n">add_acc</span> <span class="o">=</span> <span class="n">add_new_accel</span> <span class="o">=</span> <span class="n">add_accel</span>
+    <span class="n">add_quad</span> <span class="o">=</span> <span class="n">add_new_quadrupole</span> <span class="o">=</span> <span class="n">add_quadrupole</span>
+    <span class="n">add_corr_x</span> <span class="o">=</span> <span class="n">add_new_corrector_x</span> <span class="o">=</span> <span class="n">add_corrector_x</span>
+    <span class="n">add_corr_y</span> <span class="o">=</span> <span class="n">add_new_corrector_y</span> <span class="o">=</span> <span class="n">add_corrector_y</span>
+
+    <span class="n">del_sol</span> <span class="o">=</span> <span class="n">del_solenoid</span> <span class="o">=</span> <span class="n">delete_solenoid</span>
+    <span class="n">del_acc</span> <span class="o">=</span> <span class="n">del_accel</span> <span class="o">=</span> <span class="n">delete_accel</span>
+    <span class="n">del_quad</span> <span class="o">=</span> <span class="n">del_quadrupole</span> <span class="o">=</span> <span class="n">delete_quadrupole</span>
+    <span class="n">del_corr_x</span> <span class="o">=</span> <span class="n">del_corrector_x</span> <span class="o">=</span> <span class="n">delete_corrector_x</span>
+    <span class="n">del_corr_y</span> <span class="o">=</span> <span class="n">del_corrector_y</span> <span class="o">=</span> <span class="n">delete_corrector_y</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">KENV</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/api_reference.html">API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, KENV contributors.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
