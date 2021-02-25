@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kenv.accelerator &#8212; KENV 0.3.0.0 documentation</title>
+    <title>kenv.accelerator &#8212; KENV 0.3.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -39,17 +39,8 @@
 
 
 <span class="k">class</span> <span class="nc">Element</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Sets one accelerator element.</span>
-
-<span class="sd">    Sets one accelerator element with parameters:</span>
-<span class="sd">    z0 [m] --- element position,</span>
-<span class="sd">    max_field --- maximum field,</span>
-<span class="sd">    file_name --- field profile,</span>
-<span class="sd">    name --- unique element name,</span>
-
-<span class="sd">    and shifted by x, xp, y, yp,</span>
-
-<span class="sd">    and z_start, z_stop, length</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets one accelerator element.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -63,6 +54,29 @@
                  <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of an accelerator element.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z0: float</span>
+<span class="sd">            Position of the element center</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Maximum value of the field on the element axis</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Name of the file</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Name of the element</span>
+
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="n">z0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_field</span> <span class="o">=</span> <span class="n">max_field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
@@ -80,12 +94,24 @@
 
 <span class="k">def</span> <span class="nf">read_fields</span><span class="p">(</span><span class="n">beamline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                 <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Sews elements into a function of z.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Field reading function.</span>
 
-<span class="sd">    Sews elements into a function of z with parameters:</span>
-<span class="sd">    beamline --- set of accelerator elements,</span>
-<span class="sd">    z [m] --- coordinate.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beamline: dict</span>
+<span class="sd">        Accelerator`s beamline</span>
+<span class="sd">    z: an instance of the `np.arange` class</span>
+<span class="sd">        Axis z</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    F: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Field function</span>
+<span class="sd">    F_prime: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Field prime function</span>
+<span class="sd">    F_int: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Field integrate function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_files</span> <span class="o">=</span> <span class="p">{}</span>
@@ -156,12 +182,26 @@
 
 <span class="k">def</span> <span class="nf">read_offsets</span><span class="p">(</span><span class="n">beamline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                  <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Sews elements into a function of z.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Offsets and rotations reading function.</span>
 
-<span class="sd">    Sews elements into a function of z with parameters:</span>
-<span class="sd">    beamline --- set of accelerator elements,</span>
-<span class="sd">    z [m] --- coordinate.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beamline: dict</span>
+<span class="sd">        Accelerator`s beamline</span>
+<span class="sd">    z: an instance of the `np.arange` class</span>
+<span class="sd">        Axis z</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    offset_correct_x: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Offset function</span>
+<span class="sd">    offset_correct_xp: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Rotation function</span>
+<span class="sd">    offset_correct_y: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Offset function</span>
+<span class="sd">    offset_correct_yp: an instance of the `interpolate.interp1d` class</span>
+<span class="sd">        Rotation function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">field_files</span> <span class="o">=</span> <span class="p">{}</span>
@@ -265,33 +305,34 @@
 
 
 <div class="viewcode-block" id="Accelerator"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator">[docs]</a><span class="k">class</span> <span class="nc">Accelerator</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create an accelerator.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Top-level accelerator class that contains all the accelerator data.</span>
 
-<span class="sd">    Create an accelerator with parameters:</span>
-<span class="sd">    z_start [m] --- the beginning of the accelerator,</span>
-<span class="sd">    z_stop [m] --- end of the accelerator,</span>
-<span class="sd">    dz [m] --- step method along the accelerator.</span>
+<span class="sd">    The `Accelerator` class has several important attributes:</span>
 
-<span class="sd">    Can add a solenoids, quadrupoles and accelerating modules.</span>
-
-<span class="sd">    Accelerator&#39;s parameters after compile:</span>
-<span class="sd">    beamline:</span>
-<span class="sd">    Bz_beamline, Ez_beamline, Gz_beamline,</span>
-<span class="sd">    Bx_beamline, By_beamline,</span>
-<span class="sd">    function:</span>
-<span class="sd">    Ez, Bz, Gz, Bx, By,</span>
-<span class="sd">    Dx, Dxp, Dy, Dyp,</span>
-<span class="sd">    and</span>
-<span class="sd">    dEzdz, dBzdz, dGzdz, dBxdz, dBydz,</span>
-<span class="sd">    and</span>
-<span class="sd">    Ezdz, Bzdz, Gzdz, Bxdz, Bydz</span>
-
+<span class="sd">    - `Bx_beamline`, a beamline which contains the solenoids information</span>
+<span class="sd">    - `By_beamline`, a beamline which contains the solenoids information</span>
+<span class="sd">    - `Bz_beamline`, a beamline which contains the solenoids information</span>
+<span class="sd">    - `Ez_beamline`, a beamline which contains the accels information</span>
+<span class="sd">    - `Gz_beamline`, a beamline which contains the quadrupoles information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">z_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">z_stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes an accelerator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_start: float</span>
+<span class="sd">            The position of the start of the accelerator</span>
+<span class="sd">        z_stop: float</span>
+<span class="sd">            The position of the end of the accelerator</span>
+<span class="sd">        dz: float</span>
+<span class="sd">            The step of the accelerator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">z_start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="n">z_stop</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">dz</span>
@@ -324,15 +365,28 @@
                      <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                      <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                      <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates a solenoid in the accelerator.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a solenoid lenses in the accelerator.</span>
 
-<span class="sd">        Creates a solenoid in the accelerator with parameters:</span>
-<span class="sd">        name --- solenoid&#39;s id,</span>
-<span class="sd">        center [m] --- solenoid&#39;s center,</span>
-<span class="sd">        max_field [T] --- solenoid&#39;s maximum field,</span>
-<span class="sd">        file_name --- experimental profile of the Bz field</span>
-<span class="sd">        and shifted by x [m], xp [rad], y [m], yp [rad]</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Solenoid&#39;s id,</span>
+<span class="sd">        center: float</span>
+<span class="sd">            Solenoid&#39;s center,</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Solenoid&#39;s maximum field [T],</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Experimental profile of the Bz field</span>
 
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
                                          <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">yp</span><span class="o">=</span><span class="n">yp</span><span class="p">)</span></div>
@@ -347,15 +401,28 @@
                   <span class="n">xp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                   <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                   <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates an accelerating module in the accelerator.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an accelerating module in the accelerator.</span>
 
-<span class="sd">        Creates an accelerating module in the accelerator with parameters:</span>
-<span class="sd">        name --- accelerating module&#39;s id,</span>
-<span class="sd">        center [m] --- accelerating module&#39;s center,</span>
-<span class="sd">        max_field [MV/m] --- accelerating module&#39;s maximum field,</span>
-<span class="sd">        file_name --- experimental profile of the Ez field</span>
-<span class="sd">        and shifted by x [m], xp [rad], y [m], yp [rad]</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Accel&#39;s id,</span>
+<span class="sd">        center: float</span>
+<span class="sd">            Accel&#39;s center,</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Accel&#39;s maximum field [MV/m],</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Experimental profile of the Ez field</span>
 
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
                                          <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">yp</span><span class="o">=</span><span class="n">yp</span><span class="p">)</span></div>
@@ -365,14 +432,28 @@
                        <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                        <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates a quadrupole in the accelerator.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a quadrupole in the accelerator.</span>
 
-<span class="sd">        Creates a quadrupole in the accelerator with parameters:</span>
-<span class="sd">        name --- quadrupole&#39;s id,</span>
-<span class="sd">        center [m] --- quadrupole&#39;s center,</span>
-<span class="sd">        max_field [T/m] --- quadrupole&#39;s maximum field,</span>
-<span class="sd">        file_name --- experimental profile of the Gz field</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Quad&#39;s id,</span>
+<span class="sd">        center: float</span>
+<span class="sd">            Quad&#39;s center,</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Quad&#39;s maximum field [T/m],</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Experimental profile of the Gz field</span>
 
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
@@ -381,14 +462,28 @@
                         <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                         <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates a corrector in the accelerator.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a corrector x in the accelerator.</span>
 
-<span class="sd">        Creates a corrector in the accelerator with parameters:</span>
-<span class="sd">        name --- corrector&#39;s id,</span>
-<span class="sd">        center [m] --- corrector&#39;s center,</span>
-<span class="sd">        max_field [T] --- corrector&#39;s maximum field,</span>
-<span class="sd">        file_name --- experimental profile of the By field</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Corrector&#39;s id,</span>
+<span class="sd">        center: float</span>
+<span class="sd">            Corrector&#39;s center,</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Corrector&#39;s maximum field [T],</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Experimental profile of the By field</span>
 
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
@@ -397,86 +492,100 @@
                         <span class="n">center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                         <span class="n">max_field</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates a corrector in the accelerator.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a corrector y in the accelerator.</span>
 
-<span class="sd">        Creates a corrector in the accelerator with parameters:</span>
-<span class="sd">        name --- corrector&#39;s id,</span>
-<span class="sd">        center [m] --- corrector&#39;s center,</span>
-<span class="sd">        max_field [T] --- corrector&#39;s maximum field,</span>
-<span class="sd">        file_name --- experimental profile of the Bx field</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Corrector&#39;s id,</span>
+<span class="sd">        center: float</span>
+<span class="sd">            Corrector&#39;s center,</span>
+<span class="sd">        max_field: float</span>
+<span class="sd">            Corrector&#39;s maximum field [T],</span>
+<span class="sd">        file_name: string</span>
+<span class="sd">            Experimental profile of the Bx field</span>
 
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Element rotation in the z-y plane</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete a solenoid in the accelerator.</span>
+    <span class="k">def</span> <span class="nf">delete_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a solenoid in the accelerator.</span>
 
-<span class="sd">        Delete a solenoid in the accelerator with parameters:</span>
-<span class="sd">        name --- solenoid&#39;s id</span>
-
-<span class="sd">        *if there is no name that will be removed all</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Solenoid`s id</span>
+<span class="sd">            (If there is no name that will be removed all)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">delete_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete a accelerating module in the accelerator.</span>
+    <span class="k">def</span> <span class="nf">delete_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete an accelerating module in the accelerator.</span>
 
-<span class="sd">        Delete a accelerating module in the accelerator with parameters:</span>
-<span class="sd">        name --- accel&#39;s id</span>
-
-<span class="sd">        *if there is no name that will be removed all</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Accel`s id</span>
+<span class="sd">            (If there is no name that will be removed all)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">delete_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                          <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete a quadrupole in the accelerator.</span>
+    <span class="k">def</span> <span class="nf">delete_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a quadrupole in the accelerator.</span>
 
-<span class="sd">        Delete a quadrupole in the accelerator with parameters:</span>
-<span class="sd">        name --- quadrupole&#39;s id</span>
-
-<span class="sd">        *if there is no name that will be removed all</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Quad`s id</span>
+<span class="sd">            (If there is no name that will be removed all)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">delete_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                           <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete a corrector in the accelerator.</span>
+    <span class="k">def</span> <span class="nf">delete_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a corrector x in the accelerator.</span>
 
-<span class="sd">        Delete a corrector in the accelerator with parameters:</span>
-<span class="sd">        name --- corrector&#39;s id</span>
-
-<span class="sd">        *if there is no name that will be removed all</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Corrector`s id</span>
+<span class="sd">            (If there is no name that will be removed all)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">delete_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                           <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete a corrector in the accelerator.</span>
+    <span class="k">def</span> <span class="nf">delete_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a corrector y in the accelerator.</span>
 
-<span class="sd">        Delete a corrector in the accelerator with parameters:</span>
-<span class="sd">        name --- corrector&#39;s id</span>
-
-<span class="sd">        *if there is no name that will be removed all</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name: string</span>
+<span class="sd">           Corrector`s id</span>
+<span class="sd">           (If there is no name that will be removed all)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span> <span class="o">=</span> <span class="p">{}</span>
@@ -484,7 +593,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Accelerator.compile"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compilation of the accelerator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compilation of the accelerator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dBxdz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bxdz</span> <span class="o">=</span> <span class="n">read_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">,</span>
                                                      <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>

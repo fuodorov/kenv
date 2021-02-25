@@ -5,17 +5,8 @@ __all__ = ['Element', 'Accelerator', 'read_fields', 'read_offsets']
 
 
 class Element:
-    """Sets one accelerator element.
-
-    Sets one accelerator element with parameters:
-    z0 [m] --- element position,
-    max_field --- maximum field,
-    file_name --- field profile,
-    name --- unique element name,
-
-    and shifted by x, xp, y, yp,
-
-    and z_start, z_stop, length
+    """
+    Sets one accelerator element.
 
     """
 
@@ -29,6 +20,29 @@ class Element:
                  xp: float = 0.0,
                  y: float = 0.0,
                  yp: float = 0.0):
+        """
+        Initialization of an accelerator element.
+
+        Parameters
+        ----------
+        z0: float
+            Position of the element center
+        max_field: float
+            Maximum value of the field on the element axis
+        file_name: string
+            Name of the file
+        name: string
+            Name of the element
+
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
+        """
         self.z0 = z0
         self.max_field = max_field
         self.file_name = file_name
@@ -46,12 +60,24 @@ class Element:
 
 def read_fields(beamline: dict,
                 z: np.arange) -> interpolate.interp1d:
-    """Sews elements into a function of z.
+    """
+    Field reading function.
 
-    Sews elements into a function of z with parameters:
-    beamline --- set of accelerator elements,
-    z [m] --- coordinate.
+    Parameters
+    ----------
+    beamline: dict
+        Accelerator`s beamline
+    z: an instance of the `np.arange` class
+        Axis z
 
+    Returns
+    -------
+    F: an instance of the `interpolate.interp1d` class
+        Field function
+    F_prime: an instance of the `interpolate.interp1d` class
+        Field prime function
+    F_int: an instance of the `interpolate.interp1d` class
+        Field integrate function
     """
 
     field_files = {}
@@ -122,12 +148,26 @@ def read_fields(beamline: dict,
 
 def read_offsets(beamline: dict,
                  z: np.arange) -> interpolate.interp1d:
-    """Sews elements into a function of z.
+    """
+    Offsets and rotations reading function.
 
-    Sews elements into a function of z with parameters:
-    beamline --- set of accelerator elements,
-    z [m] --- coordinate.
+    Parameters
+    ----------
+    beamline: dict
+        Accelerator`s beamline
+    z: an instance of the `np.arange` class
+        Axis z
 
+    Returns
+    -------
+    offset_correct_x: an instance of the `interpolate.interp1d` class
+        Offset function
+    offset_correct_xp: an instance of the `interpolate.interp1d` class
+        Rotation function
+    offset_correct_y: an instance of the `interpolate.interp1d` class
+        Offset function
+    offset_correct_yp: an instance of the `interpolate.interp1d` class
+        Rotation function
     """
 
     field_files = {}
@@ -231,33 +271,34 @@ def read_offsets(beamline: dict,
 
 
 class Accelerator:
-    """Create an accelerator.
+    """
+    Top-level accelerator class that contains all the accelerator data.
 
-    Create an accelerator with parameters:
-    z_start [m] --- the beginning of the accelerator,
-    z_stop [m] --- end of the accelerator,
-    dz [m] --- step method along the accelerator.
+    The `Accelerator` class has several important attributes:
 
-    Can add a solenoids, quadrupoles and accelerating modules.
-
-    Accelerator's parameters after compile:
-    beamline:
-    Bz_beamline, Ez_beamline, Gz_beamline,
-    Bx_beamline, By_beamline,
-    function:
-    Ez, Bz, Gz, Bx, By,
-    Dx, Dxp, Dy, Dyp,
-    and
-    dEzdz, dBzdz, dGzdz, dBxdz, dBydz,
-    and
-    Ezdz, Bzdz, Gzdz, Bxdz, Bydz
-
+    - `Bx_beamline`, a beamline which contains the solenoids information
+    - `By_beamline`, a beamline which contains the solenoids information
+    - `Bz_beamline`, a beamline which contains the solenoids information
+    - `Ez_beamline`, a beamline which contains the accels information
+    - `Gz_beamline`, a beamline which contains the quadrupoles information
     """
 
     def __init__(self,
                  z_start: float,
                  z_stop: float,
                  dz: float):
+        """
+        Initializes an accelerator.
+
+        Parameters
+        ----------
+        z_start: float
+            The position of the start of the accelerator
+        z_stop: float
+            The position of the end of the accelerator
+        dz: float
+            The step of the accelerator
+        """
         self.z_start = self.start = z_start
         self.z_stop = self.stop = z_stop
         self.dz = self.step = dz
@@ -290,15 +331,28 @@ class Accelerator:
                      xp: float = 0.0,
                      y: float = 0.0,
                      yp: float = 0.0) -> None:
-        """Creates a solenoid in the accelerator.
+        """
+        Creates a solenoid lenses in the accelerator.
 
-        Creates a solenoid in the accelerator with parameters:
-        name --- solenoid's id,
-        center [m] --- solenoid's center,
-        max_field [T] --- solenoid's maximum field,
-        file_name --- experimental profile of the Bz field
-        and shifted by x [m], xp [rad], y [m], yp [rad]
+        Parameters
+        ----------
+        name: string
+            Solenoid's id,
+        center: float
+            Solenoid's center,
+        max_field: float
+            Solenoid's maximum field [T],
+        file_name: string
+            Experimental profile of the Bz field
 
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
         """
         self.Bz_beamline[name] = Element(center, max_field, file_name, name,
                                          x=x, xp=xp, y=y, yp=yp)
@@ -313,15 +367,28 @@ class Accelerator:
                   xp: float = 0.0,
                   y: float = 0.0,
                   yp: float = 0.0) -> None:
-        """Creates an accelerating module in the accelerator.
+        """
+        Creates an accelerating module in the accelerator.
 
-        Creates an accelerating module in the accelerator with parameters:
-        name --- accelerating module's id,
-        center [m] --- accelerating module's center,
-        max_field [MV/m] --- accelerating module's maximum field,
-        file_name --- experimental profile of the Ez field
-        and shifted by x [m], xp [rad], y [m], yp [rad]
+        Parameters
+        ----------
+        name: string
+            Accel's id,
+        center: float
+            Accel's center,
+        max_field: float
+            Accel's maximum field [MV/m],
+        file_name: string
+            Experimental profile of the Ez field
 
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
         """
         self.Ez_beamline[name] = Element(center, max_field, file_name, name,
                                          x=x, xp=xp, y=y, yp=yp)
@@ -331,14 +398,28 @@ class Accelerator:
                        center: float,
                        max_field: float,
                        file_name: str) -> None:
-        """Creates a quadrupole in the accelerator.
+        """
+        Creates a quadrupole in the accelerator.
 
-        Creates a quadrupole in the accelerator with parameters:
-        name --- quadrupole's id,
-        center [m] --- quadrupole's center,
-        max_field [T/m] --- quadrupole's maximum field,
-        file_name --- experimental profile of the Gz field
+        Parameters
+        ----------
+        name: string
+            Quad's id,
+        center: float
+            Quad's center,
+        max_field: float
+            Quad's maximum field [T/m],
+        file_name: string
+            Experimental profile of the Gz field
 
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
         """
         self.Gz_beamline[name] = Element(center, max_field, file_name, name)
 
@@ -347,14 +428,28 @@ class Accelerator:
                         center: float,
                         max_field: float,
                         file_name: str) -> None:
-        """Creates a corrector in the accelerator.
+        """
+        Creates a corrector x in the accelerator.
 
-        Creates a corrector in the accelerator with parameters:
-        name --- corrector's id,
-        center [m] --- corrector's center,
-        max_field [T] --- corrector's maximum field,
-        file_name --- experimental profile of the By field
+        Parameters
+        ----------
+        name: string
+            Corrector's id,
+        center: float
+            Corrector's center,
+        max_field: float
+            Corrector's maximum field [T],
+        file_name: string
+            Experimental profile of the By field
 
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
         """
         self.By_beamline[name] = Element(center, max_field, file_name, name)
 
@@ -363,86 +458,100 @@ class Accelerator:
                         center: float,
                         max_field: float,
                         file_name: str) -> None:
-        """Creates a corrector in the accelerator.
+        """
+        Creates a corrector y in the accelerator.
 
-        Creates a corrector in the accelerator with parameters:
-        name --- corrector's id,
-        center [m] --- corrector's center,
-        max_field [T] --- corrector's maximum field,
-        file_name --- experimental profile of the Bx field
+        Parameters
+        ----------
+        name: string
+            Corrector's id,
+        center: float
+            Corrector's center,
+        max_field: float
+            Corrector's maximum field [T],
+        file_name: string
+            Experimental profile of the Bx field
 
+        x: float, optional
+            Offset of the element along the x-axis
+        xp: float, optional
+            Element rotation in the z-x plane
+        y: float, optional
+            Offset of the element along the y-axis
+        yp: float, optional
+            Element rotation in the z-y plane
         """
         self.Bx_beamline[name] = Element(center, max_field, file_name, name)
 
-    def delete_solenoid(self,
-                        name: str = 'all') -> None:
-        """Delete a solenoid in the accelerator.
+    def delete_solenoid(self, name: str = 'all') -> None:
+        """
+        Delete a solenoid in the accelerator.
 
-        Delete a solenoid in the accelerator with parameters:
-        name --- solenoid's id
-
-        *if there is no name that will be removed all
-
+        Parameters
+        ----------
+        name: string
+            Solenoid`s id
+            (If there is no name that will be removed all)
         """
         if name == 'all':
             self.Bz_beamline = {}
         else:
             self.Bz_beamline.pop(name)
 
-    def delete_accel(self,
-                     name: str = 'all') -> None:
-        """Delete a accelerating module in the accelerator.
+    def delete_accel(self, name: str = 'all') -> None:
+        """
+        Delete an accelerating module in the accelerator.
 
-        Delete a accelerating module in the accelerator with parameters:
-        name --- accel's id
-
-        *if there is no name that will be removed all
-
+        Parameters
+        ----------
+        name: string
+            Accel`s id
+            (If there is no name that will be removed all)
         """
         if name == 'all':
             self.Ez_beamline = {}
         else:
             self.Ez_beamline.pop(name)
 
-    def delete_quadrupole(self,
-                          name: str = 'all') -> None:
-        """Delete a quadrupole in the accelerator.
+    def delete_quadrupole(self, name: str = 'all') -> None:
+        """
+        Delete a quadrupole in the accelerator.
 
-        Delete a quadrupole in the accelerator with parameters:
-        name --- quadrupole's id
-
-        *if there is no name that will be removed all
-
+        Parameters
+        ----------
+        name: string
+            Quad`s id
+            (If there is no name that will be removed all)
         """
         if name == 'all':
             self.Gz_beamline = {}
         else:
             self.Gz_beamline.pop(name)
 
-    def delete_corrector_x(self,
-                           name: str = 'all') -> None:
-        """Delete a corrector in the accelerator.
+    def delete_corrector_x(self, name: str = 'all') -> None:
+        """
+        Delete a corrector x in the accelerator.
 
-        Delete a corrector in the accelerator with parameters:
-        name --- corrector's id
-
-        *if there is no name that will be removed all
-
+        Parameters
+        ----------
+        name: string
+            Corrector`s id
+            (If there is no name that will be removed all)
         """
         if name == 'all':
             self.By_beamline = {}
         else:
             self.By_beamline.pop(name)
 
-    def delete_corrector_y(self,
-                           name: str = 'all') -> None:
-        """Delete a corrector in the accelerator.
+    def delete_corrector_y(self, name: str = 'all') -> None:
+        """
+        Delete a corrector y in the accelerator.
 
-        Delete a corrector in the accelerator with parameters:
-        name --- corrector's id
-
-        *if there is no name that will be removed all
-
+        Parameters
+        ----------
+        name: string
+           Corrector`s id
+           (If there is no name that will be removed all)
         """
         if name == 'all':
             self.Bx_beamline = {}
@@ -450,7 +559,9 @@ class Accelerator:
             self.Bx_beamline.pop(name)
 
     def compile(self) -> None:
-        """Compilation of the accelerator."""
+        """
+        Compilation of the accelerator.
+        """
 
         self.Bx, self.dBxdz, self.Bxdz = read_fields(self.Bx_beamline,
                                                      self.parameter)
