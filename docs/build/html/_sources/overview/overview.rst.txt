@@ -9,5 +9,5 @@ In order to properly use the code, it is important to read them.
 .. toctree::
    :maxdepth: 2
 
-   theory.ipynb
-   algorithm_and_features.ipynb
+   theory/theory.ipynb
+   algorithm_and_features/algorithm_and_features.ipynb

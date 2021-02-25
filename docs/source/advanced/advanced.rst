@@ -9,5 +9,4 @@ more performance and faster results from the code.
 .. toctree::
    :maxdepth: 1
 
-   gui
-   genetic.ipynb
+   genetic/genetic.ipynb

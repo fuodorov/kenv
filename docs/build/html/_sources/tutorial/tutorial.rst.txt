@@ -6,4 +6,4 @@ We strongly recommend that you read the manual carefully before starting KENV fo
 .. toctree::
   :maxdepth: 2
 
-  manual.ipynb
+  manual/manual.ipynb
