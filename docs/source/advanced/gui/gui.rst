@@ -14,4 +14,4 @@ The installation requires the `PyQt <https://wiki.python.org/moin/PyQt>`_.
 
 -  Install ``kenv_gui``
 
-    Install from the souces, by cloning the `code from Github <https://github.com/fuodorov/kenv/gui>`_.
+    Install from the souces, by cloning the `code from Github <https://github.com/fuodorov/kenv/tree/master/gui>`_.
