@@ -30,7 +30,6 @@ that are accessible through KENV.
   overview/overview
   install/installation
   tutorial/tutorial
-  gui/gui
   api_reference/api_reference
   advanced/advanced
 
