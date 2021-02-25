@@ -7,6 +7,6 @@ more performance and faster results from the code.
 **Topics:**
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    genetic/genetic.ipynb
