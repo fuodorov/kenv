@@ -31,6 +31,7 @@ that are accessible through KENV.
   install/installation
   tutorial/tutorial
   api_reference/api_reference
+  advanced/advanced
 
 Contributing to KENV
 ----------------------

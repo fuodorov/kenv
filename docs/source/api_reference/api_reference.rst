@@ -5,7 +5,7 @@ The sections below describe the main objects that are accessible in
 the ``kenv`` package, and which are used to set up a simulation.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    particle
    beam

@@ -25,7 +25,7 @@ class Equations:
             Beam data
         accelerator: an instance of :any:`Accelerator`
             Accelerator data
-        Particle: an instance of :any:`Particle`, optional
+        particle: an instance of :any:`Particle`, optional
             Particle data
         """
         self.beam = beam
@@ -258,7 +258,7 @@ class Simulation:
             Beam data
         accelerator: an instance of :any:`Accelerator`
             Accelerator data
-        Particle: an instance of :any:`Particle`, optional
+        particle: an instance of :any:`Particle`, optional
             Particle data
         """
         self.beam = beam
