@@ -6,4 +6,4 @@ the accelerator data, and has the high-level method :any:`compile`
 that performs the accelerator.
 
 .. autoclass:: kenv.accelerator.Accelerator
-   :members: compile, add_solenoid, add_accel, add_quadrupole, add_corrector_x, add_corrector_y
+   :members: compile, add_solenoid, add_accel, add_quadrupole, add_corrector_x, add_corrector_y, delete_solenoid, delete_accel, delete_quadrupole, delete_corrector_x, delete_corrector_y

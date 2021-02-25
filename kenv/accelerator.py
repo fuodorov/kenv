@@ -337,11 +337,11 @@ class Accelerator:
         Parameters
         ----------
         name: string
-            Solenoid's id,
+            Solenoid's id
         center: float
-            Solenoid's center,
+            Solenoid's center
         max_field: float
-            Solenoid's maximum field [T],
+            Solenoid's maximum field [T]
         file_name: string
             Experimental profile of the Bz field
 
@@ -373,11 +373,11 @@ class Accelerator:
         Parameters
         ----------
         name: string
-            Accel's id,
+            Accel's id
         center: float
-            Accel's center,
+            Accel's center
         max_field: float
-            Accel's maximum field [MV/m],
+            Accel's maximum field [MV/m]
         file_name: string
             Experimental profile of the Ez field
 
@@ -404,11 +404,11 @@ class Accelerator:
         Parameters
         ----------
         name: string
-            Quad's id,
+            Quad's id
         center: float
-            Quad's center,
+            Quad's center
         max_field: float
-            Quad's maximum field [T/m],
+            Quad's maximum field [T/m]
         file_name: string
             Experimental profile of the Gz field
 
@@ -434,11 +434,11 @@ class Accelerator:
         Parameters
         ----------
         name: string
-            Corrector's id,
+            Corrector's id
         center: float
-            Corrector's center,
+            Corrector's center
         max_field: float
-            Corrector's maximum field [T],
+            Corrector's maximum field [T]
         file_name: string
             Experimental profile of the By field
 
@@ -464,11 +464,11 @@ class Accelerator:
         Parameters
         ----------
         name: string
-            Corrector's id,
+            Corrector's id
         center: float
-            Corrector's center,
+            Corrector's center
         max_field: float
-            Corrector's maximum field [T],
+            Corrector's maximum field [T]
         file_name: string
             Experimental profile of the Bx field
 
