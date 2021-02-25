@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kenv.beam &#8212; KENV 0.3.0.2 documentation</title>
+    <title>kenv.beam &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -38,8 +38,10 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Beam&#39;</span><span class="p">,</span> <span class="s1">&#39;Particle&#39;</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">Particle</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creating an particle&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Particle"><a class="viewcode-back" href="../../api_reference/particle.html#kenv.beam.Particle">[docs]</a><span class="k">class</span> <span class="nc">Particle</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creating a particle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">,</span>
@@ -48,6 +50,24 @@
                  <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">,</span>
                  <span class="n">energy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">,</span>
                  <span class="n">larmor_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of a particle.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: float</span>
+<span class="sd">            Position of the x-axis, [m]</span>
+<span class="sd">        y: float</span>
+<span class="sd">            Position of the y-axis, [m]</span>
+<span class="sd">        xp: float</span>
+<span class="sd">            Angle of the x-axis, [rad]</span>
+<span class="sd">        yp: float</span>
+<span class="sd">            Angle of the y-axis, [rad]</span>
+<span class="sd">        energy: float</span>
+<span class="sd">            Energy, [MeV]</span>
+<span class="sd">        larmor_angle: float</span>
+<span class="sd">            Larmor angle, [rad]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">xp</span>
@@ -64,30 +84,12 @@
             <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Vertical position</span><span class="se">\t</span><span class="si">%0.1f</span><span class="s1"> mm&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Horizontal angle</span><span class="se">\t</span><span class="si">%0.1f</span><span class="s1"> mrad&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Vertical angle</span><span class="se">\t</span><span class="si">%0.1f</span><span class="s1"> mrad&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yp</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> \
-            <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Energy</span><span class="se">\t</span><span class="si">%0.3f</span><span class="s1"> MeV&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Energy</span><span class="se">\t</span><span class="si">%0.3f</span><span class="s1"> MeV&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
 
 
 <div class="viewcode-block" id="Beam"><a class="viewcode-back" href="../../api_reference/beam.html#kenv.beam.Beam">[docs]</a><span class="k">class</span> <span class="nc">Beam</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creating an electron beam.</span>
-
-<span class="sd">    Creating a round electron beam with parameters:</span>
-<span class="sd">    current [A],</span>
-<span class="sd">    energy [MeV],</span>
-<span class="sd">    radius [m],</span>
-<span class="sd">    rp [rad],</span>
-<span class="sd">    normalized emittance [m*rad],</span>
-
-<span class="sd">    Creating an elliptical electron beam with parameters:</span>
-<span class="sd">    radius_x [m],</span>
-<span class="sd">    radius_y [m],</span>
-<span class="sd">    radius_xp [rad],</span>
-<span class="sd">    radius_yp [rad],</span>
-<span class="sd">    normalized_emittance_x [m*rad],</span>
-<span class="sd">    normalized_emittance_y [m*rad]</span>
-
-<span class="sd">    and with shifted centroid:</span>
-<span class="sd">    x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creating an electron beam.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
@@ -108,7 +110,47 @@
                  <span class="n">yp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">,</span>
                  <span class="n">larmor_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span><span class="p">,</span>
                  <span class="n">charge</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of an electron beam.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        current: float</span>
+<span class="sd">            Beam current, [A]</span>
+<span class="sd">        energy: float</span>
+<span class="sd">            Beam energy, [MeV]</span>
+<span class="sd">        radius: float</span>
+<span class="sd">            Beam radius, [m]</span>
+<span class="sd">        radius_x: float, optional</span>
+<span class="sd">            Elliptical beam radius along the x-axis, [m]</span>
+<span class="sd">        radius_y: float, optional</span>
+<span class="sd">            Elliptical beam radius along the y-axis, [m]</span>
+<span class="sd">        rp: float</span>
+<span class="sd">            Beam radius prime, [rad]</span>
+<span class="sd">        radius_xp: float, optional</span>
+<span class="sd">            Elliptical beam radius prime along the x-axis, [rad]</span>
+<span class="sd">        radius_yp: float, optional</span>
+<span class="sd">            Elliptical beam radius prime along the y-axis, [rad]</span>
+<span class="sd">        normalized_emittance: float</span>
+<span class="sd">            Beam normalized emittance, [m*rad]</span>
+<span class="sd">        normalized_emittance_x: float, optional</span>
+<span class="sd">            Elliptical beam normalized emittance along the x-axis, [m*rad]</span>
+<span class="sd">        normalized_emittance_y: float, optional</span>
+<span class="sd">            Elliptical beam normalized emittance along the y-axis, [m*rad]</span>
+
+<span class="sd">        x: float, optional</span>
+<span class="sd">            Offset of the centroid along the x-axis, [m]</span>
+<span class="sd">        xp: float, optional</span>
+<span class="sd">            Centroid rotation in the z-x plane, [rad]</span>
+<span class="sd">        y: float, optional</span>
+<span class="sd">            Offset of the centroid along the y-axis, [m]</span>
+<span class="sd">        yp: float, optional</span>
+<span class="sd">            Centroid rotation in the z-y plane, [rad]</span>
+<span class="sd">        larmor_angle: float, optional</span>
+<span class="sd">            Centroid larmor angle, [rad]</span>
+<span class="sd">        charge: int, optional</span>
+<span class="sd">            Particle charge (dev!)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">current</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">energy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
@@ -147,7 +189,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-<div class="viewcode-block" id="Beam.__str__"><a class="viewcode-back" href="../../api_reference/beam.html#kenv.beam.Beam.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Beam parameters:</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Current</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="si">}</span><span class="s1"> A</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Energy</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="s1"> MeV</span><span class="se">\n</span><span class="s1">&#39;</span> \
@@ -163,7 +205,7 @@
             <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Vertical centroid angle</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">yp</span> <span class="o">*</span> <span class="mf">1e3</span><span class="si">}</span><span class="s1"> mrad</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Larmor angle</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">larmor_angle</span><span class="si">}</span><span class="s1"> rad</span><span class="se">\n</span><span class="s1">&#39;</span> \
             <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Norm. emitt x</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">normalized_emittance_x</span><span class="o">*</span><span class="mf">1e6</span><span class="si">}</span><span class="s1"> mm*mrad</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span></div>
 </pre></div>
 
           </div>

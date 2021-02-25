@@ -5,7 +5,9 @@ __all__ = ['Beam', 'Particle']
 
 
 class Particle:
-    """Creating an particle"""
+    """
+    Creating a particle.
+    """
 
     def __init__(self, *,
                  x: float = .0e0,
@@ -14,6 +16,24 @@ class Particle:
                  yp: float = .0e0,
                  energy: float = .0e0,
                  larmor_angle: float = .0e0):
+        """
+        Initialization of a particle.
+
+        Parameters
+        ----------
+        x: float
+            Position of the x-axis, [m]
+        y: float
+            Position of the y-axis, [m]
+        xp: float
+            Angle of the x-axis, [rad]
+        yp: float
+            Angle of the y-axis, [rad]
+        energy: float
+            Energy, [MeV]
+        larmor_angle: float
+            Larmor angle, [rad]
+        """
         self.x = x
         self.y = y
         self.xp = xp
@@ -34,26 +54,8 @@ class Particle:
 
 
 class Beam:
-    """Creating an electron beam.
-
-    Creating a round electron beam with parameters:
-    current [A],
-    energy [MeV],
-    radius [m],
-    rp [rad],
-    normalized emittance [m*rad],
-
-    Creating an elliptical electron beam with parameters:
-    radius_x [m],
-    radius_y [m],
-    radius_xp [rad],
-    radius_yp [rad],
-    normalized_emittance_x [m*rad],
-    normalized_emittance_y [m*rad]
-
-    and with shifted centroid:
-    x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]
-
+    """
+    Creating an electron beam.
     """
 
     def __init__(self, *,
@@ -74,7 +76,47 @@ class Beam:
                  yp: float = .0e0,
                  larmor_angle: float = .0e0,
                  charge: int = -1):
+        """
+        Initialization of an electron beam.
 
+        Parameters
+        ----------
+        current: float
+            Beam current, [A]
+        energy: float
+            Beam energy, [MeV]
+        radius: float
+            Beam radius, [m]
+        radius_x: float, optional
+            Elliptical beam radius along the x-axis, [m]
+        radius_y: float, optional
+            Elliptical beam radius along the y-axis, [m]
+        rp: float
+            Beam radius prime, [rad]
+        radius_xp: float, optional
+            Elliptical beam radius prime along the x-axis, [rad]
+        radius_yp: float, optional
+            Elliptical beam radius prime along the y-axis, [rad]
+        normalized_emittance: float
+            Beam normalized emittance, [m*rad]
+        normalized_emittance_x: float, optional
+            Elliptical beam normalized emittance along the x-axis, [m*rad]
+        normalized_emittance_y: float, optional
+            Elliptical beam normalized emittance along the y-axis, [m*rad]
+
+        x: float, optional
+            Offset of the centroid along the x-axis, [m]
+        xp: float, optional
+            Centroid rotation in the z-x plane, [rad]
+        y: float, optional
+            Offset of the centroid along the y-axis, [m]
+        yp: float, optional
+            Centroid rotation in the z-y plane, [rad]
+        larmor_angle: float, optional
+            Centroid larmor angle, [rad]
+        charge: int, optional
+            Particle charge (dev!)
+        """
         self.current = current
         self.energy = energy
         self.radius = radius

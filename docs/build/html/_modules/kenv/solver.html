@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kenv.solver &#8212; KENV 0.3.0.2 documentation</title>
+    <title>kenv.solver &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -43,21 +43,42 @@
            <span class="s1">&#39;Equations&#39;</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">Equations</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Located derivative for further integration.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Equations"><a class="viewcode-back" href="../../api_reference/equations.html#kenv.solver.Equations">[docs]</a><span class="k">class</span> <span class="nc">Equations</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Located derivative for further integration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">,</span>
                  <span class="n">particle</span><span class="o">=</span><span class="n">Particle</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes an Equations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        beam: an instance of :any:`Beam`</span>
+<span class="sd">            Beam data</span>
+<span class="sd">        accelerator: an instance of :any:`Accelerator`</span>
+<span class="sd">            Accelerator data</span>
+<span class="sd">        Particle: an instance of :any:`Particle`, optional</span>
+<span class="sd">            Particle data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">=</span> <span class="n">beam</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">=</span> <span class="n">accelerator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">particle</span> <span class="o">=</span> <span class="n">particle</span>
 
-    <span class="k">def</span> <span class="nf">envelope_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Equations.envelope_prime"><a class="viewcode-back" href="../../api_reference/equations.html#kenv.solver.Equations.envelope_prime">[docs]</a>    <span class="k">def</span> <span class="nf">envelope_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span>
                        <span class="n">X</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Located derivative for further integration</span>
-<span class="sd">         Kapchinscky equation for envelope beam.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Located derivative for further integration</span>
+<span class="sd">        Kapchinscky equation for envelope beam.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z: an instance of the `np.arange` class</span>
+<span class="sd">            Axis z</span>
+<span class="sd">        X: list</span>
+<span class="sd">            Initial conditions, [x0, xp0, y, yp0]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -90,14 +111,21 @@
         <span class="n">dypdz</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">P</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="n">emitt_y</span> <span class="o">*</span> <span class="n">emitt_y</span> <span class="o">/</span> <span class="n">y</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">K_y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">-</span> \
             <span class="n">dgdz</span> <span class="o">*</span> <span class="n">yp</span> <span class="o">/</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">d2gdz2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">centroid_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Equations.centroid_prime"><a class="viewcode-back" href="../../api_reference/equations.html#kenv.solver.Equations.centroid_prime">[docs]</a>    <span class="k">def</span> <span class="nf">centroid_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span>
                        <span class="n">X</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Located derivative for further integration</span>
-<span class="sd">         Kapchinscky equation for centroid trajectory.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Located derivative for further integration</span>
+<span class="sd">        Kapchinscky equation for centroid trajectory.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z: an instance of the `np.arange` class</span>
+<span class="sd">            Axis z</span>
+<span class="sd">        X: list</span>
+<span class="sd">            Initial conditions, [x0, xp0, y, yp0, larmor_angle]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -148,14 +176,21 @@
             <span class="p">(</span><span class="n">Bx</span> <span class="o">-</span> <span class="n">xp</span> <span class="o">*</span> <span class="n">Bz</span><span class="p">)</span> <span class="o">/</span> <span class="n">Brho</span>
         <span class="n">dphidz</span> <span class="o">=</span> <span class="n">Bz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Brho</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">,</span> <span class="n">dphidz</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">,</span> <span class="n">dphidz</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">particle_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Equations.particle_prime"><a class="viewcode-back" href="../../api_reference/equations.html#kenv.solver.Equations.particle_prime">[docs]</a>    <span class="k">def</span> <span class="nf">particle_prime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">,</span>
                        <span class="n">X</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">envelope_x</span><span class="p">,</span> <span class="n">envelope_y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Located derivative for further integration</span>
-<span class="sd">         Kapchinscky equation for envelope beam.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Located derivative for further integration</span>
+<span class="sd">        Kapchinscky equation for envelope beam.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z: an instance of the `np.arange` class</span>
+<span class="sd">            Axis z</span>
+<span class="sd">        X: list</span>
+<span class="sd">            Initial conditions, [x0, xp0, y, yp0, larmor_angle]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -190,7 +225,7 @@
 
         <span class="n">P</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">current</span> <span class="o">/</span> <span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">alfven_current</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">((</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">envelope_x</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">envelope_y</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="ow">and</span>
-           <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)):</span>
+                <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)):</span>
             <span class="n">dxdz</span> <span class="o">=</span> <span class="n">xp</span>
             <span class="n">dxpdz</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">P</span> <span class="o">*</span> \
                 <span class="p">((</span><span class="n">envelope_x</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">envelope_y</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">envelope_x</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">/</span> <span class="n">x</span> <span class="o">-</span> \
@@ -219,27 +254,47 @@
 
         <span class="n">dphidz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span><span class="o">.</span><span class="n">Bz</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Brho</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">,</span> <span class="n">dphidz</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dxdz</span><span class="p">,</span> <span class="n">dxpdz</span><span class="p">,</span> <span class="n">dydz</span><span class="p">,</span> <span class="n">dypdz</span><span class="p">,</span> <span class="n">dphidz</span><span class="p">]</span></div></div>
 
 
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../../api_reference/simulation.html#kenv.solver.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Simulation of the envelope beam in the accelerator.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulation of the envelope beam, centroid and particle in the accelerator.</span>
 
-<span class="sd">    Basic parameters after track:</span>
-<span class="sd">    gamma,</span>
-<span class="sd">    envelope_x and envelope_y,</span>
-<span class="sd">    envelope_xp and envelope_yp,</span>
-<span class="sd">    centroid_x and centroid_y,</span>
-<span class="sd">    centroid_xp and centroid_yp,</span>
-<span class="sd">    larmor_angle</span>
+<span class="sd">    The `Simulation` class has several important attributes:</span>
 
+<span class="sd">    - `envelope_x`, a object which contains the envelope information</span>
+<span class="sd">    - `envelope_y`, a object which contains the envelope information</span>
+<span class="sd">    - `envelope_xp`, a object which contains the envelope information</span>
+<span class="sd">    - `envelope_yp`, a object which contains the envelope information</span>
+
+<span class="sd">    - `centroid_x`, a object which contains the centroid information</span>
+<span class="sd">    - `centroid_y`, a object which contains the centroid information</span>
+<span class="sd">    - `centroid_xp`, a object which contains the centroid information</span>
+<span class="sd">    - `centroid_yp`, a object which contains the centroid information</span>
+
+<span class="sd">    - `particle_x`, a object which contains the particle information</span>
+<span class="sd">    - `particle_y`, a object which contains the particle information</span>
+<span class="sd">    - `particle_xp`, a object which contains the particle information</span>
+<span class="sd">    - `particle_yp`, a object which contains the particle information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">beam</span><span class="p">,</span>
                  <span class="n">accelerator</span><span class="p">,</span>
                  <span class="n">particle</span><span class="o">=</span><span class="n">Particle</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a Simulation.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        beam: an instance of :any:`Beam`</span>
+<span class="sd">            Beam data</span>
+<span class="sd">        accelerator: an instance of :any:`Accelerator`</span>
+<span class="sd">            Accelerator data</span>
+<span class="sd">        Particle: an instance of :any:`Particle`, optional</span>
+<span class="sd">            Particle data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">=</span> <span class="n">beam</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">=</span> <span class="n">accelerator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">particle</span> <span class="o">=</span> <span class="n">particle</span>
@@ -268,9 +323,21 @@
               <span class="n">rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
               <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span>
               <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;RK23&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Tracking!&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Tracking!</span>
 
-        <span class="c1"># initial conditions</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        particle: bool</span>
+<span class="sd">            Particle equations switch</span>
+<span class="sd">        centroid: bool</span>
+<span class="sd">            Centroid equations switch</span>
+<span class="sd">        envelope: bool</span>
+<span class="sd">            Envelope equations switch</span>
+<span class="sd">        rtol: float, optional</span>
+<span class="sd">        atol: float, optional</span>
+<span class="sd">        method: str, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">equations</span> <span class="o">=</span> <span class="n">Equations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">gamma</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">charge</span> <span class="o">*</span> \

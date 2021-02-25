@@ -10,10 +10,24 @@ __all__ = ['Sim',
 
 
 class Equations:
-    """Located derivative for further integration."""
+    """
+    Located derivative for further integration.
+    """
 
     def __init__(self, beam, accelerator,
                  particle=Particle()):
+        """
+        Initializes an Equations.
+
+        Parameters
+        ----------
+        beam: an instance of :any:`Beam`
+            Beam data
+        accelerator: an instance of :any:`Accelerator`
+            Accelerator data
+        Particle: an instance of :any:`Particle`, optional
+            Particle data
+        """
         self.beam = beam
         self.accelerator = accelerator
         self.particle = particle
@@ -21,9 +35,16 @@ class Equations:
     def envelope_prime(self,
                        z: np.arange,
                        X: list) -> list:
-        """Located derivative for further integration
-         Kapchinscky equation for envelope beam.
+        """
+        Located derivative for further integration
+        Kapchinscky equation for envelope beam.
 
+        Parameters
+        ----------
+        z: an instance of the `np.arange` class
+            Axis z
+        X: list
+            Initial conditions, [x0, xp0, y, yp0]
         """
 
         x = X[0]
@@ -61,9 +82,16 @@ class Equations:
     def centroid_prime(self,
                        z: np.arange,
                        X: list) -> list:
-        """Located derivative for further integration
-         Kapchinscky equation for centroid trajectory.
+        """
+        Located derivative for further integration
+        Kapchinscky equation for centroid trajectory.
 
+        Parameters
+        ----------
+        z: an instance of the `np.arange` class
+            Axis z
+        X: list
+            Initial conditions, [x0, xp0, y, yp0, larmor_angle]
         """
 
         x = X[0]
@@ -119,9 +147,16 @@ class Equations:
     def particle_prime(self,
                        z: np.arange,
                        X: list, envelope_x, envelope_y) -> list:
-        """Located derivative for further integration
-         Kapchinscky equation for envelope beam.
+        """
+        Located derivative for further integration
+        Kapchinscky equation for envelope beam.
 
+        Parameters
+        ----------
+        z: an instance of the `np.arange` class
+            Axis z
+        X: list
+            Initial conditions, [x0, xp0, y, yp0, larmor_angle]
         """
 
         x = X[0]
@@ -156,7 +191,7 @@ class Equations:
 
         P = 2 * self.beam.current / (consts.alfven_current * (g * beta)**3)
         if ((x * x + y * y > envelope_x(z)**2 + envelope_y(z)**2) and
-           (x != 0.0 and y != 0.0)):
+                (x != 0.0 and y != 0.0)):
             dxdz = xp
             dxpdz = 2 * P * \
                 ((envelope_x(z) + envelope_y(z)) / 2 * envelope_x(z)) / x - \
@@ -189,23 +224,43 @@ class Equations:
 
 
 class Simulation:
-    """Simulation of the envelope beam in the accelerator.
+    """
+    Simulation of the envelope beam, centroid and particle in the accelerator.
 
-    Basic parameters after track:
-    gamma,
-    envelope_x and envelope_y,
-    envelope_xp and envelope_yp,
-    centroid_x and centroid_y,
-    centroid_xp and centroid_yp,
-    larmor_angle
+    The `Simulation` class has several important attributes:
 
+    - `envelope_x`, a object which contains the envelope information
+    - `envelope_y`, a object which contains the envelope information
+    - `envelope_xp`, a object which contains the envelope information
+    - `envelope_yp`, a object which contains the envelope information
+
+    - `centroid_x`, a object which contains the centroid information
+    - `centroid_y`, a object which contains the centroid information
+    - `centroid_xp`, a object which contains the centroid information
+    - `centroid_yp`, a object which contains the centroid information
+
+    - `particle_x`, a object which contains the particle information
+    - `particle_y`, a object which contains the particle information
+    - `particle_xp`, a object which contains the particle information
+    - `particle_yp`, a object which contains the particle information
     """
 
     def __init__(self,
                  beam,
                  accelerator,
                  particle=Particle()):
+        """
+        Initializes a Simulation.
 
+        Parameters
+        ----------
+        beam: an instance of :any:`Beam`
+            Beam data
+        accelerator: an instance of :any:`Accelerator`
+            Accelerator data
+        Particle: an instance of :any:`Particle`, optional
+            Particle data
+        """
         self.beam = beam
         self.accelerator = accelerator
         self.particle = particle
@@ -234,9 +289,21 @@ class Simulation:
               rtol: float = 1e-4,
               atol: float = 1e-7,
               method: str = 'RK23'):
-        """Tracking!"""
+        """Tracking!
 
-        # initial conditions
+        Parameters
+        ----------
+        particle: bool
+            Particle equations switch
+        centroid: bool
+            Centroid equations switch
+        envelope: bool
+            Envelope equations switch
+        rtol: float, optional
+        atol: float, optional
+        method: str, optional
+        """
+
         equations = Equations(self.beam, self.accelerator, self.particle)
 
         self.gamma = self.beam.gamma + self.beam.charge * \

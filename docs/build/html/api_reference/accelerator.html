@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Accelerator class &#8212; KENV 0.3.0.2 documentation</title>
+    <title>The Accelerator class &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="The Simulation class" href="simulation.html" />
+    <link rel="next" title="The Equations class" href="equations.html" />
     <link rel="prev" title="The Element class" href="element.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -58,9 +58,9 @@ that performs the accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>string</em>) – Accel’s id,</p></li>
-<li><p><strong>center</strong> (<em>float</em>) – Accel’s center,</p></li>
-<li><p><strong>max_field</strong> (<em>float</em>) – Accel’s maximum field [MV/m],</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Accel’s id</p></li>
+<li><p><strong>center</strong> (<em>float</em>) – Accel’s center</p></li>
+<li><p><strong>max_field</strong> (<em>float</em>) – Accel’s maximum field [MV/m]</p></li>
 <li><p><strong>file_name</strong> (<em>string</em>) – Experimental profile of the Ez field</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the element along the x-axis</p></li>
 <li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Element rotation in the z-x plane</p></li>
@@ -78,9 +78,9 @@ that performs the accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>string</em>) – Corrector’s id,</p></li>
-<li><p><strong>center</strong> (<em>float</em>) – Corrector’s center,</p></li>
-<li><p><strong>max_field</strong> (<em>float</em>) – Corrector’s maximum field [T],</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Corrector’s id</p></li>
+<li><p><strong>center</strong> (<em>float</em>) – Corrector’s center</p></li>
+<li><p><strong>max_field</strong> (<em>float</em>) – Corrector’s maximum field [T]</p></li>
 <li><p><strong>file_name</strong> (<em>string</em>) – Experimental profile of the By field</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the element along the x-axis</p></li>
 <li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Element rotation in the z-x plane</p></li>
@@ -98,9 +98,9 @@ that performs the accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>string</em>) – Corrector’s id,</p></li>
-<li><p><strong>center</strong> (<em>float</em>) – Corrector’s center,</p></li>
-<li><p><strong>max_field</strong> (<em>float</em>) – Corrector’s maximum field [T],</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Corrector’s id</p></li>
+<li><p><strong>center</strong> (<em>float</em>) – Corrector’s center</p></li>
+<li><p><strong>max_field</strong> (<em>float</em>) – Corrector’s maximum field [T]</p></li>
 <li><p><strong>file_name</strong> (<em>string</em>) – Experimental profile of the Bx field</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the element along the x-axis</p></li>
 <li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Element rotation in the z-x plane</p></li>
@@ -118,9 +118,9 @@ that performs the accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>string</em>) – Quad’s id,</p></li>
-<li><p><strong>center</strong> (<em>float</em>) – Quad’s center,</p></li>
-<li><p><strong>max_field</strong> (<em>float</em>) – Quad’s maximum field [T/m],</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Quad’s id</p></li>
+<li><p><strong>center</strong> (<em>float</em>) – Quad’s center</p></li>
+<li><p><strong>max_field</strong> (<em>float</em>) – Quad’s maximum field [T/m]</p></li>
 <li><p><strong>file_name</strong> (<em>string</em>) – Experimental profile of the Gz field</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the element along the x-axis</p></li>
 <li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Element rotation in the z-x plane</p></li>
@@ -138,9 +138,9 @@ that performs the accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>string</em>) – Solenoid’s id,</p></li>
-<li><p><strong>center</strong> (<em>float</em>) – Solenoid’s center,</p></li>
-<li><p><strong>max_field</strong> (<em>float</em>) – Solenoid’s maximum field [T],</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Solenoid’s id</p></li>
+<li><p><strong>center</strong> (<em>float</em>) – Solenoid’s center</p></li>
+<li><p><strong>max_field</strong> (<em>float</em>) – Solenoid’s maximum field [T]</p></li>
 <li><p><strong>file_name</strong> (<em>string</em>) – Experimental profile of the Bz field</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the element along the x-axis</p></li>
 <li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Element rotation in the z-x plane</p></li>
@@ -251,7 +251,7 @@ that performs the accelerator.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="api_reference.html">API reference</a><ul>
       <li>Previous: <a href="element.html" title="previous chapter">The Element class</a></li>
-      <li>Next: <a href="simulation.html" title="next chapter">The Simulation class</a></li>
+      <li>Next: <a href="equations.html" title="next chapter">The Equations class</a></li>
   </ul></li>
   </ul></li>
 </ul>

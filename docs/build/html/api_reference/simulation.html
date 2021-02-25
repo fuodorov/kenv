@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Simulation class &#8212; KENV 0.3.0.2 documentation</title>
+    <title>The Simulation class &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="The Accelerator class" href="accelerator.html" />
+    <link rel="prev" title="The Equations class" href="equations.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -40,18 +40,32 @@ that performs the integrate.</p>
 <dl class="py class">
 <dt id="kenv.solver.Simulation">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">kenv.solver.</span></code><code class="sig-name descname"><span class="pre">Simulation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">beam</span></em>, <em class="sig-param"><span class="pre">accelerator</span></em>, <em class="sig-param"><span class="pre">particle=&lt;kenv.beam.Particle</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kenv/solver.html#Simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.solver.Simulation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulation of the envelope beam in the accelerator.</p>
-<p>Basic parameters after track:
-gamma,
-envelope_x and envelope_y,
-envelope_xp and envelope_yp,
-centroid_x and centroid_y,
-centroid_xp and centroid_yp,
-larmor_angle</p>
+<dd><p>Initializes a Simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beam</strong> (an instance of <a class="reference internal" href="beam.html#kenv.beam.Beam" title="kenv.beam.Beam"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Beam</span></code></a>) – Beam data</p></li>
+<li><p><strong>accelerator</strong> (an instance of <a class="reference internal" href="accelerator.html#kenv.accelerator.Accelerator" title="kenv.accelerator.Accelerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Accelerator</span></code></a>) – Accelerator data</p></li>
+<li><p><strong>Particle</strong> (an instance of <a class="reference internal" href="particle.html#kenv.beam.Particle" title="kenv.beam.Particle"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Particle</span></code></a>, optional) – Particle data</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="kenv.solver.Simulation.track">
 <code class="sig-name descname"><span class="pre">track</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'RK23'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kenv/solver.html#Simulation.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.solver.Simulation.track" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tracking!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> (<em>bool</em>) – Particle equations switch</p></li>
+<li><p><strong>centroid</strong> (<em>bool</em>) – Centroid equations switch</p></li>
+<li><p><strong>envelope</strong> (<em>bool</em>) – Envelope equations switch</p></li>
+<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -87,7 +101,7 @@ larmor_angle</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="api_reference.html">API reference</a><ul>
-      <li>Previous: <a href="accelerator.html" title="previous chapter">The Accelerator class</a></li>
+      <li>Previous: <a href="equations.html" title="previous chapter">The Equations class</a></li>
   </ul></li>
   </ul></li>
 </ul>

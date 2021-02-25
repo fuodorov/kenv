@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kenv.accelerator &#8212; KENV 0.3.0.2 documentation</title>
+    <title>kenv.accelerator &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -38,7 +38,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Element&#39;</span><span class="p">,</span> <span class="s1">&#39;Accelerator&#39;</span><span class="p">,</span> <span class="s1">&#39;read_fields&#39;</span><span class="p">,</span> <span class="s1">&#39;read_offsets&#39;</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">Element</span><span class="p">:</span>
+<div class="viewcode-block" id="Element"><a class="viewcode-back" href="../../api_reference/element.html#kenv.accelerator.Element">[docs]</a><span class="k">class</span> <span class="nc">Element</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sets one accelerator element.</span>
 
@@ -69,13 +69,13 @@
 <span class="sd">            Name of the element</span>
 
 <span class="sd">        x: float, optional</span>
-<span class="sd">            Offset of the element along the x-axis</span>
+<span class="sd">            Offset of the element along the x-axis, [m]</span>
 <span class="sd">        xp: float, optional</span>
-<span class="sd">            Element rotation in the z-x plane</span>
+<span class="sd">            Element rotation in the z-x plane, [rad]</span>
 <span class="sd">        y: float, optional</span>
-<span class="sd">            Offset of the element along the y-axis</span>
+<span class="sd">            Offset of the element along the y-axis, [m]</span>
 <span class="sd">        yp: float, optional</span>
-<span class="sd">            Element rotation in the z-y plane</span>
+<span class="sd">            Element rotation in the z-y plane, [rad]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="n">z0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_field</span> <span class="o">=</span> <span class="n">max_field</span>
@@ -89,7 +89,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">z_start</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_stop</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="o">.</span><span class="mf">0e0</span></div>
 
 
 <span class="k">def</span> <span class="nf">read_fields</span><span class="p">(</span><span class="n">beamline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -371,11 +371,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: string</span>
-<span class="sd">            Solenoid&#39;s id,</span>
+<span class="sd">            Solenoid&#39;s id</span>
 <span class="sd">        center: float</span>
-<span class="sd">            Solenoid&#39;s center,</span>
+<span class="sd">            Solenoid&#39;s center</span>
 <span class="sd">        max_field: float</span>
-<span class="sd">            Solenoid&#39;s maximum field [T],</span>
+<span class="sd">            Solenoid&#39;s maximum field [T]</span>
 <span class="sd">        file_name: string</span>
 <span class="sd">            Experimental profile of the Bz field</span>
 
@@ -407,11 +407,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: string</span>
-<span class="sd">            Accel&#39;s id,</span>
+<span class="sd">            Accel&#39;s id</span>
 <span class="sd">        center: float</span>
-<span class="sd">            Accel&#39;s center,</span>
+<span class="sd">            Accel&#39;s center</span>
 <span class="sd">        max_field: float</span>
-<span class="sd">            Accel&#39;s maximum field [MV/m],</span>
+<span class="sd">            Accel&#39;s maximum field [MV/m]</span>
 <span class="sd">        file_name: string</span>
 <span class="sd">            Experimental profile of the Ez field</span>
 
@@ -438,11 +438,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: string</span>
-<span class="sd">            Quad&#39;s id,</span>
+<span class="sd">            Quad&#39;s id</span>
 <span class="sd">        center: float</span>
-<span class="sd">            Quad&#39;s center,</span>
+<span class="sd">            Quad&#39;s center</span>
 <span class="sd">        max_field: float</span>
-<span class="sd">            Quad&#39;s maximum field [T/m],</span>
+<span class="sd">            Quad&#39;s maximum field [T/m]</span>
 <span class="sd">        file_name: string</span>
 <span class="sd">            Experimental profile of the Gz field</span>
 
@@ -468,11 +468,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: string</span>
-<span class="sd">            Corrector&#39;s id,</span>
+<span class="sd">            Corrector&#39;s id</span>
 <span class="sd">        center: float</span>
-<span class="sd">            Corrector&#39;s center,</span>
+<span class="sd">            Corrector&#39;s center</span>
 <span class="sd">        max_field: float</span>
-<span class="sd">            Corrector&#39;s maximum field [T],</span>
+<span class="sd">            Corrector&#39;s maximum field [T]</span>
 <span class="sd">        file_name: string</span>
 <span class="sd">            Experimental profile of the By field</span>
 
@@ -498,11 +498,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: string</span>
-<span class="sd">            Corrector&#39;s id,</span>
+<span class="sd">            Corrector&#39;s id</span>
 <span class="sd">        center: float</span>
-<span class="sd">            Corrector&#39;s center,</span>
+<span class="sd">            Corrector&#39;s center</span>
 <span class="sd">        max_field: float</span>
-<span class="sd">            Corrector&#39;s maximum field [T],</span>
+<span class="sd">            Corrector&#39;s maximum field [T]</span>
 <span class="sd">        file_name: string</span>
 <span class="sd">            Experimental profile of the Bx field</span>
 
@@ -517,7 +517,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">max_field</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Accelerator.delete_solenoid"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.delete_solenoid">[docs]</a>    <span class="k">def</span> <span class="nf">delete_solenoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a solenoid in the accelerator.</span>
 
@@ -530,9 +530,9 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Accelerator.delete_accel"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.delete_accel">[docs]</a>    <span class="k">def</span> <span class="nf">delete_accel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete an accelerating module in the accelerator.</span>
 
@@ -545,9 +545,9 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ez_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Accelerator.delete_quadrupole"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.delete_quadrupole">[docs]</a>    <span class="k">def</span> <span class="nf">delete_quadrupole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a quadrupole in the accelerator.</span>
 
@@ -560,9 +560,9 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Gz_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Accelerator.delete_corrector_x"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.delete_corrector_x">[docs]</a>    <span class="k">def</span> <span class="nf">delete_corrector_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a corrector x in the accelerator.</span>
 
@@ -575,9 +575,9 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">By_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Accelerator.delete_corrector_y"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.delete_corrector_y">[docs]</a>    <span class="k">def</span> <span class="nf">delete_corrector_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a corrector y in the accelerator.</span>
 
@@ -590,7 +590,7 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Bx_beamline</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Accelerator.compile"><a class="viewcode-back" href="../../api_reference/accelerator.html#kenv.accelerator.Accelerator.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>

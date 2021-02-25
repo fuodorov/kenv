@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Beam class &#8212; KENV 0.3.0.2 documentation</title>
+    <title>The Beam class &#8212; KENV 0.3.0.3 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Element class" href="element.html" />
-    <link rel="prev" title="API reference" href="api_reference.html" />
+    <link rel="prev" title="The Particle class" href="particle.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -40,22 +40,30 @@ the beam data.</p>
 <dl class="py class">
 <dt id="kenv.beam.Beam">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">kenv.beam.</span></code><code class="sig-name descname"><span class="pre">Beam</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_xp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_yp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized_emittance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized_emittance_x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized_emittance_y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">larmor_angle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kenv/beam.html#Beam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kenv.beam.Beam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creating an electron beam.</p>
-<p>Creating a round electron beam with parameters:
-current [A],
-energy [MeV],
-radius [m],
-rp [rad],
-normalized emittance [m*rad],</p>
-<p>Creating an elliptical electron beam with parameters:
-radius_x [m],
-radius_y [m],
-radius_xp [rad],
-radius_yp [rad],
-normalized_emittance_x [m*rad],
-normalized_emittance_y [m*rad]</p>
-<p>and with shifted centroid:
-x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]</p>
+<dd><p>Initialization of an electron beam.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current</strong> (<em>float</em>) – Beam current, [A]</p></li>
+<li><p><strong>energy</strong> (<em>float</em>) – Beam energy, [MeV]</p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – Beam radius, [m]</p></li>
+<li><p><strong>radius_x</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam radius along the x-axis, [m]</p></li>
+<li><p><strong>radius_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam radius along the y-axis, [m]</p></li>
+<li><p><strong>rp</strong> (<em>float</em>) – Beam radius prime, [rad]</p></li>
+<li><p><strong>radius_xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam radius prime along the x-axis, [rad]</p></li>
+<li><p><strong>radius_yp</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam radius prime along the y-axis, [rad]</p></li>
+<li><p><strong>normalized_emittance</strong> (<em>float</em>) – Beam normalized emittance, [m*rad]</p></li>
+<li><p><strong>normalized_emittance_x</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam normalized emittance along the x-axis, [m*rad]</p></li>
+<li><p><strong>normalized_emittance_y</strong> (<em>float</em><em>, </em><em>optional</em>) – Elliptical beam normalized emittance along the y-axis, [m*rad]</p></li>
+<li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the centroid along the x-axis, [m]</p></li>
+<li><p><strong>xp</strong> (<em>float</em><em>, </em><em>optional</em>) – Centroid rotation in the z-x plane, [rad]</p></li>
+<li><p><strong>y</strong> (<em>float</em><em>, </em><em>optional</em>) – Offset of the centroid along the y-axis, [m]</p></li>
+<li><p><strong>yp</strong> (<em>float</em><em>, </em><em>optional</em>) – Centroid rotation in the z-y plane, [rad]</p></li>
+<li><p><strong>larmor_angle</strong> (<em>float</em><em>, </em><em>optional</em>) – Centroid larmor angle, [rad]</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>optional</em>) – Particle charge (dev!)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -89,7 +97,7 @@ x [m], y [m], xp[rad], yp[rad], larmor_angle [rad]</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="api_reference.html">API reference</a><ul>
-      <li>Previous: <a href="api_reference.html" title="previous chapter">API reference</a></li>
+      <li>Previous: <a href="particle.html" title="previous chapter">The Particle class</a></li>
       <li>Next: <a href="element.html" title="next chapter">The Element class</a></li>
   </ul></li>
   </ul></li>

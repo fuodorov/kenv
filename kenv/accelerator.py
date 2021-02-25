@@ -35,13 +35,13 @@ class Element:
             Name of the element
 
         x: float, optional
-            Offset of the element along the x-axis
+            Offset of the element along the x-axis, [m]
         xp: float, optional
-            Element rotation in the z-x plane
+            Element rotation in the z-x plane, [rad]
         y: float, optional
-            Offset of the element along the y-axis
+            Offset of the element along the y-axis, [m]
         yp: float, optional
-            Element rotation in the z-y plane
+            Element rotation in the z-y plane, [rad]
         """
         self.z0 = z0
         self.max_field = max_field

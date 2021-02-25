@@ -7,9 +7,11 @@ the ``kenv`` package, and which are used to set up a simulation.
 .. toctree::
    :maxdepth: 2
 
+   particle
    beam
    element
    accelerator
+   equations
    simulation
 
 If you are looking for a specific class or function, see the
