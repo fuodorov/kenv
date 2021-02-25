@@ -1,7 +1,0 @@
-The read_offsets functions
-======================
-
-The :any:`read_offsets` function is top-level function in KENV. It reads
-offsets and rotations elements from beamlnes.
-
-.. autoclass:: kenv.accelerator.read_offsets

@@ -1,7 +1,0 @@
-The read fields functions
-===========================
-
-The :any:`read_fields` function is top-level function in KENV. It reads,
-stitches and interpolates fields from beamlnes.
-
-.. autofunction:: kenv.accelerator.read_fields

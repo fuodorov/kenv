@@ -7,7 +7,7 @@ more performance and faster results from the code.
 **Topics:**
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    gui/gui
    genetic/genetic.ipynb
