@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='kenv',
+    name="kenv",
     version=kenv.__version__,
-    author='Vyacheslav Fedorov',
-    author_email='fuodorov1998@gmail.com',
+    author="Vyacheslav Fedorov",
+    author_email="slava@fuodorov.ru",
     description=kenv.__doc__,
     long_description=long_description,
     long_description_content_type="text/markdown",
