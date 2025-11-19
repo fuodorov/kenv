@@ -1,8 +1,9 @@
 import kenv.constants as consts
 import numpy as np
 from kenv.beam import Particle
-from scipy import interpolate, misc
+from scipy import interpolate
 from scipy.integrate import solve_ivp
+from scipy.differentiate import derivative
 
 __all__ = ['Sim',
            'Simulation',
@@ -118,8 +119,8 @@ class Equations:
         By = self.accelerator.By(z)
         Bz = self.accelerator.Bz(z)
         dBzdz = self.accelerator.dBzdz(z)
-        d2Bzdz2 = misc.derivative(
-            self.accelerator.dBzdz, z, dx=self.accelerator.dz, n=1)
+        d2Bzdz2 = derivative(
+            self.accelerator.dBzdz, z).df
         Gz = self.accelerator.Gz(z)
         Bz = Bz - d2Bzdz2 * r_corr**2 / 4
         Bx = Bx + Gz * y_corr - dBzdz * x_corr / 2 + Bz * offset_xp
@@ -128,8 +129,7 @@ class Equations:
 
         Ez = self.accelerator.Ez(z) * consts.MeV
         dEzdz = self.accelerator.dEzdz(z) * consts.MeV
-        d2Ezdz2 = misc.derivative(self.accelerator.dEzdz, z,
-                                  dx=self.accelerator.dz, n=1) * consts.MeV
+        d2Ezdz2 = derivative(self.accelerator.dEzdz, z).df * consts.MeV
         Ez = Ez - d2Ezdz2 * r_corr**2 / 4                    # row remainder
         Ex = - dEzdz * x_corr / 2 + Ez * offset_xp             # row remainder
         Ey = - dEzdz * y_corr / 2 + Ez * offset_yp             # row remainder
@@ -327,6 +327,7 @@ class Simulation:
                 equations.envelope_prime,
                 t_span=[z_start, z_finish],
                 y0=X0_beam,
+                max_step = self.accelerator.dz,
                 t_eval=self.accelerator.parameter,
                 method=method,
                 rtol=rtol,
@@ -377,6 +378,7 @@ class Simulation:
                 equations.centroid_prime,
                 t_span=[z_start, z_finish],
                 y0=X0_centroid,
+                max_step = self.accelerator.dz,
                 t_eval=self.accelerator.parameter,
                 method=method,
                 rtol=rtol,
@@ -440,6 +442,7 @@ class Simulation:
                 wrapper,
                 t_span=[z_start, z_finish],
                 y0=X0_particle,
+                max_step = self.accelerator.dz,
                 t_eval=self.accelerator.parameter,
                 method=method,
                 rtol=rtol,
