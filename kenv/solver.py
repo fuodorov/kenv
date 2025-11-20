@@ -3,7 +3,7 @@ import numpy as np
 from kenv.beam import Particle
 from scipy import interpolate
 from scipy.integrate import solve_ivp
-from scipy.differentiate import derivative
+#from scipy.differentiate import derivative
 
 __all__ = ['Sim',
            'Simulation',
@@ -80,6 +80,9 @@ class Equations:
 
         return [dxdz, dxpdz, dydz, dypdz]
 
+    def derivative_numpy(self, func, z, h=1e-5):
+        return (func(z + h) - func(z - h)) / (2 * h)
+
     def centroid_prime(self,
                        z: np.arange,
                        X: list) -> list:
@@ -118,9 +121,12 @@ class Equations:
         Bx = self.accelerator.Bx(z)
         By = self.accelerator.By(z)
         Bz = self.accelerator.Bz(z)
+
         dBzdz = self.accelerator.dBzdz(z)
-        d2Bzdz2 = derivative(
-            self.accelerator.dBzdz, z).df
+#        d2Bzdz2 = derivative(
+#            self.accelerator.dBzdz, z).df
+        d2Bzdz2 = self.derivative_numpy( self.accelerator.dBzdz, z, h=self.accelerator.dz )
+
         Gz = self.accelerator.Gz(z)
         Bz = Bz - d2Bzdz2 * r_corr**2 / 4
         Bx = Bx + Gz * y_corr - dBzdz * x_corr / 2 + Bz * offset_xp
@@ -129,7 +135,10 @@ class Equations:
 
         Ez = self.accelerator.Ez(z) * consts.MeV
         dEzdz = self.accelerator.dEzdz(z) * consts.MeV
-        d2Ezdz2 = derivative(self.accelerator.dEzdz, z).df * consts.MeV
+
+#        d2Ezdz2 = derivative(self.accelerator.dEzdz, z).df * consts.MeV
+        d2Ezdz2 = self.derivative_numpy( self.accelerator.dEzdz, z, h=self.accelerator.dz ) * consts.MeV
+
         Ez = Ez - d2Ezdz2 * r_corr**2 / 4                    # row remainder
         Ex = - dEzdz * x_corr / 2 + Ez * offset_xp             # row remainder
         Ey = - dEzdz * y_corr / 2 + Ez * offset_yp             # row remainder
